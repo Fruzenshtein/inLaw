@@ -1,0 +1,11 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET         /api-docs.json                      controllers.ApiHelpController.getResources
+GET         /swagger                            controllers.Application.swagger
+
+GET         /api-docs.json/lawyers              controllers.ApiHelpController.getResource(path = "/lawyers")
+POST        /lawyers                            controllers.LawyerController.createAccount
+
+GET         /assets/*file                       controllers.Assets.at(path="/public", file)
