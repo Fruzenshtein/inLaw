@@ -11,7 +11,6 @@ import play.api.libs.json.Json
 import services.LawyerService
 import models.{BearerToken, Lawyer}
 import com.wordnik.swagger.annotations._
-import scala.Some
 
 /**
  * Created by Alex on 11/23/14.

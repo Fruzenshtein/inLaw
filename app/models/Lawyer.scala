@@ -31,10 +31,10 @@ object Lawyer {
 
   implicit val accountReads: Reads[Lawyer] = (
     (JsPath \ "_id").readNullable[BSONObjectID].map(_.getOrElse(BSONObjectID.generate)).map(Some(_)) and
-      (JsPath \ "email").read[String] and
-      (JsPath \ "password").read[String] and
-      (JsPath \ "token").readNullable[BearerToken] and
-      (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0)))
+    (JsPath \ "email").read[String] and
+    (JsPath \ "password").read[String] and
+    (JsPath \ "token").readNullable[BearerToken] and
+    (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0)))
     )(Lawyer.apply _)
 
   def createAccount(accountInfo: UserAccountInfo) = {

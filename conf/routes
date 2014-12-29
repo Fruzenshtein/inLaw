@@ -5,6 +5,9 @@
 GET         /api-docs.json                      controllers.ApiHelpController.getResources
 GET         /swagger                            controllers.Application.swagger
 
+GET         /api-docs.json/auth                 controllers.ApiHelpController.getResource(path = "/auth")
+POST        /auth/login                         controllers.AuthController.login
+
 GET         /api-docs.json/lawyers              controllers.ApiHelpController.getResource(path = "/lawyers")
 POST        /lawyers                            controllers.LawyerController.createAccount
 GET         /lawyers                            controllers.LawyerController.getAccountInfo

@@ -33,4 +33,14 @@ object LawyerService {
     account
   }
 
+  def updateBearerToken(email: String, token: String) = {
+    val updatedToken = Json.obj(
+      "$set" -> Json.obj(
+        "token.bearer" -> token))
+    val updateAction = collection.update(
+      Json.obj("email" -> email),
+      updatedToken)
+    updateAction
+  }
+
 }
