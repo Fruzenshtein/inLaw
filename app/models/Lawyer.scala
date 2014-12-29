@@ -11,7 +11,7 @@ import utils.CryptUtils
 
 
 /**
- * Created by pitbul on 11/23/14.
+ * Created by Alex on 11/23/14.
  */
 case class Lawyer(_id: Option[BSONObjectID],
                   email: String,

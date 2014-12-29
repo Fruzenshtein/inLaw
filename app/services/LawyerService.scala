@@ -10,9 +10,9 @@ import scala.concurrent.Future
 import play.api.libs.json.Json
 
 /**
- * Created by pitbul on 11/23/14.
+ * Created by Alex on 11/23/14.
  */
-object UserAccountService {
+object LawyerService {
 
   private val collection = ReactiveMongoPlugin.db.collection[JSONCollection]("userAccount")
 
@@ -23,6 +23,12 @@ object UserAccountService {
 
   def findByEmail(email: String): Future[Option[Lawyer]] = {
     val query = Json.obj("email" -> email)
+    val account = collection.find(query).one[Lawyer]
+    account
+  }
+
+  def findByToken(token: String): Future[Option[Lawyer]] = {
+    val query = Json.obj("token.bearer" -> token)
     val account = collection.find(query).one[Lawyer]
     account
   }

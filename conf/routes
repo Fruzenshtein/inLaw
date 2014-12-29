@@ -7,5 +7,6 @@ GET         /swagger                            controllers.Application.swagger
 
 GET         /api-docs.json/lawyers              controllers.ApiHelpController.getResource(path = "/lawyers")
 POST        /lawyers                            controllers.LawyerController.createAccount
+GET         /lawyers                            controllers.LawyerController.getAccountInfo
 
 GET         /assets/*file                       controllers.Assets.at(path="/public", file)
