@@ -1,11 +1,13 @@
 package controllers
 
+import models.Lawyer
 import play.api.Logger
 import play.api.mvc._
 import services.LawyerService
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 /**
  * Created by Alex on 12/25/14.
@@ -26,29 +28,23 @@ trait Security {
 
   private def onUnauthorized(request: RequestHeader) = Results.Unauthorized
 
-  def isAuthenticated[A](action: Action[A]) = Action.async(action.parser) {
-    request => {
-      bearerToken(request) match {
-        case Some(token) => {
-          LawyerService.findByToken(token) flatMap { optionLawyer =>
-            optionLawyer match {
-              case Some(lawyer) => {
-                Logger.info(s"The Lawyer's account with token: $token exists.")
-                action(request)
-              }
-              case None => {
-                Logger.info(s"The Lawyer's account with token: $token was not found.")
-                Future.successful(onUnauthorized(request))
-              }
-            }
-          }
+  private def handleAuthenticated[T](bodyParser: BodyParser[T])(f: => String => Request[T] => Future[Result]): EssentialAction = Security.Authenticated(bearerToken, onUnauthorized) { bearerToken =>
+    Action.async(bodyParser)(request => f(bearerToken)(request))
+  }
+
+  def isAuthenticated(f: => Lawyer => Request[AnyContent] => Future[Result]) = handleAuthenticated(BodyParsers.parse.anyContent) { implicit bearerToken =>
+    implicit request =>
+      Try {
+        LawyerService.findByToken(bearerToken) flatMap {
+          case Some(account) => f(account)(request)
+          case None => Future(onUnauthorized(request))
         }
-        case None => {
-          Logger.info("Token was not provided.")
-          Future.successful(onUnauthorized(request))
+      } recover {
+        case e: Exception => {
+          Logger.error(s"Can't find lawyer by token: $bearerToken", e)
+          Future(onUnauthorized(request))
         }
-      }
-    }
+      } getOrElse (Future(onUnauthorized(request)))
   }
 
 }

@@ -2,6 +2,7 @@ package controllers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import controllers.Security
 import forms.UserAccountForms
 import play.api.mvc._
 
@@ -66,12 +67,5 @@ object LawyerController extends Controller with UserAccountForms with Security {
         })
     }
   }
-
-  def getAccountInfo = isAuthenticated(
-    Action {
-      Logger.info("SUCCESS Get Account Info")
-      Ok
-    }
-  )
 
 }

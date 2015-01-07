@@ -17,7 +17,8 @@ case class Lawyer(_id: Option[BSONObjectID],
                   email: String,
                   password: String,
                   bearerToken: Option[BearerToken],
-                  createdAt: DateTime)
+                  createdAt: DateTime,
+                  profile: Option[Profile])
 
 object Lawyer {
 
@@ -26,7 +27,8 @@ object Lawyer {
       (JsPath \ "email").write[String] and
       (JsPath \ "password").write[String] and
       (JsPath \ "token").writeNullable[BearerToken] and
-      (JsPath \ "createdAt").write[DateTime]
+      (JsPath \ "createdAt").write[DateTime] and
+      (JsPath \ "profile").writeNullable[Profile]
     )(unlift(Lawyer.unapply))
 
   implicit val accountReads: Reads[Lawyer] = (
@@ -34,8 +36,9 @@ object Lawyer {
     (JsPath \ "email").read[String] and
     (JsPath \ "password").read[String] and
     (JsPath \ "token").readNullable[BearerToken] and
-    (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0)))
-    )(Lawyer.apply _)
+    (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0))) and
+    (JsPath \ "profile").readNullable[Profile]
+  )(Lawyer.apply _)
 
   def createAccount(accountInfo: UserAccountInfo) = {
     val account = Lawyer(
@@ -43,10 +46,31 @@ object Lawyer {
       email = accountInfo.email,
       password = CryptUtils.encryptPassword(accountInfo.password),
       bearerToken = None,
-      createdAt = new DateTime()
+      createdAt = new DateTime(),
+      profile = None
     )
     account
   }
+
+}
+
+case class Profile(gender: Option[String],
+                   firstName: Option[String],
+                   lastName: Option[String],
+                   middleName: Option[String],
+                   birthDate: Option[DateTime],
+                   minRate: Option[Integer])
+
+object Profile {
+
+  implicit val profileFormat: Format[Profile] = (
+    (JsPath \ "gender").formatNullable[String] and
+    (JsPath \ "firstName").formatNullable[String] and
+    (JsPath \ "lastName").formatNullable[String] and
+    (JsPath \ "middleName").formatNullable[String] and
+    (JsPath \ "birthDate").formatNullable[DateTime] and
+    (JsPath \ "minRate").formatNullable[Integer]
+  )(Profile.apply, unlift(Profile.unapply))
 
 }
 

@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * Created by Alex on 12/29/14.
  */
 @Api(value = "/auth", description = "Authentication operations")
-object AuthController extends Controller with UserAccountForms {
+object AuthController extends Controller with UserAccountForms with Security {
 
   @ApiOperation(
     nickname = "login",
@@ -55,6 +55,25 @@ object AuthController extends Controller with UserAccountForms {
         }
       )
     }
+  }
+
+  @ApiOperation(
+    nickname = "logout",
+    value = "Logout",
+    notes = "Logout endpoint",
+    httpMethod = "GET",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)))
+  @ApiResponses(Array(
+    new ApiResponse(code = 401, message = "Unauthorized")))
+  def logout() = isAuthenticated {
+    acc =>
+      implicit request => {
+        val newToken = BearerToken.generateToken
+        LawyerService.updateBearerToken(acc.email, newToken)
+        Future(Ok)
+      }
   }
 
 }
