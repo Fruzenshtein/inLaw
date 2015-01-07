@@ -44,6 +44,23 @@ object LawyerProfileController extends Controller with Security with UserAccount
     }
   }
 
-  
+  @ApiOperation(
+    nickname = "getLawyerProfile",
+    value = "Get Lawyer Profile",
+    notes = "Get Lawyer Profile",
+    httpMethod = "GET",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Information about Profile")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)))
+  def getProfile = isAuthenticated { implicit acc =>
+    implicit request => {
+      LawyerService.getProfile(acc.email) map {
+        case Some(profile) => Ok(Json.toJson(profile))
+        case None => Ok(Json.obj("message" -> "Profile does not exist"))
+      }
+    }
+  }
 
 }

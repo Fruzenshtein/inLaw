@@ -10,9 +10,9 @@ case class Credentials(email: String, password: String)
 
 case class InformationMessage(message: String)
 
-case class Profile(gender: Option[String],
-                   firstName: Option[String],
-                   lastName: Option[String],
-                   middleName: Option[String],
-                   birthDate: Option[Date],
-                   minRate: Option[Int])
+case class Profile(gender: String,
+                   firstName: String,
+                   lastName: String,
+                   middleName: String,
+                   birthDate: Date,
+                   minRate: Int)

@@ -14,5 +14,6 @@ POST        /lawyers                            controllers.LawyerController.cre
 
 GET         /api-docs.json/lawyers/profile      controllers.ApiHelpController.getResource(path = "/lawyers/profile")
 PUT         /lawyers/profile                    controllers.LawyerProfileController.updateProfile
+GET         /lawyers/profile                    controllers.LawyerProfileController.getProfile
 
 GET         /assets/*file                       controllers.Assets.at(path="/public", file)

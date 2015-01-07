@@ -56,4 +56,13 @@ object LawyerService {
     updateProfile
   }
 
+  def getProfile(email: String): Future[Option[Profile]] = {
+    val query = Json.obj("email" -> email)
+    val account = collection.find(query).one[Lawyer]
+    account map {
+      case Some(lawyer) => lawyer.profile
+      case None => None
+    }
+  }
+
 }
