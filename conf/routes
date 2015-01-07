@@ -12,4 +12,7 @@ GET         /auth/logout                        controllers.AuthController.logou
 GET         /api-docs.json/lawyers              controllers.ApiHelpController.getResource(path = "/lawyers")
 POST        /lawyers                            controllers.LawyerController.createAccount
 
+GET         /api-docs.json/lawyers/profile      controllers.ApiHelpController.getResource(path = "/lawyers/profile")
+PUT         /lawyers/profile                    controllers.LawyerProfileController.updateProfile
+
 GET         /assets/*file                       controllers.Assets.at(path="/public", file)

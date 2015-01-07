@@ -1,5 +1,7 @@
 package models
 
+import java.util.Date
+
 import reactivemongo.bson.BSONObjectID
 import play.modules.reactivemongo.json.BSONFormats._
 import org.joda.time.DateTime
@@ -58,8 +60,8 @@ case class Profile(gender: Option[String],
                    firstName: Option[String],
                    lastName: Option[String],
                    middleName: Option[String],
-                   birthDate: Option[DateTime],
-                   minRate: Option[Integer])
+                   birthDate: Option[Date],
+                   minRate: Option[Int])
 
 object Profile {
 
@@ -68,8 +70,8 @@ object Profile {
     (JsPath \ "firstName").formatNullable[String] and
     (JsPath \ "lastName").formatNullable[String] and
     (JsPath \ "middleName").formatNullable[String] and
-    (JsPath \ "birthDate").formatNullable[DateTime] and
-    (JsPath \ "minRate").formatNullable[Integer]
+    (JsPath \ "birthDate").formatNullable[Date] and
+    (JsPath \ "minRate").formatNullable[Int]
   )(Profile.apply, unlift(Profile.unapply))
 
 }
