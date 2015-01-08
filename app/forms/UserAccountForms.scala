@@ -29,7 +29,7 @@ trait UserAccountForms extends LawyerValidators {
       "lastName" -> optional(text(maxLength = 20)),
       "middleName" -> optional(text(maxLength = 20)),
       "birthDate" -> optional(date("dd/MM/yyyy")),
-      "rate" -> optional(number(max=1000000))
+      "minRate" -> optional(number)
     )(Profile.apply)(Profile.unapply)
   )
 
