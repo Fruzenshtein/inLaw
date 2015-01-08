@@ -53,7 +53,6 @@ object LawyerService {
       Json.obj("email" -> email),
       updateProfile
     )
-    updateProfile
   }
 
   def getProfile(email: String): Future[Option[Profile]] = {

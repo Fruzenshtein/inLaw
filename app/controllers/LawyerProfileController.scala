@@ -37,6 +37,7 @@ object LawyerProfileController extends Controller with Security with UserAccount
         },
         profileInfo => {
           Logger.info("Updating of Lawyer Profile...")
+          Logger.info("Lawyer Profile: "+profileInfo.toString)
           LawyerService.updateProfile(acc.email, profileInfo)
           Future(Ok(Json.obj("message" -> "Lawyer Profile successfully updated")))
         }
