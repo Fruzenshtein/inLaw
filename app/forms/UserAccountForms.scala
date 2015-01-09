@@ -44,8 +44,8 @@ trait UserAccountForms extends LawyerValidators {
       "phones" -> optional(
         seq(
           mapping(
-            "name" -> text,
-            "number" -> text
+            "name" -> text(maxLength = 20),
+            "number" -> text(maxLength = 12)
           )(Phone.apply)(Phone.unapply)
         )
       ),

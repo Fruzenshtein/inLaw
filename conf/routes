@@ -16,4 +16,8 @@ GET         /api-docs.json/lawyers/profile      controllers.ApiHelpController.ge
 PUT         /lawyers/profile                    controllers.LawyerProfileController.updateProfile
 GET         /lawyers/profile                    controllers.LawyerProfileController.getProfile
 
+GET         /api-docs.json/lawyers/contacts     controllers.ApiHelpController.getResource(path = "/lawyers/contacts")
+PUT         /lawyers/contacts                   controllers.LawyerContactsController.updateContacts
+GET         /lawyers/contacts                   controllers.LawyerContactsController.getContacts
+
 GET         /assets/*file                       controllers.Assets.at(path="/public", file)
