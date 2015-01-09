@@ -20,18 +20,20 @@ case class Lawyer(_id: Option[BSONObjectID],
                   password: String,
                   bearerToken: Option[BearerToken],
                   createdAt: DateTime,
-                  profile: Option[Profile])
+                  profile: Option[Profile],
+                  contacts: Option[Contacts])
 
 object Lawyer {
 
   implicit val accountWrites: Writes[Lawyer] = (
     (JsPath \ "_id").writeNullable[BSONObjectID] and
-      (JsPath \ "email").write[String] and
-      (JsPath \ "password").write[String] and
-      (JsPath \ "token").writeNullable[BearerToken] and
-      (JsPath \ "createdAt").write[DateTime] and
-      (JsPath \ "profile").writeNullable[Profile]
-    )(unlift(Lawyer.unapply))
+    (JsPath \ "email").write[String] and
+    (JsPath \ "password").write[String] and
+    (JsPath \ "token").writeNullable[BearerToken] and
+    (JsPath \ "createdAt").write[DateTime] and
+    (JsPath \ "profile").writeNullable[Profile] and
+    (JsPath \ "contacts").writeNullable[Contacts]
+  )(unlift(Lawyer.unapply))
 
   implicit val accountReads: Reads[Lawyer] = (
     (JsPath \ "_id").readNullable[BSONObjectID].map(_.getOrElse(BSONObjectID.generate)).map(Some(_)) and
@@ -39,7 +41,8 @@ object Lawyer {
     (JsPath \ "password").read[String] and
     (JsPath \ "token").readNullable[BearerToken] and
     (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0))) and
-    (JsPath \ "profile").readNullable[Profile]
+    (JsPath \ "profile").readNullable[Profile] and
+    (JsPath \ "contacts").readNullable[Contacts]
   )(Lawyer.apply _)
 
   def createAccount(accountInfo: UserAccountInfo) = {
@@ -49,7 +52,8 @@ object Lawyer {
       password = CryptUtils.encryptPassword(accountInfo.password),
       bearerToken = None,
       createdAt = new DateTime(),
-      profile = None
+      profile = None,
+      contacts = None
     )
     account
   }
@@ -73,6 +77,45 @@ object Profile {
     (JsPath \ "birthDate").formatNullable[Date] and
     (JsPath \ "minRate").formatNullable[Int]
   )(Profile.apply, unlift(Profile.unapply))
+
+}
+
+case class Phone(name: String, number: String)
+
+object Phone {
+
+  implicit val phoneFormat: Format[Phone] = (
+    (JsPath \ "name").format[String] and
+    (JsPath \ "number").format[String]
+  )(Phone.apply, unlift(Phone.unapply))
+
+}
+
+case class Contacts(country: Option[String],
+                    city: Option[String],
+                    street: Option[String],
+                    zip: Option[String],
+                    phones: Option[Seq[Phone]],
+                    email: Option[String],
+                    facebook: Option[String],
+                    linkedIn: Option[String],
+                    twitter: Option[String],
+                    website: Option[String])
+
+object Contacts {
+
+  implicit val contactsFormat: Format[Contacts] = (
+    (JsPath \ "country").formatNullable[String] and
+    (JsPath \ "city").formatNullable[String] and
+    (JsPath \ "street").formatNullable[String] and
+    (JsPath \ "zip").formatNullable[String] and
+    (JsPath \ "phones").formatNullable[Seq[Phone]] and
+    (JsPath \ "email").formatNullable[String] and
+    (JsPath \ "facebook").formatNullable[String] and
+    (JsPath \ "linkedIn").formatNullable[String] and
+    (JsPath \ "twitter").formatNullable[String] and
+    (JsPath \ "website").formatNullable[String]
+  )(Contacts.apply, unlift(Contacts.unapply))
 
 }
 
