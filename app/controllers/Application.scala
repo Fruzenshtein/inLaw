@@ -9,4 +9,9 @@ object Application extends Controller {
       Ok(views.html.swagger())
   }
 
+  def appLogin = Action {
+    request =>
+      Ok(views.html.app())
+  }
+
 }

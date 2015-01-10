@@ -4,6 +4,7 @@
 
 GET         /api-docs.json                      controllers.ApiHelpController.getResources
 GET         /swagger                            controllers.Application.swagger
+GET         /login                              controllers.Application.appLogin
 
 GET         /api-docs.json/auth                 controllers.ApiHelpController.getResource(path = "/auth")
 POST        /auth/login                         controllers.AuthController.login
