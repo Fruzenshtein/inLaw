@@ -1,3 +1,1 @@
-if (window.console) {
-  console.log("Welcome to your Play application's JavaScript!");
-}
+console.log("just to demonstrate Play! Framework import static resources functionality")
