@@ -6,36 +6,20 @@ var App = angular.module('App', ['ui.router'])
 
         $urlRouterProvider.otherwise("/"); // root route
 
-        $stateProvider.state('main', {
+        $stateProvider.state('landing', {
             url: '/',
             views: {
-                "test": {
-                    templateUrl: 'assets/partials/noTest.html'
+                "mainView": {
+                    "templateUrl": 'assets/app/components/registration/registration.html',
+                    "controller": 'RegistrationCtrl'
                 }
             }
-        }).state('testOptions', {
-            url: '/tests/:name',
+        }).state('registration', {
+            url: "/registration",
             views: {
-                "test": {
-                    templateUrl: function ($stateParams){
-                        return 'assets/partials/tests/' + $stateParams.name + '.html';
-                    },
-                    controllerProvider: function ($stateParams){
-                        return $stateParams.name + 'Ctrl';
-                    }
-                },
-                "progressBar@testOptions": {
-                    templateUrl: 'assets/partials/progressBar.html'
-                }
-            }
-        }).state('testOptions.testResult', {
-            url: '/result',
-            views: {
-                "test@": {
-                    templateUrl: 'assets/partials/testResult.html',
-                    controllerProvider: function ($stateParams) {
-                        return $stateParams.name + 'Ctrl';
-                    }
+                "mainView": {
+                    templateUrl: 'assets/app/components/registration/registration.html',
+                    controller: 'RegistrationCtrl'
                 }
             }
         });

@@ -1,3 +1,9 @@
-App.controller('registrationCtrl',['$scope', function($scope){
-    $scope.signUp = null;
+'use strict';
+
+App.controller('RegistrationCtrl',['$scope', function($scope) {
+    $scope.signUp = {
+        'email': '',
+        'password': '',
+        'cpassword': ''
+    };
 }]);

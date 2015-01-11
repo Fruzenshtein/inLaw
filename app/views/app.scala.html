@@ -7,10 +7,8 @@
     <script src="@routes.Assets.at("javascripts/angular-ui-router.js")"></script>
     <script src="@routes.Assets.at("javascripts/jquery.js")"></script>
     <script src="@routes.Assets.at("javascripts/bootstrap.js")"></script>
-    <!-- ======= CSS ====== -->
     <link href="@routes.Assets.at("stylesheets/bootstrap.css")" rel="stylesheet">
     <link href="@routes.Assets.at("app/components/registration/registration.css")" rel="stylesheet">
-    <link rel="stylesheet/less" href="assets/css/nav-bar.less">
     <title>InLaw</title>
 </head>
 <body>
@@ -41,12 +39,12 @@
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
-        <div ui-view=""></div>
+        <div ui-view="mainView"></div>
     </div>
 </div>
 <!-- =================== JS ===================== -->
 <script src="@routes.Assets.at("app/app.js")"></script>
-<script src="@routes.Assets.at("app/components/registration/registrationCtrl.js")"></script>
+<script src="@routes.Assets.at("app/components/registration/RegistrationCtrl.js")"></script>
 <script src=""></script>
 </body>
 </html>

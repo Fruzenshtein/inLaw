@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="red-text" ng-show="registration.cpassword.$dirty && registration.cpassword.$invalid">
+            <div class="red-text">
                 <small class="red-text" ng-show="(signUp.password !== signUp.cpassword) && registration.cpassword.$dirty">
                     Your confirmation password doesn't match to password
                 </small>
@@ -67,7 +67,7 @@
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-default">Sign in</button>
+                <button type="button" class="btn btn-default" ng-disabled="registration.$invalid || (signUp.password !== signUp.cpassword) ">Sign up</button>
             </div>
         </div>
     </form>
