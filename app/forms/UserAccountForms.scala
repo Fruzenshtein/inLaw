@@ -10,6 +10,8 @@ import forms.validators.LawyerValidators
  */
 trait UserAccountForms extends LawyerValidators {
 
+  private val dateFormat: String = "dd/MM/yyyy"
+
   val createAccountForm = Form(
     mapping(
       "email" -> email,
@@ -30,7 +32,7 @@ trait UserAccountForms extends LawyerValidators {
       "firstName" -> optional(text(maxLength = 20)),
       "lastName" -> optional(text(maxLength = 20)),
       "middleName" -> optional(text(maxLength = 20)),
-      "birthDate" -> optional(date("dd/MM/yyyy")),
+      "birthDate" -> optional(date(dateFormat)),
       "minRate" -> optional(number)
     )(Profile.apply)(Profile.unapply)
   )
