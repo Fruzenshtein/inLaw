@@ -24,4 +24,19 @@ trait LawyerValidators {
 
   val genderCheck: Mapping[String] = text.verifying(genderConstraint)
 
+  private val educationDegree = """^bachelor|master|phd$""".r
+  private val educationDegreeConstraint: Constraint[String] = Constraint("constraints.education.degree")({
+    plainText =>
+      val errors = educationDegree.findFirstIn(plainText) match {
+        case Some(_) => Nil
+        case None => Seq(ValidationError("Education degree could be 'bachelor', 'master' or 'phd'"))
+      }
+      if (errors.isEmpty)
+        Valid
+      else
+        Invalid(errors)
+  })
+
+  val educationDegreeCheck: Mapping[String] = text.verifying(educationDegreeConstraint)
+
 }

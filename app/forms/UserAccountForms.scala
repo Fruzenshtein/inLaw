@@ -1,6 +1,6 @@
 package forms
 
-import models.{Phone, Contacts, Profile}
+import models.{University, Phone, Contacts, Profile}
 import play.api.data._
 import play.api.data.Forms._
 import forms.validators.LawyerValidators
@@ -57,6 +57,17 @@ trait UserAccountForms extends LawyerValidators {
       "linkedIn" -> optional(text(maxLength = 60)),
       "website" -> optional(text(maxLength = 80))
     )(Contacts.apply)(Contacts.unapply)
+  )
+
+  val createUniversityForm = Form(
+    mapping(
+      "id" -> optional(text(maxLength = 12)),
+      "name" -> text(minLength = 2, maxLength = 60),
+      "faculty" -> text(minLength = 2, maxLength = 60),
+      "degree" -> educationDegreeCheck,
+      "startDate" -> date(dateFormat),
+      "endDate" -> optional(date(dateFormat))
+    )(University.apply)(University.unapply)
   )
 
 }

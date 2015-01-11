@@ -1,14 +1,16 @@
 package models
 
 import java.util.Date
-import play.api.libs.functional.syntax._
 
-import play.api.libs.json.{JsPath, Format}
+import play.api.libs.json.Json
+
+import scala.util.Random
 
 /**
  * Created by Alex on 1/11/15.
  */
-case class University(name: String,
+case class University(id: Option[String] = Random.alphanumeric.take(12).mkString,
+                      name: String,
                       faculty: String,
                       degree: String,
                       startDate: Date,
@@ -16,25 +18,18 @@ case class University(name: String,
 
 object University {
 
-  implicit val universityFormat: Format[University] = (
-    (JsPath \ "name").format[String] and
-    (JsPath \ "faculty").format[String] and
-    (JsPath \ "degree").format[String] and
-    (JsPath \ "startDate").format[Date] and
-    (JsPath \ "endDate").formatNullable[Date]
-  )(University.apply, unlift(University.unapply))
+  implicit val universityFormat = Json.format[University]
 
 }
 
-case class Certificate(name: String, licenseCode: Option[String], link: Option[String], date: Date)
+case class Certificate(id: Option[String] = Random.alphanumeric.take(12).mkString,
+                       name: String,
+                       licenseCode: Option[String],
+                       link: Option[String],
+                       date: Date)
 
 object Certificate {
 
-  implicit val certificateFormat: Format[Certificate] = (
-    (JsPath \ "name").format[String] and
-    (JsPath \ "licenseCode").formatNullable[String] and
-    (JsPath \ "link").formatNullable[String] and
-    (JsPath \ "date").format[Date]
-  )(Certificate.apply, unlift(Certificate.unapply))
+  implicit val certificateFormat = Json.format[Certificate]
 
 }

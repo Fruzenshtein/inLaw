@@ -21,7 +21,8 @@ case class Lawyer(_id: Option[BSONObjectID],
                   bearerToken: Option[BearerToken],
                   createdAt: DateTime,
                   profile: Option[Profile],
-                  contacts: Option[Contacts])
+                  contacts: Option[Contacts],
+                  education: Option[Education])
 
 object Lawyer {
 
@@ -32,7 +33,8 @@ object Lawyer {
     (JsPath \ "token").writeNullable[BearerToken] and
     (JsPath \ "createdAt").write[DateTime] and
     (JsPath \ "profile").writeNullable[Profile] and
-    (JsPath \ "contacts").writeNullable[Contacts]
+    (JsPath \ "contacts").writeNullable[Contacts] and
+    (JsPath \ "education").writeNullable[Education]
   )(unlift(Lawyer.unapply))
 
   implicit val accountReads: Reads[Lawyer] = (
@@ -42,7 +44,8 @@ object Lawyer {
     (JsPath \ "token").readNullable[BearerToken] and
     (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0))) and
     (JsPath \ "profile").readNullable[Profile] and
-    (JsPath \ "contacts").readNullable[Contacts]
+    (JsPath \ "contacts").readNullable[Contacts] and
+    (JsPath \ "education").readNullable[Education]
   )(Lawyer.apply _)
 
   def createAccount(accountInfo: UserAccountInfo) = {
@@ -53,7 +56,8 @@ object Lawyer {
       bearerToken = None,
       createdAt = new DateTime(),
       profile = None,
-      contacts = None
+      contacts = None,
+      education = None
     )
     account
   }
@@ -116,6 +120,17 @@ object Contacts {
     (JsPath \ "twitter").formatNullable[String] and
     (JsPath \ "website").formatNullable[String]
   )(Contacts.apply, unlift(Contacts.unapply))
+
+}
+
+case class Education(universities: Option[Seq[University]], certificates: Option[Seq[Certificate]])
+
+object Education {
+
+  implicit val educationFormat: Format[Education] = (
+    (JsPath \ "universities").formatNullable[Seq[University]] and
+    (JsPath \ "certificates").formatNullable[Seq[Certificate]]
+  )(Education.apply, unlift(Education.unapply))
 
 }
 
