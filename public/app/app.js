@@ -10,8 +10,7 @@ var App = angular.module('App', ['ui.router'])
             url: '/',
             views: {
                 "mainView": {
-                    "templateUrl": 'assets/app/components/registration/registration.html',
-                    "controller": 'RegistrationCtrl'
+                    "templateUrl": 'assets/app/components/landing/landing.html'
                 }
             }
         }).state('registration', {
@@ -20,6 +19,14 @@ var App = angular.module('App', ['ui.router'])
                 "mainView": {
                     templateUrl: 'assets/app/components/registration/registration.html',
                     controller: 'RegistrationCtrl'
+                }
+            }
+        }).state('login', {
+            url: "/login",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/app/components/login/login.html',
+                    controller: 'LoginCtrl'
                 }
             }
         });

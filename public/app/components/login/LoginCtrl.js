@@ -1,24 +1,24 @@
 'use strict';
 
-App.controller('RegistrationCtrl',['$scope', '$state', '$http', function($scope, $state, $http) {
-    $scope.signUp = {};
+App.controller('LoginCtrl', ['$scope', '$state', '$http', function($scope, $state, $http) {
+    $scope.signIn = {};
+    $scope.error = false;
+    $scope.isLogin = true;
 
-    $scope.submit = function(signUp) {
+    $scope.submit = function(signIn) {
         var data = {
-            "email": signUp.email,
-            "password": signUp.password,
-            "repeatPassword": signUp.cpassword
+            'email': signIn.email,
+            'password': signIn.password
         };
-
         $http({
             method: 'POST',
-            url: '/lawyers',
+            url: '/auth/login',
             data: data,
             headers: {'Content-Type': 'application/json'}
         }).
             success(function(data, status, headers, config) {
                 //userinfo.getUserData(); TBD... if appropriate info need to be shown
-                sessionStorage.setItem(signUp.email, data.token);
+                sessionStorage.setItem(signIn.email, data['token']);
                 $state.go('landing');
             }).
             error(function(data, status, headers, config) {
@@ -29,5 +29,6 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', function($scope,
     $scope.cleanError = function() {
         this.error = false;
     };
+
 
 }]);
