@@ -9,7 +9,7 @@ import scala.util.Random
 /**
  * Created by Alex on 1/11/15.
  */
-case class University(id: Option[String] = Random.alphanumeric.take(12).mkString,
+case class University(id: Option[String] = Some(Random.alphanumeric.take(12).mkString),
                       name: String,
                       faculty: String,
                       degree: String,
@@ -22,7 +22,7 @@ object University {
 
 }
 
-case class Certificate(id: Option[String] = Random.alphanumeric.take(12).mkString,
+case class Certificate(id: Option[String] = Some(Random.alphanumeric.take(12).mkString),
                        name: String,
                        licenseCode: Option[String],
                        link: Option[String],

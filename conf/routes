@@ -2,23 +2,26 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /api-docs.json                      controllers.ApiHelpController.getResources
-GET         /swagger                            controllers.Application.swagger
-GET         /login                              controllers.Application.appLogin
+GET         /api-docs.json                          controllers.ApiHelpController.getResources
+GET         /swagger                                controllers.Application.swagger
+GET         /                                       controllers.Application.appLogin
 
-GET         /api-docs.json/auth                 controllers.ApiHelpController.getResource(path = "/auth")
-POST        /auth/login                         controllers.AuthController.login
-GET         /auth/logout                        controllers.AuthController.logout
+GET         /api-docs.json/auth                     controllers.ApiHelpController.getResource(path = "/auth")
+POST        /auth/login                             controllers.AuthController.login
+GET         /auth/logout                            controllers.AuthController.logout
 
-GET         /api-docs.json/lawyers              controllers.ApiHelpController.getResource(path = "/lawyers")
-POST        /lawyers                            controllers.LawyerController.createAccount
+GET         /api-docs.json/lawyers                  controllers.ApiHelpController.getResource(path = "/lawyers")
+POST        /lawyers                                controllers.LawyerController.createAccount
 
-GET         /api-docs.json/lawyers/profile      controllers.ApiHelpController.getResource(path = "/lawyers/profile")
-PUT         /lawyers/profile                    controllers.LawyerProfileController.updateProfile
-GET         /lawyers/profile                    controllers.LawyerProfileController.getProfile
+GET         /api-docs.json/lawyers/profile          controllers.ApiHelpController.getResource(path = "/lawyers/profile")
+PUT         /lawyers/profile                        controllers.LawyerProfileController.updateProfile
+GET         /lawyers/profile                        controllers.LawyerProfileController.getProfile
 
-GET         /api-docs.json/lawyers/contacts     controllers.ApiHelpController.getResource(path = "/lawyers/contacts")
-PUT         /lawyers/contacts                   controllers.LawyerContactsController.updateContacts
-GET         /lawyers/contacts                   controllers.LawyerContactsController.getContacts
+GET         /api-docs.json/lawyers/contacts         controllers.ApiHelpController.getResource(path = "/lawyers/contacts")
+PUT         /lawyers/contacts                       controllers.LawyerContactsController.updateContacts
+GET         /lawyers/contacts                       controllers.LawyerContactsController.getContacts
 
-GET         /assets/*file                       controllers.Assets.at(path="/public", file)
+GET         /api-docs.json/lawyers/education        controllers.ApiHelpController.getResource(path = "/lawyers/education")
+POST        /lawyers/education/universities         controllers.LawyerEducationController.createUniversity
+
+GET         /assets/*file                           controllers.Assets.at(path="/public", file)

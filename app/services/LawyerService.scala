@@ -5,7 +5,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.modules.reactivemongo.json.collection.JSONCollection
-import models.{Contacts, Profile, Lawyer}
+import models.{University, Contacts, Profile, Lawyer}
 import scala.concurrent.Future
 import play.api.libs.json.Json
 
@@ -82,6 +82,18 @@ object LawyerService {
       case Some(lawyer) => lawyer.contacts
       case None => None
     }
+  }
+
+  def createUniversity(email: String, university: University) = {
+    val createUniversity = Json.obj(
+      "$set" -> Json.obj(
+        "education.universities" -> Seq(university)
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      createUniversity
+    )
   }
 
 }
