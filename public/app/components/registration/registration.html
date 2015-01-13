@@ -62,6 +62,7 @@
                         class="btn btn-default"
                         ng-disabled="registration.$invalid || (signUp.password !== signUp.cpassword)"
                         ng-click="submit(signUp)">Sign up</button>
+                <p ng-show="commonError" class="text-danger">{{ commonError }}</p>
             </div>
         </div>
     </form>

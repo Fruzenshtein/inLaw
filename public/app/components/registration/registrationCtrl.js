@@ -23,6 +23,8 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', function($scope,
             }).
             error(function(data, status, headers, config) {
                 $scope.error = true;
+                status == 400 ? $scope.commonError = data.message :
+                    $scope.commonError = 'Unexpected error. Please try again later.'
             });
     };
 
