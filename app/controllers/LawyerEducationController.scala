@@ -2,9 +2,10 @@ package controllers
 
 import com.wordnik.swagger.annotations._
 import forms.UserAccountForms
+import models.University
 import play.api.Logger
 import play.api.libs.json.Json
-import play.api.mvc.Controller
+import play.api.mvc.{Action, Controller}
 import services.LawyerService
 
 import scala.concurrent.Future
@@ -38,11 +39,17 @@ object LawyerEducationController extends Controller with Security with UserAccou
         university => {
           Logger.info("Updating of Lawyer Profile...")
           Logger.info("Lawyer Profile: "+university.toString)
-          LawyerService.createUniversity(acc.email, university)
+          LawyerService.createUniversity(acc.email, University.generateUniversity(university))
           Future(Ok(Json.obj("message" -> "Lawyer's University successfully updated")))
         }
         )
     }
+  }
+
+  def getUniversities = isAuthenticated { implicit  acc =>
+    implicit request =>
+      val universities = acc.education.get.universities.get
+      Future.successful(Ok(Json.toJson(universities)))
   }
 
 }

@@ -23,5 +23,6 @@ GET         /lawyers/contacts                       controllers.LawyerContactsCo
 
 GET         /api-docs.json/lawyers/education        controllers.ApiHelpController.getResource(path = "/lawyers/education")
 POST        /lawyers/education/universities         controllers.LawyerEducationController.createUniversity
+GET         /lawyers/education/universities         controllers.LawyerEducationController.getUniversities
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)

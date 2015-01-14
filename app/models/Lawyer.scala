@@ -123,7 +123,8 @@ object Contacts {
 
 }
 
-case class Education(universities: Option[Seq[University]], certificates: Option[Seq[Certificate]])
+case class Education(universities: Option[Seq[University]],
+                     certificates: Option[Seq[Certificate]])
 
 object Education {
 

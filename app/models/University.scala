@@ -9,7 +9,7 @@ import scala.util.Random
 /**
  * Created by Alex on 1/11/15.
  */
-case class University(id: Option[String] = Some(Random.alphanumeric.take(12).mkString),
+case class University(id: Option[String],
                       name: String,
                       faculty: String,
                       degree: String,
@@ -19,6 +19,10 @@ case class University(id: Option[String] = Some(Random.alphanumeric.take(12).mkS
 object University {
 
   implicit val universityFormat = Json.format[University]
+
+  def generateUniversity(university: University): University = {
+    university copy (id = Some(Random.alphanumeric.take(12).mkString))
+  }
 
 }
 
