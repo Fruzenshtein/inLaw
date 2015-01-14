@@ -29,8 +29,7 @@ case class Contacts(country: Option[String],
                     twitter: Option[String],
                     website: Option[String])
 
-case class University(id: Option[String],
-                      name: String,
+case class University(name: String,
                       faculty: String,
                       degree: String,
                       startDate: Date,

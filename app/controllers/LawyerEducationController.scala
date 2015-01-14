@@ -5,9 +5,10 @@ import forms.UserAccountForms
 import models.University
 import play.api.Logger
 import play.api.libs.json.Json
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.Controller
 import services.LawyerService
 
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -25,6 +26,7 @@ object LawyerEducationController extends Controller with Security with UserAccou
     httpMethod = "POST",
     response = classOf[models.swagger.InformationMessage])
   @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Lawyer's University successfully added"),
     new ApiResponse(code = 400, message = "Bad arguments")))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
@@ -40,16 +42,35 @@ object LawyerEducationController extends Controller with Security with UserAccou
           Logger.info("Updating of Lawyer Profile...")
           Logger.info("Lawyer Profile: "+university.toString)
           LawyerService.createUniversity(acc.email, University.generateUniversity(university))
-          Future(Ok(Json.obj("message" -> "Lawyer's University successfully updated")))
+          Future(Ok(Json.obj("message" -> "Lawyer's University successfully added")))
         }
         )
     }
   }
 
-  def getUniversities = isAuthenticated { implicit  acc =>
+  @ApiOperation(
+    nickname = "lawyersEducationUniversities",
+    value = "Get lawyers education universities",
+    notes = "Get lawyers education universities",
+    httpMethod = "GET",
+    response = classOf[models.University])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "List of universities"),
+    new ApiResponse(code = 200, message = "Universities does not exist"),
+    new ApiResponse(code = 200, message = "Education does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def getUniversities = isAuthenticated { implicit acc =>
     implicit request =>
-      val universities = acc.education.get.universities.get
-      Future.successful(Ok(Json.toJson(universities)))
+      acc.education match {
+        case Some(someEdu) => someEdu.universities match {
+          case Some(universities) => Future.successful(Ok(Json.toJson(universities)))
+          case None => Future.successful(Ok(Json.obj("message" -> "Universities do not exist")))
+        }
+        case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
+      }
   }
 
 }
