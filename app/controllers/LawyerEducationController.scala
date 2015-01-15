@@ -56,8 +56,8 @@ object LawyerEducationController extends Controller with Security with UserAccou
     response = classOf[models.University])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "List of universities"),
-    new ApiResponse(code = 200, message = "Universities does not exist"),
-    new ApiResponse(code = 200, message = "Education does not exist")
+    new ApiResponse(code = 404, message = "Universities does not exist"),
+    new ApiResponse(code = 404, message = "Education does not exist")
   ))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
@@ -67,9 +67,9 @@ object LawyerEducationController extends Controller with Security with UserAccou
       acc.education match {
         case Some(someEdu) => someEdu.universities match {
           case Some(universities) => Future.successful(Ok(Json.toJson(universities)))
-          case None => Future.successful(Ok(Json.obj("message" -> "Universities do not exist")))
+          case None => Future.successful(NotFound(Json.obj("message" -> "Universities do not exist")))
         }
-        case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
+        case None => Future.successful(NotFound(Json.obj("message" -> "Education does not exist")))
       }
   }
 
@@ -91,22 +91,30 @@ object LawyerEducationController extends Controller with Security with UserAccou
   ))
   def updateUniversity(id: String) = isAuthenticated { implicit acc =>
     implicit request =>
-      Logger.info(acc.education.toString)
-      acc.education match {
-        case Some(someEdu) => someEdu.universities match {
-          case Some(universities) => {
-            universities.find((u: University) => u.id == Some(id)) match {
-              case Some(univer) => {
-                //TODO: Delete item, insert new one
-                Future.successful(Ok(Json.obj("message" -> "Update univer")))
+      createUniversityForm.bindFromRequest fold(
+        formWithErrors => {
+          Logger.info("Update of Lawyer Profile was with ERRORS")
+          Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+        },
+        newUniversity => {
+          acc.education match {
+            case Some(someEdu) => someEdu.universities match {
+              case Some(universities) => {
+                universities.find((u: University) => u.id == Some(id)) match {
+                  case Some(university) => {
+                    LawyerService.deleteUniversity(acc.email, id)
+                    LawyerService.createUniversity(acc.email, models.University.generateUniversity(newUniversity))
+                    Future.successful(Ok(Json.obj("message" -> "Update university")))
+                  }
+                  case None => Future.successful(NotFound(Json.obj("message" -> s"University with id $id does not exist")))
+                }
               }
-              case None => Future.successful(NotFound(Json.obj("message" -> s"University with id $id does not exist")))
+              case None => Future.successful(Ok(Json.obj("message" -> "Universities do not exist")))
             }
+            case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
           }
-          case None => Future.successful(Ok(Json.obj("message" -> "Universities do not exist")))
         }
-        case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
-      }
+      )
   }
 
   @ApiOperation(

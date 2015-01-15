@@ -87,7 +87,7 @@ object LawyerService {
   def createUniversity(email: String, university: University) = {
     val createUniversity = Json.obj(
       "$push" -> Json.obj(
-        "education.universities" -> university
+        "education.universities" -> university copy()
       )
     )
     collection.update(
