@@ -96,4 +96,16 @@ object LawyerService {
     )
   }
 
+  def deleteUniversity(email: String, id: String) = {
+    val removeUniver = Json.obj(
+      "$pull" -> Json.obj(
+        "education.universities" -> Json.obj("id" -> id)
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      removeUniver
+    )
+  }
+
 }

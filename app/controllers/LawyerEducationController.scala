@@ -41,7 +41,7 @@ object LawyerEducationController extends Controller with Security with UserAccou
         university => {
           Logger.info("Updating of Lawyer Profile...")
           Logger.info("Lawyer Profile: "+university.toString)
-          LawyerService.createUniversity(acc.email, University.generateUniversity(university))
+          LawyerService.createUniversity(acc.email, models.University.generateUniversity(university))
           Future(Ok(Json.obj("message" -> "Lawyer's University successfully added")))
         }
         )
@@ -71,6 +71,74 @@ object LawyerEducationController extends Controller with Security with UserAccou
         }
         case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
       }
+  }
+
+  @ApiOperation(
+    nickname = "lawyersEducationUniversities",
+    value = "Put lawyers education universities",
+    notes = "Put lawyers education universities",
+    httpMethod = "PUT",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "University successfully updated"),
+    new ApiResponse(code = 400, message = "Validation errors"),
+    new ApiResponse(code = 404, message = "Education does not exist"),
+    new ApiResponse(code = 404, message = "University with such id does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
+    new ApiImplicitParam(value = "Lawyer University object which will be updated", required = true, dataType = "models.swagger.University", paramType = "body")
+  ))
+  def updateUniversity(id: String) = isAuthenticated { implicit acc =>
+    implicit request =>
+      Logger.info(acc.education.toString)
+      acc.education match {
+        case Some(someEdu) => someEdu.universities match {
+          case Some(universities) => {
+            universities.find((u: University) => u.id == Some(id)) match {
+              case Some(univer) => {
+                //TODO: Delete item, insert new one
+                Future.successful(Ok(Json.obj("message" -> "Update univer")))
+              }
+              case None => Future.successful(NotFound(Json.obj("message" -> s"University with id $id does not exist")))
+            }
+          }
+          case None => Future.successful(Ok(Json.obj("message" -> "Universities do not exist")))
+        }
+        case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
+      }
+  }
+
+  @ApiOperation(
+    nickname = "lawyersEducationUniversities",
+    value = "Delete lawyers education universities by id",
+    notes = "Delete lawyers education universities by id",
+    httpMethod = "DELETE",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "University successfully updated"),
+    new ApiResponse(code = 404, message = "Education does not exist"),
+    new ApiResponse(code = 404, message = "University with such id does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def deleteUniversity(id: String) = isAuthenticated { implicit acc =>
+    implicit request => acc.education match {
+      case Some(someEdu) => someEdu.universities match {
+        case Some(universities) => {
+          universities.find((u: University) => u.id == Some(id)) match {
+            case Some(_) => {
+              LawyerService.deleteUniversity(acc.email, id)
+              Future.successful(Ok(Json.obj("message" -> s"University with id: $id successfully deleted")))
+            }
+            case None => Future.successful(NotFound(Json.obj("message" -> "Universities do not exist")))
+          }
+        }
+        case None => Future.successful(Ok(Json.obj("message" -> "Universities do not exist")))
+      }
+      case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
+    }
   }
 
 }

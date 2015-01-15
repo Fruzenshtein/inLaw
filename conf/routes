@@ -24,5 +24,7 @@ GET         /lawyers/contacts                       controllers.LawyerContactsCo
 GET         /api-docs.json/lawyers/education        controllers.ApiHelpController.getResource(path = "/lawyers/education")
 POST        /lawyers/education/universities         controllers.LawyerEducationController.createUniversity
 GET         /lawyers/education/universities         controllers.LawyerEducationController.getUniversities
+PUT         /lawyers/education/universities/:id     controllers.LawyerEducationController.updateUniversity(id: String)
+DELETE      /lawyers/education/universities/:id     controllers.LawyerEducationController.deleteUniversity(id: String)
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
