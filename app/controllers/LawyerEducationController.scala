@@ -26,7 +26,7 @@ object LawyerEducationController extends Controller with Security with UserAccou
     httpMethod = "POST",
     response = classOf[models.swagger.InformationMessage])
   @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "Lawyer's University successfully added"),
+    new ApiResponse(code = 200, message = "University successfully added"),
     new ApiResponse(code = 400, message = "Bad arguments")))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
@@ -35,14 +35,14 @@ object LawyerEducationController extends Controller with Security with UserAccou
     implicit request => {
       createUniversityForm.bindFromRequest fold(
         formWithErrors => {
-          Logger.info("Creation of Lawyer Profile was with ERRORS")
+          Logger.info("Creation of University was with ERRORS")
           Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
         },
         university => {
-          Logger.info("Updating of Lawyer Profile...")
-          Logger.info("Lawyer Profile: "+university.toString)
+          Logger.info("Creation of University...")
+          Logger.info("University: "+university.toString)
           LawyerService.createUniversity(acc.email, models.University.generateUniversity(university))
-          Future(Ok(Json.obj("message" -> "Lawyer's University successfully added")))
+          Future(Ok(Json.obj("message" -> "University successfully added")))
         }
         )
     }
@@ -146,6 +146,35 @@ object LawyerEducationController extends Controller with Security with UserAccou
         case None => Future.successful(Ok(Json.obj("message" -> "Universities do not exist")))
       }
       case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
+    }
+  }
+
+  @ApiOperation(
+    nickname = "certificatesEducationUniversities",
+    value = "Create lawyers education certificates",
+    notes = "Create lawyers education certificates",
+    httpMethod = "POST",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Certificate successfully added"),
+    new ApiResponse(code = 400, message = "Bad arguments")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
+    new ApiImplicitParam(value = "Lawyer Certificate object which will be added", required = true, dataType = "models.swagger.Certificate", paramType = "body")))
+  def createCertificate = isAuthenticated { implicit acc =>
+    implicit request => {
+      createCertificateForm.bindFromRequest fold(
+        formWithErrors => {
+          Logger.info("Creation of Certificate was with ERRORS")
+          Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+        },
+        certificate => {
+          Logger.info("Creation of Certificate...")
+          Logger.info("Certificate: "+certificate.toString)
+          LawyerService.createCertificate(acc.email, models.Certificate.generateCertificate(certificate))
+          Future(Ok(Json.obj("message" -> "Certificate successfully added")))
+        }
+        )
     }
   }
 

@@ -27,4 +27,6 @@ GET         /lawyers/education/universities         controllers.LawyerEducationC
 PUT         /lawyers/education/universities/:id     controllers.LawyerEducationController.updateUniversity(id: String)
 DELETE      /lawyers/education/universities/:id     controllers.LawyerEducationController.deleteUniversity(id: String)
 
+POST        /lawyers/education/certificates         controllers.LawyerEducationController.createCertificate
+
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)

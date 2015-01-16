@@ -36,4 +36,8 @@ object Certificate {
 
   implicit val certificateFormat = Json.format[Certificate]
 
+  def generateCertificate(certificate: Certificate): Certificate = {
+    certificate copy (id = Some(Random.alphanumeric.take(12).mkString))
+  }
+
 }

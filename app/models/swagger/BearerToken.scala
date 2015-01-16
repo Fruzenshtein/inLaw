@@ -34,3 +34,8 @@ case class University(name: String,
                       degree: String,
                       startDate: Date,
                       endDate: Option[Date])
+
+case class Certificate(name: String,
+                       licenseCode: Option[String],
+                       link: Option[String],
+                       date: Date)

@@ -1,6 +1,6 @@
 package forms
 
-import models.{University, Phone, Contacts, Profile}
+import models._
 import play.api.data._
 import play.api.data.Forms._
 import forms.validators.LawyerValidators
@@ -68,6 +68,16 @@ trait UserAccountForms extends LawyerValidators {
       "startDate" -> date(dateFormat),
       "endDate" -> optional(date(dateFormat))
     )(University.apply)(University.unapply)
+  )
+
+  val createCertificateForm = Form(
+    mapping(
+      "id" -> optional(text(maxLength = 12)),
+      "name" -> text(minLength = 2, maxLength = 60),
+      "licenseCode" -> optional(text(minLength = 2, maxLength = 60)),
+      "link" -> optional(text(minLength = 7, maxLength = 80)),
+      "date" -> date(dateFormat)
+    )(Certificate.apply)(Certificate.unapply)
   )
 
 }
