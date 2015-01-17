@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var App = angular.module('App', ['ui.router'])
+var App = angular.module('App', ['ui.router', 'ui.bootstrap']) //'ui.bootstrap', 'ui.select', 'ngSanitize'
     .config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function($stateProvider, $locationProvider, $urlRouterProvider) {
 
         $urlRouterProvider.otherwise("/"); // root route
@@ -27,6 +27,14 @@ var App = angular.module('App', ['ui.router'])
                 "mainView": {
                     templateUrl: 'assets/app/components/login/login.html',
                     controller: 'LoginCtrl'
+                }
+            }
+        }).state('profile', {
+            url: "/profile",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/app/components/profile/profile.html',
+                    controller: 'ProfileCtrl'
                 }
             }
         });

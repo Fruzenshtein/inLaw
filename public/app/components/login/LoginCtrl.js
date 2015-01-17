@@ -17,8 +17,8 @@ App.controller('LoginCtrl', ['$scope', '$state', '$http', function($scope, $stat
             headers: {'Content-Type': 'application/json'}
         }).
             success(function(data, status, headers, config) {
-                //userinfo.getUserData(); TBD... if appropriate info need to be shown
-                sessionStorage.setItem(signIn.email, data['token']);
+                //UserInfoService.getUserData(); TBD... if appropriate info need to be shown
+                sessionStorage.setItem('token', data['token']);
                 $state.go('landing');
             }).
             error(function(data, status, headers, config) {

@@ -2,10 +2,11 @@
 <html ng-app="App">
 <head lang="en">
 <meta charset="UTF-8">
+
     <script src="@routes.Assets.at("javascripts/angular.js")"></script>
+    <script src="@routes.Assets.at("bower_components/angular-bootstrap/ui-bootstrap-tpls.js")"></script>
     <script src="@routes.Assets.at("javascripts/angular-ui-router.js")"></script>
-    <script src="@routes.Assets.at("javascripts/jquery.js")"></script>
-    <script src="@routes.Assets.at("javascripts/bootstrap.js")"></script>
+
     <link href="@routes.Assets.at("stylesheets/bootstrap.css")" rel="stylesheet">
     <link href="@routes.Assets.at("app/components/registration/registration.css")" rel="stylesheet">
     <title>InLaw</title>
@@ -19,22 +20,20 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="#">In Law</a>
                 </div>
-
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">Link</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <div class="nav navbar-nav navbar-right" dropdown is-open="status.isopen">
+                    <span class="dropdown" dropdown on-toggle="toggled(open)">
+                        <a href class="dropdown-toggle" dropdown-toggle>DropDown</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                        </ul>
+                    </span>
+                    </div>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
@@ -45,5 +44,6 @@
 <script src="@routes.Assets.at("app/app.js")"></script>
 <script src="@routes.Assets.at("app/components/registration/RegistrationCtrl.js")"></script>
 <script src="@routes.Assets.at("app/components/login/LoginCtrl.js")"></script>
+<script src="@routes.Assets.at("app/components/profile/ProfileCtrl.js")"></script>
 </body>
 </html>

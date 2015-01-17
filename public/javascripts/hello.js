@@ -1,1 +1,0 @@
-console.log("just to demonstrate Play! Framework import static resources functionality")
