@@ -3,11 +3,11 @@
 <head lang="en">
 <meta charset="UTF-8">
 
-    <script src="@routes.Assets.at("javascripts/angular.js")"></script>
+    <script src="@routes.Assets.at("bower_components/angular/angular.js")"></script>
     <script src="@routes.Assets.at("bower_components/angular-bootstrap/ui-bootstrap-tpls.js")"></script>
-    <script src="@routes.Assets.at("javascripts/angular-ui-router.js")"></script>
+    <script src="@routes.Assets.at("bower_components/release/angular-ui-router.js")"></script>
 
-    <link href="@routes.Assets.at("stylesheets/bootstrap.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("bower_components/bootstrap/dist/css/bootstrap.css")" rel="stylesheet">
     <link href="@routes.Assets.at("app/components/registration/registration.css")" rel="stylesheet">
     <title>InLaw</title>
 </head>
@@ -18,21 +18,21 @@
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">In Law</a>
+                    <a class="navbar-brand" href="/">In Law</a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <div class="nav navbar-nav navbar-right" dropdown is-open="status.isopen">
-                    <span class="dropdown" dropdown on-toggle="toggled(open)">
-                        <a href class="dropdown-toggle" dropdown-toggle>DropDown</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                        </ul>
-                    </span>
+                    <div class="navbar-nav navbar-right" dropdown is-open="status.isopen">
+                        <span class="dropdown" dropdown on-toggle="toggled(open)">
+                            <a href class="dropdown-toggle" dropdown-toggle>DropDown</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </span>
                     </div>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->

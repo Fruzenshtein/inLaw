@@ -1,5 +1,4 @@
 var gulp = require('gulp'),
-    sass = require('gulp-ruby-sass'),
     autoprefixer = require('gulp-autoprefixer'),
     minifycss = require('gulp-minify-css'),
     jshint = require('gulp-jshint'),
@@ -10,66 +9,74 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
     cache = require('gulp-cache'),
+    sourcemaps = require('gulp-sourcemaps'),
     livereload = require('gulp-livereload');
 
 var paths = {
-    "dist": "../server/staffing/static/",
-    "vendor": ['vendor/underscore/underscore.js',
-        'vendor/angular/angular.min.js',
-        'vendor/angular-route/angular-route.min.js',
-        'vendor/restangular/dist/restangular.min.js',
-        'vendor/angular-animate/angular-animate.min.js',
-        'vendor/angular-bootstrap/ui-bootstrap-0.7.0.min.js',
-        'vendor/angular-bootstrap/ui-bootstrap-tpls-0.7.0.min.js',
-        'vendor/angular-ui-router/release/angular-ui-router.min.js',
-        'vendor/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js',
-        'vendor/momentjs/min/moment.min.js'],
+    "dist": "deploy/",
+    "vendorScripts": [
+        'bower_components/angular/angular.js',
+        'bower_components/angular-bootstrap/ui-bootstrap.js',
+        'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+        'bower_components/angular-ui-router/release/angular-ui-router.js',
+        'bower_components/angular-ui-select/dist/select.js',
+        'bower_components/lodash/dist/lodash.js',
+        'bower_components/restangular/dist/restangular.js',
+        'bower_components/moment/moment.js'
+    ],
     "scripts": ['app/**/*.js'],
-    "fonts": ['app-data/fonts/*.*'],
+    "fonts": ['fonts/*.*'],
     "templates": ['app/**/*.html'],
-    "styles": ['app/**/*.scss','vendor/angular-bootstrap-colorpicker/css/*.css']
-}
+    "styles": ['app/**/*.css','bower_components/bootstrap/dist/css/*.css']
+};
 
 gulp.task("watch", function () {
     gulp.watch('app/**/*.js', ['scripts']);
-    gulp.watch('app/**/*.html', ['scripts'])
-    gulp.watch('app/**/*.scss', ['styles']);
-})
-
-gulp.task("default", ["clean"], function () {
-    gulp.start("scripts", "vendor", "styles", "fonts");
-})
+    gulp.watch('app/**/*.html', ['templates']);
+    gulp.watch('app/**/*.css', ['styles']);
+});
 
 gulp.task("clean", function () {
     return gulp.src(paths.dist, {read: false})
         .pipe(clean({force: true}));
-})
+});
 
-gulp.task("vendor", function () {
-    gulp.src(paths.vendor)
+
+gulp.task("vendorScripts", function () {
+    // Copy all vendor JavaScript
+    gulp.src(paths.vendorScripts)
         .pipe(concat("vendor.js"))
         .pipe(gulp.dest(paths.dist + "js/"));
 });
 
-gulp.task("scripts", function () {
-    var stream = streamqueue({objectMode: true});
-    stream.queue(gulp.src(paths.scripts)
-        .pipe(ngDepOrder()));
-    stream.queue(gulp.src(paths.templates)
-        .pipe(html2js({moduleName: "templates"})));
-    return stream.done()
-        .pipe(concat("app.js"))
+gulp.task('scripts', ['clean'], function() {
+    // Minify and copy all JavaScript (except vendor scripts)
+    // with sourcemaps all the way down
+    return gulp.src(paths.scripts)
+        .pipe(sourcemaps.init())
+        .pipe(concat('app.js'))
         .pipe(gulp.dest(paths.dist + "js/"))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest('build/js'));
 });
+
 
 gulp.task("styles", function () {
     gulp.src(paths.styles)
-        .pipe(sass())
-        .pipe(concat("staffing.css"))
+        .pipe(concat("app.css"))
         .pipe(gulp.dest(paths.dist + "css/"))
-})
+});
 
 gulp.task("fonts", function () {
     gulp.src(paths.fonts).
         pipe(gulp.dest(paths.dist + "fonts/"))
+});
+
+gulp.task("build", ["clean"], function () {
+    gulp.start("scripts", "vendorScripts", "styles", "fonts");
+});
+
+
+gulp.task("production", ["clean"], function () {
+    gulp.start("scripts", "vendorScripts", "styles", "fonts");
 });

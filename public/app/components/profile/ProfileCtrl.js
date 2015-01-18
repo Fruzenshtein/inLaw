@@ -3,6 +3,7 @@
 App.controller('ProfileCtrl', ['$scope', '$http', '$filter', function($scope, $http, $filter) {
     $scope.userProfile = {};
     $scope.error = false;
+    $scope.isUpdated = false;
 
     $scope.formStatus = {
         isEditModeOpen: true,
@@ -67,10 +68,11 @@ App.controller('ProfileCtrl', ['$scope', '$http', '$filter', function($scope, $h
         }).
             success(function(data, status, headers, config) {
                 //UserInfoService.getUserData(); TBD... if appropriate info need to be shown
-
+                $scope.formStatus.isEditModeOpen = true;
+                $scope.isUpdated = true;
             }).
             error(function(data, status, headers, config) {
-                $scope.error = true;
+                $scope.error = 'Unexpected error. Please try again later.';
             });
     };
 
