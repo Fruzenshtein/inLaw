@@ -2,7 +2,7 @@ package controllers
 
 import com.wordnik.swagger.annotations._
 import forms.UserAccountForms
-import models.University
+import models.{Certificate, University}
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Controller
@@ -93,7 +93,7 @@ object LawyerEducationController extends Controller with Security with UserAccou
     implicit request =>
       createUniversityForm.bindFromRequest fold(
         formWithErrors => {
-          Logger.info("Update of Lawyer Profile was with ERRORS")
+          Logger.info("University data was with ERRORS")
           Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
         },
         newUniversity => {
@@ -124,7 +124,7 @@ object LawyerEducationController extends Controller with Security with UserAccou
     httpMethod = "DELETE",
     response = classOf[models.swagger.InformationMessage])
   @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "University successfully updated"),
+    new ApiResponse(code = 200, message = "University successfully deleted"),
     new ApiResponse(code = 404, message = "Education does not exist"),
     new ApiResponse(code = 404, message = "University with such id does not exist")
   ))
@@ -175,6 +175,107 @@ object LawyerEducationController extends Controller with Security with UserAccou
           Future(Ok(Json.obj("message" -> "Certificate successfully added")))
         }
         )
+    }
+  }
+
+  @ApiOperation(
+    nickname = "lawyersEducationCertificates",
+    value = "Get lawyers education certificates",
+    notes = "Get lawyers education certificates",
+    httpMethod = "GET",
+    response = classOf[models.Certificate])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "List of certificates"),
+    new ApiResponse(code = 404, message = "Certificates does not exist"),
+    new ApiResponse(code = 404, message = "Education does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def getCertificates = isAuthenticated { implicit acc =>
+    implicit request =>
+      acc.education match {
+        case Some(someEdu) => someEdu.certificates match {
+          case Some(certificates) => Future.successful(Ok(Json.toJson(certificates)))
+          case None => Future.successful(NotFound(Json.obj("message" -> "Certificates do not exist")))
+        }
+        case None => Future.successful(NotFound(Json.obj("message" -> "Education does not exist")))
+      }
+  }
+
+  @ApiOperation(
+    nickname = "lawyersEducationCertificates",
+    value = "Put lawyers education certificates",
+    notes = "Put lawyers education certificates",
+    httpMethod = "PUT",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Certificate successfully updated"),
+    new ApiResponse(code = 400, message = "Validation errors"),
+    new ApiResponse(code = 404, message = "Education does not exist"),
+    new ApiResponse(code = 404, message = "Certificate with such id does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
+    new ApiImplicitParam(value = "Lawyer Certificate object which will be updated", required = true, dataType = "models.swagger.Certificate", paramType = "body")
+  ))
+  def updateCertificate(id: String) = isAuthenticated { implicit acc =>
+    implicit request =>
+      createCertificateForm.bindFromRequest fold(
+        formWithErrors => {
+          Logger.info("Certificate data was with ERRORS")
+          Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+        },
+        newCertificate => {
+          acc.education match {
+            case Some(someEdu) => someEdu.certificates match {
+              case Some(certificates) => {
+                certificates.find((c: Certificate) => c.id == Some(id)) match {
+                  case Some(certificate) => {
+                    LawyerService.deleteCertificate(acc.email, id)
+                    LawyerService.createCertificate(acc.email, models.Certificate.generateCertificate(newCertificate))
+                    Future.successful(Ok(Json.obj("message" -> "Update certificate")))
+                  }
+                  case None => Future.successful(NotFound(Json.obj("message" -> s"Certificate with id $id does not exist")))
+                }
+              }
+              case None => Future.successful(Ok(Json.obj("message" -> "Certificates do not exist")))
+            }
+            case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
+          }
+        }
+        )
+  }
+
+  @ApiOperation(
+    nickname = "lawyersEducationCertificates",
+    value = "Delete lawyers education certificates by id",
+    notes = "Delete lawyers education certificates by id",
+    httpMethod = "DELETE",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Certificate successfully deleted"),
+    new ApiResponse(code = 404, message = "Education does not exist"),
+    new ApiResponse(code = 404, message = "Certificate with such id does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def deleteCertificate(id: String) = isAuthenticated { implicit acc =>
+    implicit request => acc.education match {
+      case Some(someEdu) => someEdu.certificates match {
+        case Some(certificates) => {
+          certificates.find((c: Certificate) => c.id == Some(id)) match {
+            case Some(_) => {
+              LawyerService.deleteCertificate(acc.email, id)
+              Future.successful(Ok(Json.obj("message" -> s"Certificate with id: $id successfully deleted")))
+            }
+            case None => Future.successful(NotFound(Json.obj("message" -> "Certificates do not exist")))
+          }
+        }
+        case None => Future.successful(Ok(Json.obj("message" -> "Certificates do not exist")))
+      }
+      case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
     }
   }
 

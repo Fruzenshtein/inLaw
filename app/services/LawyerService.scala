@@ -120,4 +120,16 @@ object LawyerService {
     )
   }
 
+  def deleteCertificate(email: String, id: String) = {
+    val removeCertificate = Json.obj(
+      "$pull" -> Json.obj(
+        "education.certificates" -> Json.obj("id" -> id)
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      removeCertificate
+    )
+  }
+
 }

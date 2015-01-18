@@ -28,5 +28,8 @@ PUT         /lawyers/education/universities/:id     controllers.LawyerEducationC
 DELETE      /lawyers/education/universities/:id     controllers.LawyerEducationController.deleteUniversity(id: String)
 
 POST        /lawyers/education/certificates         controllers.LawyerEducationController.createCertificate
+GET         /lawyers/education/certificates         controllers.LawyerEducationController.getCertificates
+PUT         /lawyers/education/certificates/:id     controllers.LawyerEducationController.updateCertificate(id: String)
+DELETE      /lawyers/education/certificates/:id     controllers.LawyerEducationController.deleteCertificate(id: String)
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
