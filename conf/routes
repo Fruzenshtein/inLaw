@@ -34,5 +34,6 @@ DELETE      /lawyers/education/certificates/:id     controllers.LawyerEducationC
 
 GET         /api-docs.json/lawyers/experience       controllers.ApiHelpController.getResource(path = "/lawyers/experience")
 POST        /lawyers/experience                     controllers.LawyerExperienceController.createExperience
+GET         /lawyers/experience                     controllers.LawyerExperienceController.getExperience
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)

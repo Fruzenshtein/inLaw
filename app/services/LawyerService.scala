@@ -144,4 +144,16 @@ object LawyerService {
     )
   }
 
+  def deleteExperience(email: String, id: String) = {
+    val deleteExperience = Json.obj(
+      "$pull" -> Json.obj(
+        "experience" -> Json.obj("id" -> id)
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      deleteExperience
+    )
+  }
+
 }

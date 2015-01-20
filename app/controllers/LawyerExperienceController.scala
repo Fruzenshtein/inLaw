@@ -46,4 +46,25 @@ object LawyerExperienceController extends Controller with Security with UserAcco
     }
   }
 
+  @ApiOperation(
+    nickname = "lawyersExperience",
+    value = "Get lawyers experience",
+    notes = "Get lawyers experience",
+    httpMethod = "GET",
+    response = classOf[models.Experience])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "List of experience"),
+    new ApiResponse(code = 404, message = "Experience does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def getExperience = isAuthenticated { implicit acc =>
+    implicit request =>
+      acc.experience match {
+        case Some(experience) => Future.successful(Ok(Json.toJson(experience)))
+        case None => Future.successful(NotFound(Json.obj("message" -> "Experience does not exist")))
+      }
+  }
+
 }
