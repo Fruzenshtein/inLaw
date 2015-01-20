@@ -80,4 +80,15 @@ trait UserAccountForms extends LawyerValidators {
     )(Certificate.apply)(Certificate.unapply)
   )
 
+  val createExperienceForm = Form(
+    mapping(
+      "id" -> optional(text(maxLength = 12)),
+      "name" -> text(minLength = 2, maxLength = 60),
+      "position" -> text(minLength = 2, maxLength = 60),
+      "responsibilities" -> text(minLength = 30, maxLength = 60),
+      "startDate" -> date(dateFormat),
+      "endDate" -> optional(date(dateFormat))
+    )(Experience.apply)(Experience.unapply)
+  )
+
 }

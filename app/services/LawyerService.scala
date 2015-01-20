@@ -132,4 +132,16 @@ object LawyerService {
     )
   }
 
+  def createExperience(email: String, experience: Experience) = {
+    val createExperience = Json.obj(
+      "$push" -> Json.obj(
+        "experience" -> experience
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      createExperience
+    )
+  }
+
 }
