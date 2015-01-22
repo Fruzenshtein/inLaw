@@ -18,6 +18,7 @@ import utils.CryptUtils
 case class Lawyer(_id: Option[BSONObjectID],
                   email: String,
                   password: String,
+                  avatar: Option[String],
                   bearerToken: Option[BearerToken],
                   createdAt: DateTime,
                   profile: Option[Profile],
@@ -31,6 +32,7 @@ object Lawyer {
     (JsPath \ "_id").writeNullable[BSONObjectID] and
     (JsPath \ "email").write[String] and
     (JsPath \ "password").write[String] and
+    (JsPath \ "avatar").writeNullable[String] and
     (JsPath \ "token").writeNullable[BearerToken] and
     (JsPath \ "createdAt").write[DateTime] and
     (JsPath \ "profile").writeNullable[Profile] and
@@ -43,6 +45,7 @@ object Lawyer {
     (JsPath \ "_id").readNullable[BSONObjectID].map(_.getOrElse(BSONObjectID.generate)).map(Some(_)) and
     (JsPath \ "email").read[String] and
     (JsPath \ "password").read[String] and
+    (JsPath \ "avatar").readNullable[String] and
     (JsPath \ "token").readNullable[BearerToken] and
     (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0))) and
     (JsPath \ "profile").readNullable[Profile] and
@@ -56,6 +59,7 @@ object Lawyer {
       _id = None,
       email = accountInfo.email,
       password = CryptUtils.encryptPassword(accountInfo.password),
+      avatar = None,
       bearerToken = None,
       createdAt = new DateTime(),
       profile = None,

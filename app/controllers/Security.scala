@@ -47,4 +47,19 @@ trait Security {
       } getOrElse (Future(onUnauthorized(request)))
   }
 
+  def isAuthenticated[T](bodyParser: BodyParser[T])(f: => Lawyer => Request[T] => Future[Result]) = handleAuthenticated(bodyParser) { implicit bearerToken =>
+    implicit request =>
+      Try {
+        LawyerService.findByToken(bearerToken) flatMap {
+          case Some(account) => f(account)(request)
+          case None => Future(onUnauthorized(request))
+        }
+      } recover {
+        case e: Exception => {
+          Logger.error(s"Can't find lawyer by token: $bearerToken", e)
+          Future(onUnauthorized(request))
+        }
+      } getOrElse (Future(onUnauthorized(request)))
+  }
+
 }
