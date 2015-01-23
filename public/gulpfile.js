@@ -7,10 +7,9 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     clean = require('gulp-clean'),
     concat = require('gulp-concat'),
-    notify = require('gulp-notify'),
-    cache = require('gulp-cache'),
-    sourcemaps = require('gulp-sourcemaps'),
-    livereload = require('gulp-livereload');
+    cache = require('gulp-cache');
+    //sourcemaps = require('gulp-sourcemaps');
+
 
 var paths = {
     "dist": "deploy/",
@@ -31,9 +30,9 @@ var paths = {
 };
 
 gulp.task("watch", function () {
-    gulp.watch('app/**/*.js', ['scripts']);
-    gulp.watch('app/**/*.html', ['templates']);
-    gulp.watch('app/**/*.css', ['styles']);
+    gulp.watch('app/**/*.js', ['scripts', 'vendorScripts', 'templates', 'styles', 'fonts']);
+    gulp.watch('app/**/*.html', ['templates', 'scripts', 'vendorScripts', 'styles', 'fonts']);
+    gulp.watch('app/**/*.css', ['styles', 'scripts', 'vendorScripts', 'templates', 'fonts']);
 });
 
 gulp.task("clean", function () {
@@ -46,6 +45,8 @@ gulp.task("vendorScripts", function () {
     // Copy all vendor JavaScript
     gulp.src(paths.vendorScripts)
         .pipe(concat("vendor.js"))
+    //    .pipe(rename({ suffix: '.min' }))
+    //    .pipe(uglify())
         .pipe(gulp.dest(paths.dist + "js/"));
 });
 
@@ -53,17 +54,20 @@ gulp.task('scripts', ['clean'], function() {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
     return gulp.src(paths.scripts)
-        .pipe(sourcemaps.init())
+     //   .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(concat('app.js'))
+    //   .pipe(rename({ suffix: '.min' }))
+    //   .pipe(uglify())
         .pipe(gulp.dest(paths.dist + "js/"))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest('build/js'));
+     //   .pipe(sourcemaps.write(paths.dist + "js/"))
+     //   .pipe(gulp.dest('build/js'));
 });
 
 
 gulp.task("styles", function () {
     gulp.src(paths.styles)
         .pipe(concat("app.css"))
+    //    .pipe(minifycss())
         .pipe(gulp.dest(paths.dist + "css/"))
 });
 
@@ -72,11 +76,17 @@ gulp.task("fonts", function () {
         pipe(gulp.dest(paths.dist + "fonts/"))
 });
 
+gulp.task("templates", function () {
+    // Copy all vendor JavaScript
+    gulp.src(paths.templates)
+        .pipe(gulp.dest(paths.dist + "assets/"));
+});
+
 gulp.task("build", ["clean"], function () {
-    gulp.start("scripts", "vendorScripts", "styles", "fonts");
+    gulp.start("scripts", "vendorScripts", "styles", "fonts", "templates");
 });
 
 
 gulp.task("production", ["clean"], function () {
-    gulp.start("scripts", "vendorScripts", "styles", "fonts");
+    gulp.start("scripts", "vendorScripts", "styles", "fonts", "templates");
 });

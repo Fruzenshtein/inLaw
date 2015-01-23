@@ -1,0 +1,38 @@
+{
+  "author": "10per",
+  "name": "inLaw",
+  "description": "dev for lawers",
+  "version": "0.0.1",
+  "author": "Vladyslav Babenko <babenko.vladyslav@gmail.com>",
+  "contributors": [
+    {
+      "name": "Vladyslav Babenko",
+      "email": "babenko.vladyslav@gmail.com"
+    },
+    {
+      "name": "Alex Fruzenshtein",
+      "email": "alex.fruzenshtein@gmail.com "
+    }
+  ],
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fruzenshtein/inLaw"
+  },
+  "dependencies": {
+    "bower": "1.3.12"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-autoprefixer": "2.1.0",
+    "gulp-concat": "2.4.3",
+    "gulp-jshint": "1.9.0",
+    "gulp-minify-css": "0.3.13",
+    "gulp-notify": "2.1.0",
+    "gulp-sourcemaps": "1.3.0",
+    "gulp-uglify": "^1.0.1",
+    "gulp-watch": "3.0.0"
+  },
+  "private": true,
+  "license": "MIT"
+}
