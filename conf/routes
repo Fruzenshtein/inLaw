@@ -38,4 +38,8 @@ GET         /lawyers/experience                     controllers.LawyerExperience
 PUT         /lawyers/experience/:id                 controllers.LawyerExperienceController.updateExperience(id: String)
 DELETE      /lawyers/experience/:id                 controllers.LawyerExperienceController.deleteExperience(id: String)
 
+GET         /api-docs.json/lawyers/avatar           controllers.ApiHelpController.getResource(path = "/lawyers/avatar")
+PUT         /lawyers/avatar                         controllers.LawyerAvatarController.saveLogoByCouncil()
+GET         /lawyers/avatar/:lawyerId               controllers.LawyerAvatarController.getAvatar(lawyerId: String)
+
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
