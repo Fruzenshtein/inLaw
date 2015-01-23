@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   filters,
+  "commons-io" % "commons-io" % "2.4",
   "com.wordnik" %% "swagger-play2" % "1.3.11",
   "org.reactivemongo" %% "play2-reactivemongo" % "0.10.5.akka23-SNAPSHOT",
   "com.github.t3hnar" %% "scala-bcrypt" % "2.4"

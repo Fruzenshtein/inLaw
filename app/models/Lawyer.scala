@@ -18,11 +18,13 @@ import utils.CryptUtils
 case class Lawyer(_id: Option[BSONObjectID],
                   email: String,
                   password: String,
+                  avatar: Option[String],
                   bearerToken: Option[BearerToken],
                   createdAt: DateTime,
                   profile: Option[Profile],
                   contacts: Option[Contacts],
-                  education: Option[Education])
+                  education: Option[Education],
+                  experience: Option[Seq[Experience]])
 
 object Lawyer {
 
@@ -30,22 +32,26 @@ object Lawyer {
     (JsPath \ "_id").writeNullable[BSONObjectID] and
     (JsPath \ "email").write[String] and
     (JsPath \ "password").write[String] and
+    (JsPath \ "avatar").writeNullable[String] and
     (JsPath \ "token").writeNullable[BearerToken] and
     (JsPath \ "createdAt").write[DateTime] and
     (JsPath \ "profile").writeNullable[Profile] and
     (JsPath \ "contacts").writeNullable[Contacts] and
-    (JsPath \ "education").writeNullable[Education]
+    (JsPath \ "education").writeNullable[Education] and
+    (JsPath \ "experience").writeNullable[Seq[Experience]]
   )(unlift(Lawyer.unapply))
 
   implicit val accountReads: Reads[Lawyer] = (
     (JsPath \ "_id").readNullable[BSONObjectID].map(_.getOrElse(BSONObjectID.generate)).map(Some(_)) and
     (JsPath \ "email").read[String] and
     (JsPath \ "password").read[String] and
+    (JsPath \ "avatar").readNullable[String] and
     (JsPath \ "token").readNullable[BearerToken] and
     (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0))) and
     (JsPath \ "profile").readNullable[Profile] and
     (JsPath \ "contacts").readNullable[Contacts] and
-    (JsPath \ "education").readNullable[Education]
+    (JsPath \ "education").readNullable[Education] and
+    (JsPath \ "experience").readNullable[Seq[Experience]]
   )(Lawyer.apply _)
 
   def createAccount(accountInfo: UserAccountInfo) = {
@@ -53,11 +59,13 @@ object Lawyer {
       _id = None,
       email = accountInfo.email,
       password = CryptUtils.encryptPassword(accountInfo.password),
+      avatar = None,
       bearerToken = None,
       createdAt = new DateTime(),
       profile = None,
       contacts = None,
-      education = None
+      education = None,
+      experience = None
     )
     account
   }

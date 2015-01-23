@@ -32,4 +32,10 @@ GET         /lawyers/education/certificates         controllers.LawyerEducationC
 PUT         /lawyers/education/certificates/:id     controllers.LawyerEducationController.updateCertificate(id: String)
 DELETE      /lawyers/education/certificates/:id     controllers.LawyerEducationController.deleteCertificate(id: String)
 
+GET         /api-docs.json/lawyers/experience       controllers.ApiHelpController.getResource(path = "/lawyers/experience")
+POST        /lawyers/experience                     controllers.LawyerExperienceController.createExperience
+GET         /lawyers/experience                     controllers.LawyerExperienceController.getExperience
+PUT         /lawyers/experience/:id                 controllers.LawyerExperienceController.updateExperience(id: String)
+DELETE      /lawyers/experience/:id                 controllers.LawyerExperienceController.deleteExperience(id: String)
+
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)

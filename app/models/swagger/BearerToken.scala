@@ -39,3 +39,9 @@ case class Certificate(name: String,
                        licenseCode: Option[String],
                        link: Option[String],
                        date: Date)
+
+case class Experience(name: String,
+                      position: String,
+                      responsibilities: String,
+                      startDate: Date,
+                      endDate: Option[Date])
