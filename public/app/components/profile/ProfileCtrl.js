@@ -4,7 +4,7 @@
 App.controller('ProfileCtrl', ['$scope', '$http',
     '$filter', '$userInfo', function($scope, $http, $filter, $userInfo) {
     // if data saved before do not send request
-    if (_.isEmpty($userInfo.profile)) {
+ //   if (_.isEmpty($userInfo.profile)) {
         var promiseGetProfile = $userInfo.getUserProfile();
         promiseGetProfile.then(function(onFulfilled) {
             $userInfo.onSuccess(onFulfilled);
@@ -13,7 +13,7 @@ App.controller('ProfileCtrl', ['$scope', '$http',
         }, function(onReject) {
             $userInfo.onError(onReject);
         });
-    };
+  //  }
     $scope.userProfile = $userInfo.profile || {};
     $scope.error = false;
     $scope.isUpdated = false;
