@@ -1,7 +1,20 @@
 'use strict';
+/* Controller */
 
-App.controller('ProfileCtrl', ['$scope', '$http', '$filter', function($scope, $http, $filter) {
-    $scope.userProfile = {};
+App.controller('ProfileCtrl', ['$scope', '$http',
+    '$filter', '$userInfo', function($scope, $http, $filter, $userInfo) {
+    // if data saved before do not send request
+    if (_.isEmpty($userInfo.profile)) {
+        var promiseGetProfile = $userInfo.getUserProfile();
+        promiseGetProfile.then(function(onFulfilled) {
+            $userInfo.onSuccess(onFulfilled);
+            $scope.userProfile = $userInfo.profile;
+
+        }, function(onReject) {
+            $userInfo.onError(onReject);
+        });
+    };
+    $scope.userProfile = $userInfo.profile || {};
     $scope.error = false;
     $scope.isUpdated = false;
 
@@ -11,12 +24,12 @@ App.controller('ProfileCtrl', ['$scope', '$http', '$filter', function($scope, $h
     };
 
     $scope.today = function() {
-        $scope.userProfile.dt = +new Date();
+        $scope.userProfile.birthDate = $filter('date')($userInfo.profile.birthDate, $scope.format) || +new Date();
     };
     $scope.today();
 
     $scope.clear = function () {
-        $scope.userProfile.dt = null;
+        $scope.userProfile.birthDate = null;
     };
 
     // Disable weekend selection
@@ -54,7 +67,7 @@ App.controller('ProfileCtrl', ['$scope', '$http', '$filter', function($scope, $h
             "firstName": userProfile.firstName,
             "lastName": userProfile.lastName,
             "middleName": userProfile.middleName,
-            "birthDate": $filter('date')(userProfile.dt, $scope.format),
+            "birthDate": $filter('date')(userProfile.birthDate, $scope.format),
             "minRate": userProfile.minRate
         };
         $http({
@@ -75,7 +88,5 @@ App.controller('ProfileCtrl', ['$scope', '$http', '$filter', function($scope, $h
                 $scope.error = 'Unexpected error. Please try again later.';
             });
     };
-
-
 
 }]);
