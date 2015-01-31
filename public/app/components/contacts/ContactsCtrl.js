@@ -38,7 +38,6 @@ App.controller('ContactsCtrl', ['$scope', '$http',
         $scope.phoneCounter -=1;
         $scope.phones.length -=1;
     };
-
     $scope.updateContacts = function(contacts) {
         $http({
             method: 'PUT',
