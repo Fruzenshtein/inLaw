@@ -1,7 +1,7 @@
 'use strict';
 /* Services */
 
-App.factory('$userInfo', ['Restangular', '$http', '$state', function( Restangular, $http, $state ) {
+App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Restangular, $http, $state, $q ) {
 /*
 // TODO will experiment with Restangular
     var baseProfileURL = Restangular.withConfig(function(Configurer){
@@ -31,14 +31,18 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', function( Restangula
         };
 
     function getUserProfile() {
-        return baseProfileURL(urlConfig.profile);
+        return baseProfileURL(urlConfig.profile).then(function(onFulfilled) {
+            return onSuccess(onFulfilled);
+        },function(onReject) {
+            return onError(onReject);
+        });
     };
 
-    function getUserContacts(onSuccess, onError) {
-        baseProfileURL(urlConfig.contacts).then(function(onFulfilled) {
-            onSuccess(onFulfilled);
+    function getUserContacts() {
+       return baseProfileURL(urlConfig.contacts).then(function(onFulfilled) {
+          return onSuccess(onFulfilled);
         },function(onReject) {
-            onError(onReject);
+            return onError(onReject);
         });
     };
 
@@ -75,26 +79,31 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', function( Restangula
 
     function onSuccess(data) {
         try {
+            var deferred = $q.defer();
             var _jsonData = angular.fromJson(data);
             if ( !isAuthenticated(_jsonData) ) return;
 
             switch (data.config.url) {
                 case urlConfig.profile:
                     info['profile'] = _jsonData['data'];
-                    return _jsonData['data'];
-                    break;
+                    deferred.resolve(_jsonData['data']);
+                    return deferred.promise;
                 case  urlConfig.contacts:
                     info['contacts'] = _jsonData['data'];
-                    break;
+                    deferred.resolve(_jsonData['data']);
+                    return deferred.promise;
                 case urlConfig.university:
                     info['universities'] = _jsonData['data'];
-                    break;
+                    deferred.resolve(_jsonData['data']);
+                    return deferred.promise;
                 case urlConfig.certificates:
                     info['certificates'] = _jsonData['data'];
-                    break;
+                    deferred.resolve(_jsonData['data']);
+                    return deferred.promise;
                 default:
-                    onError(data);
-                    break;
+                    onError(data); //TODO return error object and pass to reject()
+                    deferred.reject();
+                    return deferred.promise;
             }
         } catch (e) {
             console.log(e.message);
@@ -111,8 +120,6 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', function( Restangula
         getUserContacts     : getUserContacts,
         getUserUniversity   : getUserUniversity,
         getUserCertificates : getUserCertificates,
-        onSuccess           : onSuccess,
-        onError             : onError,
         profile             : {},
         contacts            : {},
         university          : {},

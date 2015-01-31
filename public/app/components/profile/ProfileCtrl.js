@@ -4,17 +4,14 @@
 App.controller('ProfileCtrl', ['$scope', '$http',
     '$filter', '$userInfo', function($scope, $http, $filter, $userInfo) {
     // if data saved before do not send request
- //   if (_.isEmpty($userInfo.profile)) {
+    if ( _.isEmpty($userInfo.profile) ) {
         var promiseGetProfile = $userInfo.getUserProfile();
-        promiseGetProfile.then(function(onFulfilled) {
-            $userInfo.onSuccess(onFulfilled);
-            $scope.userProfile = $userInfo.profile;
-
-        }, function(onReject) {
-            $userInfo.onError(onReject);
+        promiseGetProfile.then(function (onFulfilled) {
+            $scope.userProfile = onFulfilled || {};
+        }, function (onReject) {
+            $scope.userProfile = {};
         });
-  //  }
-    $scope.userProfile = $userInfo.profile || {};
+    };
     $scope.error = false;
     $scope.isUpdated = false;
 
@@ -24,6 +21,7 @@ App.controller('ProfileCtrl', ['$scope', '$http',
     };
 
     $scope.today = function() {
+        $scope.userProfile =  $userInfo.profile || {}; // fists initialization starts here, from function
         $scope.userProfile.birthDate = $filter('date')($userInfo.profile.birthDate, $scope.format) || +new Date();
     };
     $scope.today();
