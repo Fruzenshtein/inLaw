@@ -15,6 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
  * Created by Alex on 1/27/15.
  */
+@Api(value = "/lawyers/competences", description = "Operations with Lawyer Competences")
 object CompetenceController extends Controller with Security with CompetenceForm {
 
   @ApiOperation(
