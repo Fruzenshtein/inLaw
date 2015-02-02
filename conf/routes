@@ -42,7 +42,7 @@ GET         /api-docs.json/lawyers/avatar           controllers.ApiHelpControlle
 PUT         /lawyers/avatar                         controllers.LawyerAvatarController.saveLogoByCouncil()
 GET         /lawyers/avatar/:lawyerId               controllers.LawyerAvatarController.getAvatar(lawyerId: String)
 
-POST        /competences                            controllers.CompetenceController.createCompetence
+POST        /competences                            controllers.CompetenceController.addCompetence
 GET         /competences                            controllers.CompetenceController.getCompetenceByQuery(competence: String)
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)

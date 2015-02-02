@@ -156,4 +156,28 @@ object LawyerService {
     )
   }
 
+  def addLawyerCompetence(email: String, competence: String) = {
+    val addCompetence = Json.obj(
+      "$addToSet" -> Json.obj(
+        "competences" -> competence
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      addCompetence
+    )
+  }
+
+  def deleteLawyerCompetence(email: String, id: String) = {
+    val deleteCompetence = Json.obj(
+      "$pull" -> Json.obj(
+        "competences" -> Json.obj("id" -> id)
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      deleteCompetence
+    )
+  }
+
 }

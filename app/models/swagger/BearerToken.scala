@@ -45,3 +45,5 @@ case class Experience(name: String,
                       responsibilities: String,
                       startDate: Date,
                       endDate: Option[Date])
+
+case class Competence(competence: String)

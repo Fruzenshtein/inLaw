@@ -16,16 +16,25 @@ object CompetenceService {
 
   private val collection = ReactiveMongoPlugin.db.collection[JSONCollection]("competence")
 
-  def add(competence: Competence) = {
-    collection.save(competence)
+  def add(competence: String) = {
+    collection.save(Competence(_id = None, name = competence))
     competence
   }
 
-  def findByCompetence(searchReq: String): Future[Seq[Competence]] = {
+  def findCompetenceByFirstCharacters(searchReq: String): Future[Seq[Competence]] = {
     val results = collection.find(Json.obj(
       "name" -> Json.obj("$regex" -> s"^$searchReq.*", "$options" -> "i"))
     ).cursor[Competence].collect[Seq]()
     results
+  }
+
+  def getCompetence(competence: String): Future[Option[Competence]] = {
+    val query = Json.obj("name" -> competence)
+    val account = collection.find(query).one[Competence]
+    account map {
+      case Some(comp) => Some(comp)
+      case None => None
+    }
   }
 
 }
