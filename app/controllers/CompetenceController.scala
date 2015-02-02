@@ -1,5 +1,7 @@
 package controllers
 
+import javax.ws.rs.QueryParam
+
 import com.wordnik.swagger.annotations._
 import forms.CompetenceForm
 import models.Competence
@@ -57,7 +59,16 @@ object CompetenceController extends Controller with Security with CompetenceForm
 
   }
 
-  def getCompetenceByQuery(competence: String) = Action.async {
+  @ApiOperation(
+    nickname = "lawyersCompetences",
+    value = "Get competences by first characters match",
+    notes = "Get competences by first characters match",
+    httpMethod = "GET",
+    response = classOf[Competence])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Competences")
+  ))
+  def getCompetenceByQuery(@QueryParam("competence") competence: String) = Action.async {
     implicit request =>
       CompetenceService.findCompetenceByFirstCharacters(competence) map {
         competences => Ok(Json.toJson(competences))

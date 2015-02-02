@@ -43,7 +43,7 @@ PUT         /lawyers/avatar                         controllers.LawyerAvatarCont
 GET         /lawyers/avatar/:lawyerId               controllers.LawyerAvatarController.getAvatar(lawyerId: String)
 
 GET         /api-docs.json/lawyers/competences      controllers.ApiHelpController.getResource(path = "/lawyers/competences")
-POST        /competences                            controllers.CompetenceController.addCompetence
+POST        /lawyers/competences                    controllers.CompetenceController.addCompetence
 GET         /competences                            controllers.CompetenceController.getCompetenceByQuery(competence: String)
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
