@@ -75,17 +75,40 @@ object CompetenceController extends Controller with Security with CompetenceForm
       }
   }
 
+  @ApiOperation(
+    nickname = "lawyersCompetences",
+    value = "Delete lawyers competence by name",
+    notes = "Removing of lawyer's competence",
+    httpMethod = "DELETE")
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Competence successfully deleted")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
   def removeCompetence(@QueryParam("competence") competence: String) = isAuthenticated { implicit acc =>
     implicit request =>
       LawyerService.deleteLawyerCompetence(acc.email, competence)
       Future.successful(Ok)
   }
 
+  @ApiOperation(
+    nickname = "lawyersCompetences",
+    value = "Get lawyers competences",
+    notes = "Get competences of particular lawyer",
+    httpMethod = "GET")
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Competences array"),
+    new ApiResponse(code = 404, message = "No competences found")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
   def getLawyerCompetences() = isAuthenticated { implicit acc =>
     implicit request =>
       acc.competences match {
         case Some(competences) => Future.successful(Ok(Json.toJson(competences)))
-        case None => Future.successful(NotFound(Json.obj("message" -> "No comptences found")))
+        case None => Future.successful(NotFound(Json.obj("message" -> "No competences found")))
       }
   }
 
