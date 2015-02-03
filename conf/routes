@@ -44,6 +44,9 @@ GET         /lawyers/avatar/:lawyerId               controllers.LawyerAvatarCont
 
 GET         /api-docs.json/lawyers/competences      controllers.ApiHelpController.getResource(path = "/lawyers/competences")
 POST        /lawyers/competences                    controllers.CompetenceController.addCompetence
+GET         /lawyers/competences                    controllers.CompetenceController.getLawyerCompetences
+DELETE      /lawyers/competences                    controllers.CompetenceController.removeCompetence(competence: String)
 GET         /competences                            controllers.CompetenceController.getCompetenceByQuery(competence: String)
+
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)

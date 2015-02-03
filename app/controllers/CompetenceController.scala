@@ -75,4 +75,18 @@ object CompetenceController extends Controller with Security with CompetenceForm
       }
   }
 
+  def removeCompetence(@QueryParam("competence") competence: String) = isAuthenticated { implicit acc =>
+    implicit request =>
+      LawyerService.deleteLawyerCompetence(acc.email, competence)
+      Future.successful(Ok)
+  }
+
+  def getLawyerCompetences() = isAuthenticated { implicit acc =>
+    implicit request =>
+      acc.competences match {
+        case Some(competences) => Future.successful(Ok(Json.toJson(competences)))
+        case None => Future.successful(NotFound(Json.obj("message" -> "No comptences found")))
+      }
+  }
+
 }

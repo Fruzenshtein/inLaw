@@ -168,10 +168,10 @@ object LawyerService {
     )
   }
 
-  def deleteLawyerCompetence(email: String, id: String) = {
+  def deleteLawyerCompetence(email: String, competence: String) = {
     val deleteCompetence = Json.obj(
       "$pull" -> Json.obj(
-        "competences" -> Json.obj("id" -> id)
+        "competences" -> competence
       )
     )
     collection.update(
