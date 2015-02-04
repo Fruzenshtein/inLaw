@@ -7,7 +7,7 @@ import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.modules.reactivemongo.json.collection.JSONCollection
 import models._
 import scala.concurrent.Future
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 
 /**
  * Created by Alex on 11/23/14.
@@ -25,6 +25,13 @@ object LawyerService {
     val query = Json.obj("email" -> email)
     val account = collection.find(query).one[Lawyer]
     account
+  }
+
+  def filterLawyers(query: JsObject): Future[Seq[Lawyer]] = {
+    val lawyers = collection.find(query)
+      .cursor[Lawyer]
+      .collect[Seq]()
+    lawyers
   }
 
   def findByToken(token: String): Future[Option[Lawyer]] = {

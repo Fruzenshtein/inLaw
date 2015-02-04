@@ -68,4 +68,20 @@ object LawyerController extends Controller with UserAccountForms with Security {
     }
   }
 
+  @ApiOperation(
+    nickname = "filterLawyers",
+    value = "Get lawyers accounts",
+    notes = "Filter lawyers accounts by parameters",
+    httpMethod = "GET",
+    response = classOf[Lawyer])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Lawyers list")))
+  def filterLawyers() = Action.async {
+    val futureLawyers = LawyerService.filterLawyers(Json.obj())
+    futureLawyers map {
+      case seqLawyers => Ok(Json.toJson(seqLawyers))
+    }
+
+  }
+
 }

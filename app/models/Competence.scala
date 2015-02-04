@@ -1,6 +1,6 @@
 package models
 
-import play.api.libs.json.{Reads, Writes, JsPath}
+import play.api.libs.json._
 import play.modules.reactivemongo.json.BSONFormats._
 import reactivemongo.bson.BSONObjectID
 import play.api.libs.functional.syntax._

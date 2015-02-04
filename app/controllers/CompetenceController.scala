@@ -71,7 +71,9 @@ object CompetenceController extends Controller with Security with CompetenceForm
   def getCompetenceByQuery(@QueryParam("competence") competence: String) = Action.async {
     implicit request =>
       CompetenceService.findCompetenceByFirstCharacters(competence) map {
-        competences => Ok(Json.toJson(competences))
+        competences => {
+          Ok(Json.toJson(competences))
+        }
       }
   }
 
