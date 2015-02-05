@@ -8,7 +8,7 @@ import play.api.mvc._
 
 import play.api.Logger
 import scala.concurrent.Future
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import services.LawyerService
 import models.{BearerToken, Lawyer}
 import com.wordnik.swagger.annotations._
@@ -76,12 +76,30 @@ object LawyerController extends Controller with UserAccountForms with Security {
     response = classOf[Lawyer])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Lawyers list")))
-  def filterLawyers() = Action.async {
-    val futureLawyers = LawyerService.filterLawyers(Json.obj())
+  def filterLawyers(gender: Option[String], minRate: Option[Int]) = Action.async {
+
+    val generalQuery = Json.obj();
+    val finalQuery = minRateQuery(minRate, genderQuery(gender, generalQuery))
+
+    val futureLawyers = LawyerService.filterLawyers(finalQuery)
     futureLawyers map {
       case seqLawyers => Ok(Json.toJson(seqLawyers))
     }
 
+  }
+
+  def genderQuery(gender: Option[String], generalQuery: JsObject): JsObject = {
+    gender match {
+      case Some(g) => generalQuery deepMerge Json.obj("profile.gender" -> g)
+      case None => Json.obj()
+    }
+  }
+
+  def minRateQuery(minRate: Option[Int], generalQuery: JsObject) = {
+    minRate match {
+      case Some(m) => generalQuery deepMerge Json.obj("profile.minRate" -> Json.obj("$lte" -> m))
+      case None => generalQuery
+    }
   }
 
 }
