@@ -139,10 +139,10 @@ object LawyerService {
     )
   }
 
-  def createExperience(email: String, experience: Experience) = {
+  def createWorkPlace(email: String, workPlace: WorkPlace) = {
     val createExperience = Json.obj(
       "$push" -> Json.obj(
-        "experience" -> experience
+        "experience.workPlaces" -> workPlace
       )
     )
     collection.update(
@@ -151,15 +151,15 @@ object LawyerService {
     )
   }
 
-  def deleteExperience(email: String, id: String) = {
-    val deleteExperience = Json.obj(
+  def deleteWorkPlace(email: String, id: String) = {
+    val deleteWorkPlace = Json.obj(
       "$pull" -> Json.obj(
-        "experience" -> Json.obj("id" -> id)
+        "experience.workPlaces" -> Json.obj("id" -> id)
       )
     )
     collection.update(
       Json.obj("email" -> email),
-      deleteExperience
+      deleteWorkPlace
     )
   }
 

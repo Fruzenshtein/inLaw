@@ -88,7 +88,7 @@ trait UserAccountForms extends LawyerValidators {
       "responsibilities" -> text(minLength = 30, maxLength = 60),
       "startDate" -> date(dateFormat),
       "endDate" -> optional(date(dateFormat))
-    )(Experience.apply)(Experience.unapply)
+    )(WorkPlace.apply)(WorkPlace.unapply)
   )
 
 }

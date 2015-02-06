@@ -24,7 +24,7 @@ case class Lawyer(_id: Option[BSONObjectID],
                   profile: Option[Profile],
                   contacts: Option[Contacts],
                   education: Option[Education],
-                  experience: Option[Seq[Experience]],
+                  experience: Option[Experience],
                   competences: Option[Seq[String]])
 
 object Lawyer {
@@ -39,7 +39,7 @@ object Lawyer {
     (JsPath \ "profile").writeNullable[Profile] and
     (JsPath \ "contacts").writeNullable[Contacts] and
     (JsPath \ "education").writeNullable[Education] and
-    (JsPath \ "experience").writeNullable[Seq[Experience]] and
+    (JsPath \ "experience").writeNullable[Experience] and
     (JsPath \ "competences").writeNullable[Seq[String]]
   )(unlift(Lawyer.unapply))
 
@@ -53,7 +53,7 @@ object Lawyer {
     (JsPath \ "profile").readNullable[Profile] and
     (JsPath \ "contacts").readNullable[Contacts] and
     (JsPath \ "education").readNullable[Education] and
-    (JsPath \ "experience").readNullable[Seq[Experience]] and
+    (JsPath \ "experience").readNullable[Experience] and
     (JsPath \ "competences").readNullable[Seq[String]]
   )(Lawyer.apply _)
 
@@ -68,7 +68,7 @@ object Lawyer {
       profile = None,
       contacts = None,
       education = None,
-      experience = None,
+      experience = Some(Experience(0, None)),
       competences = None
     )
     account
