@@ -2,7 +2,7 @@
 
 // Declare app level module which depends on filters, and services
 var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui.select', 'ngSanitize'])
-    .config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function($stateProvider, $locationProvider, $urlRouterProvider) {
+    .config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function ($stateProvider, $locationProvider, $urlRouterProvider) {
 
         $urlRouterProvider.otherwise("/"); // root route
 
@@ -43,6 +43,21 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
                 "mainView": {
                     templateUrl: 'assets/app/components/contacts/contacts.html',
                     controller: 'ContactsCtrl'
+                }
+            }
+        }).state('education', {
+            url: "/education",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/app/components/education/education.html'
+                },
+                "universities@education": {
+                    templateUrl: 'assets/app/components/education/universities.html',
+                    controller: 'UniversitiesCtrl'
+                },
+                "certificates@education": {
+                    templateUrl: 'assets/app/components/education/certificates.html',
+                    controller: 'CertificatesCtrl'
                 }
             }
         });
