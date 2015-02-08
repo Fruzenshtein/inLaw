@@ -16,7 +16,7 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Rest
     var urlConfig = {
         profile         : '/lawyers/profile',
         contacts        : '/lawyers/contacts',
-        university      : '/lawyers/university',
+        university      : '/lawyers/education/universities',
         certificates    : '/lawyers/education/certificates'
         },
         baseProfileURL = function(url) {
@@ -46,11 +46,11 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Rest
         });
     };
 
-    function getUserUniversity(onSuccess, onError) {
-        baseProfileURL(urlConfig.university).then(function(onFulfilled) {
-            onSuccess(onFulfilled);
+    function getUserUniversity() {
+        return baseProfileURL(urlConfig.university).then(function(onFulfilled) {
+            return onSuccess(onFulfilled);
         },function(onReject) {
-            onError(onReject);
+            return onError(onReject);
         });
     };
 
@@ -122,7 +122,7 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Rest
         getUserCertificates : getUserCertificates,
         profile             : {},
         contacts            : {},
-        university          : {},
+        universities        : {},
         certificates        : {},
         allowed             : false
     };
