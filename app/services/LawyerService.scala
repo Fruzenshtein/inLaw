@@ -1,5 +1,8 @@
 package services
 
+import java.util.Date
+
+import play.api.Logger
 import play.api.Play.current
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -161,6 +164,56 @@ object LawyerService {
       Json.obj("email" -> email),
       deleteWorkPlace
     )
+  }
+
+  def totalExperienceRecalculation(email: String) = {
+    Logger.info(s"Recalculation of total experience for user $email")
+    val query = Json.obj("email" -> email)
+    val account = collection.find(query).one[Lawyer]
+
+    def defineStartDate(d1: Date, d2: Date) = {
+      if (d1 before d2) d1 else d2
+    }
+
+    def defineEndDate(dates: Seq[Date]) = {
+      dates match {
+        case Nil => new Date()
+        case _ => dates max
+      }
+    }
+
+    val totalExperience = account map {
+      case Some(lawyer) => lawyer.experience match {
+        case Some(exp) => exp.workPlaces match {
+          case Some(workPlaces) => {
+
+            val startDates = workPlaces map (_.startDate)
+            val endDates = workPlaces map (_.endDate) map(_.get)
+
+            val startDate = startDates reduceLeft(defineStartDate)
+            val endDate =  defineEndDate(endDates)
+
+            endDate.getTime - startDate.getTime
+
+          }
+        }
+      }
+    }
+
+    totalExperience map {
+      case total: Long => {
+        Logger.info(s"Total experience is $total")
+        val updateTotalExp = Json.obj(
+          "$set" -> Json.obj(
+            "experience.total" -> total)
+        )
+        collection.update(
+          Json.obj("email" -> email),
+          updateTotalExp
+        )
+      }
+    }
+
   }
 
   def addLawyerCompetence(email: String, competence: String) = {
