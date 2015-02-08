@@ -41,6 +41,7 @@ object LawyerExperienceController extends Controller with Security with UserAcco
           Logger.info("Creation of Experience...")
           Logger.info("Experience: "+experience.toString)
           LawyerService.createWorkPlace(acc.email, models.WorkPlace.generateExperience(experience))
+          LawyerService.totalExperienceRecalculation(acc.email)
           Future(Ok(Json.obj("message" -> "Experience successfully added")))
         }
         )
@@ -100,6 +101,7 @@ object LawyerExperienceController extends Controller with Security with UserAcco
                   case Some (workPlace) => {
                     LawyerService.deleteWorkPlace (acc.email, id)
                     LawyerService.createWorkPlace (acc.email, models.WorkPlace.generateExperience (workPlace) )
+                    LawyerService.totalExperienceRecalculation(acc.email)
                     Future.successful (Ok (Json.obj ("message" -> "WorkPlace successfully updated") ) )
                   }
                   case None => Future.successful (NotFound (Json.obj ("message" -> s"WorkPlace with id $id does not exist") ) )
@@ -133,10 +135,12 @@ object LawyerExperienceController extends Controller with Security with UserAcco
           case Some(workPlaces) => workPlaces.find ((wp: WorkPlace) => wp.id == Some (id) ) match {
             case Some (_) => {
               LawyerService.deleteWorkPlace (acc.email, id)
+              LawyerService.totalExperienceRecalculation(acc.email)
               Future.successful (Ok (Json.obj ("message" -> s"WorkPlace with id: $id successfully deleted") ) )
             }
-          case None => Future.successful (NotFound (Json.obj ("message" -> "WorkPlace does not exist") ) )
-        }
+            case None => Future.successful (NotFound (Json.obj ("message" -> "WorkPlace does not exist") ) )
+          }
+          case _ => Future.successful (NotFound (Json.obj ("message" -> "WorkPlace does not exist") ) )
         }
       }
       case None => Future.successful(Ok(Json.obj("message" -> "Experience does not exist")))
