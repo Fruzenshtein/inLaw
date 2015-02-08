@@ -52,14 +52,14 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
         $scope.openStart = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
-            $scope.openedEnd = false;
-            $scope.openedStart = true;
+            this.openedEnd = false;
+            this.openedStart = true;
         };
         $scope.openEnd = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
-            $scope.openedStart = false;
-            $scope.openedEnd = true;
+            this.openedStart = false;
+            this.openedEnd = true;
         };
 
         $scope.dateOptions = {
