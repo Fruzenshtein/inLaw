@@ -1,6 +1,6 @@
 package services
 
-import java.util.Date
+import java.util.{Calendar, Date}
 
 import play.api.Logger
 import play.api.Play.current
@@ -193,7 +193,13 @@ object LawyerService {
             val startDate = startDates reduceLeft(defineStartDate)
             val endDate =  defineEndDate(endDates)
 
-            endDate.getTime - startDate.getTime
+            val calendar = Calendar.getInstance()
+            calendar.setTimeInMillis(endDate.getTime)
+            val endYear = calendar.get(Calendar.YEAR)
+            calendar.setTimeInMillis(startDate.getTime)
+            val startYear = calendar.get(Calendar.YEAR)
+
+            endYear - startYear
 
           }
         }
@@ -201,7 +207,7 @@ object LawyerService {
     }
 
     totalExperience map {
-      case total: Long => {
+      case total: Int => {
         Logger.info(s"Total experience is $total")
         val updateTotalExp = Json.obj(
           "$set" -> Json.obj(

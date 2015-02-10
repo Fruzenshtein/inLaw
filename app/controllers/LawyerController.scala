@@ -76,10 +76,10 @@ object LawyerController extends Controller with UserAccountForms with Security {
     response = classOf[Lawyer])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Lawyers list")))
-  def filterLawyers(gender: Option[String], minRate: Option[Int]) = Action.async {
+  def filterLawyers(gender: Option[String], minRate: Option[Int], minExp: Option[Int]) = Action.async {
 
     val generalQuery = Json.obj();
-    val finalQuery = minRateQuery(minRate, genderQuery(gender, generalQuery))
+    val finalQuery = minExperienceQuery(minExp, minRateQuery(minRate, genderQuery(gender, generalQuery)))
 
     val futureLawyers = LawyerService.filterLawyers(finalQuery)
     futureLawyers map {
@@ -88,7 +88,7 @@ object LawyerController extends Controller with UserAccountForms with Security {
 
   }
 
-  def genderQuery(gender: Option[String], generalQuery: JsObject): JsObject = {
+  def genderQuery(gender: Option[String], generalQuery: JsObject) = {
     gender match {
       case Some(g) => generalQuery deepMerge Json.obj("profile.gender" -> g)
       case None => Json.obj()
@@ -98,6 +98,15 @@ object LawyerController extends Controller with UserAccountForms with Security {
   def minRateQuery(minRate: Option[Int], generalQuery: JsObject) = {
     minRate match {
       case Some(m) => generalQuery deepMerge Json.obj("profile.minRate" -> Json.obj("$lte" -> m))
+      case None => generalQuery
+    }
+  }
+
+  val year: Long = 1000 * 60 * 60 * 24 * 365
+
+  def minExperienceQuery(minExp: Option[Int], generalQuery: JsObject) = {
+    minExp match {
+      case Some(me) => generalQuery deepMerge Json.obj("experience.total" -> Json.obj("$lte" -> me * year))
       case None => generalQuery
     }
   }

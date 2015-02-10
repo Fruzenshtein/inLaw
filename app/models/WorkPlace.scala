@@ -19,7 +19,7 @@ case class WorkPlace(id: Option[String],
 object WorkPlace {
   implicit val workPlaceFormat = Json.format[WorkPlace]
 
-  def generateExperience(workPlace: WorkPlace): WorkPlace = {
+  def populateWorkPlace(workPlace: WorkPlace): WorkPlace = {
     workPlace copy (id = Some(Random.alphanumeric.take(12).mkString))
   }
 }

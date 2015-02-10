@@ -37,10 +37,10 @@ object LawyerExperienceController extends Controller with Security with UserAcco
           Logger.info("Creation of Experience was with ERRORS")
           Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
         },
-        experience => {
+        workPlace => {
           Logger.info("Creation of Experience...")
-          Logger.info("Experience: "+experience.toString)
-          LawyerService.createWorkPlace(acc.email, models.WorkPlace.generateExperience(experience))
+          Logger.info("Experience: "+workPlace.toString)
+          LawyerService.createWorkPlace(acc.email, models.WorkPlace.populateWorkPlace(workPlace))
           LawyerService.totalExperienceRecalculation(acc.email)
           Future(Ok(Json.obj("message" -> "Experience successfully added")))
         }
@@ -89,18 +89,19 @@ object LawyerExperienceController extends Controller with Security with UserAcco
     implicit request =>
       createExperienceForm.bindFromRequest fold(
         formWithErrors => {
-          Logger.info("Experience data was with ERRORS")
+          Logger.info("WorkPlace data was with ERRORS")
           Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
         },
-        newExperience => {
+        newWorkPlace => {
           acc.experience match {
             case Some(experience) => experience.workPlaces match {
 
               case Some(workPlaces) => {
                 workPlaces.find ((wp: WorkPlace) => wp.id == Some (id) ) match {
                   case Some (workPlace) => {
+                    Logger.info("Updating WorkPlace: "+newWorkPlace.toString)
                     LawyerService.deleteWorkPlace (acc.email, id)
-                    LawyerService.createWorkPlace (acc.email, models.WorkPlace.generateExperience (workPlace) )
+                    LawyerService.createWorkPlace(acc.email, models.WorkPlace.populateWorkPlace(newWorkPlace))
                     LawyerService.totalExperienceRecalculation(acc.email)
                     Future.successful (Ok (Json.obj ("message" -> "WorkPlace successfully updated") ) )
                   }
