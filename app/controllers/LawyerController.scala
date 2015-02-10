@@ -102,11 +102,9 @@ object LawyerController extends Controller with UserAccountForms with Security {
     }
   }
 
-  val year: Long = 1000 * 60 * 60 * 24 * 365
-
   def minExperienceQuery(minExp: Option[Int], generalQuery: JsObject) = {
     minExp match {
-      case Some(me) => generalQuery deepMerge Json.obj("experience.total" -> Json.obj("$lte" -> me * year))
+      case Some(me) => generalQuery deepMerge Json.obj("experience.total" -> Json.obj("$gte" -> me))
       case None => generalQuery
     }
   }
