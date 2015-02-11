@@ -76,13 +76,15 @@ object LawyerController extends Controller with UserAccountForms with Security {
     response = classOf[Lawyer])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Lawyers list")))
-  def filterLawyers(gender: Option[String], minRate: Option[Int], minExp: Option[Int], maxExp: Option[Int]) = Action.async {
+  def filterLawyers(gender: Option[String], minRate: Option[Int], minExp: Option[Int], maxExp: Option[Int],
+                    competence: Option[String]) = Action.async {
 
     val generalQuery = Json.obj();
-    val finalQuery = maxExperienceQuery(maxExp,
+    val finalQuery = competenceQuery(competence,
+      maxExperienceQuery(maxExp,
       minExperienceQuery(minExp,
-        minRateQuery(minRate,
-          genderQuery(gender, generalQuery))))
+      minRateQuery(minRate,
+      genderQuery(gender, generalQuery)))))
 
     val futureLawyers = LawyerService.filterLawyers(finalQuery)
     futureLawyers map {
@@ -115,6 +117,13 @@ object LawyerController extends Controller with UserAccountForms with Security {
   def maxExperienceQuery(maxExp: Option[Int], generalQuery: JsObject) = {
     maxExp match {
       case Some(me) => generalQuery deepMerge Json.obj("experience.total" -> Json.obj("$lte" -> me))
+      case None => generalQuery
+    }
+  }
+
+  def competenceQuery(competence: Option[String], generalQuery: JsObject) = {
+    competence match {
+      case Some(c) => generalQuery deepMerge Json.obj("competences" -> c)
       case None => generalQuery
     }
   }
