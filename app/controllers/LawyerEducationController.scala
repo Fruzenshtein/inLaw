@@ -1,5 +1,7 @@
 package controllers
 
+import javax.ws.rs.QueryParam
+
 import com.wordnik.swagger.annotations._
 import forms.UserAccountForms
 import models.{Certificate, University}
@@ -186,7 +188,7 @@ object LawyerEducationController extends Controller with Security with UserAccou
     response = classOf[models.Certificate])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "List of certificates"),
-    new ApiResponse(code = 404, message = "Certificates does not exist"),
+    new ApiResponse(code = 404, message = "Certificates do not exist"),
     new ApiResponse(code = 404, message = "Education does not exist")
   ))
   @ApiImplicitParams(Array(
@@ -277,6 +279,53 @@ object LawyerEducationController extends Controller with Security with UserAccou
       }
       case None => Future.successful(Ok(Json.obj("message" -> "Education does not exist")))
     }
+  }
+
+  @ApiOperation(
+    nickname = "languages",
+    value = "Add lawyers language",
+    notes = "Add a language to lawyer account",
+    httpMethod = "POST",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Language successfully added"),
+    new ApiResponse(code = 400, message = "Bad arguments")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)))
+  def addLanguage(@QueryParam("language") language: String) = isAuthenticated { implicit acc =>
+    implicit request => {
+
+          Logger.info("Adding language...")
+          Logger.info("Language: "+language)
+          LawyerService.addLanguage(acc.email, language)
+          Future(Ok(Json.obj("message" -> "Language successfully added")))
+
+    }
+  }
+
+  @ApiOperation(
+    nickname = "languages",
+    value = "Get lawyers languages",
+    notes = "Get lawyers languages",
+    httpMethod = "GET",
+    response = classOf[String])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "List of languages"),
+    new ApiResponse(code = 404, message = "Languages do not exist"),
+    new ApiResponse(code = 404, message = "Education does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def getLanguages = isAuthenticated { implicit acc =>
+    implicit request =>
+      acc.education match {
+        case Some(someEdu) => someEdu.languages match {
+          case Some(languages) => Future.successful(Ok(Json.toJson(languages)))
+          case None => Future.successful(NotFound(Json.obj("message" -> "Languages do not exist")))
+        }
+        case None => Future.successful(NotFound(Json.obj("message" -> "Education does not exist")))
+      }
   }
 
 }

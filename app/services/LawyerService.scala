@@ -166,6 +166,18 @@ object LawyerService {
     )
   }
 
+  def addLanguage(email: String, language: String) = {
+    val addLanguage = Json.obj(
+      "$addToSet" -> Json.obj(
+        "education.languages" -> language
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      addLanguage
+    )
+  }
+
   def totalExperienceRecalculation(email: String) = {
     Logger.info(s"Recalculation of total experience for user $email")
     val query = Json.obj("email" -> email)

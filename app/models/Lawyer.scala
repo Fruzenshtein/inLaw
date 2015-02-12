@@ -136,13 +136,15 @@ object Contacts {
 }
 
 case class Education(universities: Option[Seq[University]],
-                     certificates: Option[Seq[Certificate]])
+                     certificates: Option[Seq[Certificate]],
+                     languages: Option[Seq[String]])
 
 object Education {
 
   implicit val educationFormat: Format[Education] = (
     (JsPath \ "universities").formatNullable[Seq[University]] and
-    (JsPath \ "certificates").formatNullable[Seq[Certificate]]
+    (JsPath \ "certificates").formatNullable[Seq[Certificate]] and
+    (JsPath \ "languages").formatNullable[Seq[String]]
   )(Education.apply, unlift(Education.unapply))
 
 }
