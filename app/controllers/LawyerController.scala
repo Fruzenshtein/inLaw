@@ -79,7 +79,8 @@ object LawyerController extends Controller with UserAccountForms with Security {
   def filterLawyers(gender: Option[String], minRate: Option[Int], minExp: Option[Int], maxExp: Option[Int],
                     competence: Option[String], language: Option[String]) = Action.async {
 
-    val generalQuery = Json.obj();
+    val generalQuery = Json.obj("profile.active" -> true)
+
     val finalQuery = languageQuery(language, competenceQuery(competence,
       maxExperienceQuery(maxExp,
       minExperienceQuery(minExp,
