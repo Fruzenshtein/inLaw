@@ -23,18 +23,18 @@ PUT         /lawyers/contacts                       controllers.LawyerContactsCo
 GET         /lawyers/contacts                       controllers.LawyerContactsController.getContacts
 
 GET         /api-docs.json/lawyers/education        controllers.ApiHelpController.getResource(path = "/lawyers/education")
-POST        /lawyers/education/universities         controllers.LawyerEducationController.createUniversity
-GET         /lawyers/education/universities         controllers.LawyerEducationController.getUniversities
-PUT         /lawyers/education/universities/:id     controllers.LawyerEducationController.updateUniversity(id: String)
-DELETE      /lawyers/education/universities/:id     controllers.LawyerEducationController.deleteUniversity(id: String)
+POST        /lawyers/universities                   controllers.LawyerEducationController.createUniversity
+GET         /lawyers/universities                   controllers.LawyerEducationController.getUniversities
+PUT         /lawyers/universities/:id               controllers.LawyerEducationController.updateUniversity(id: String)
+DELETE      /lawyers/universities/:id               controllers.LawyerEducationController.deleteUniversity(id: String)
 
-POST        /lawyers/education/certificates         controllers.LawyerEducationController.createCertificate
-GET         /lawyers/education/certificates         controllers.LawyerEducationController.getCertificates
-PUT         /lawyers/education/certificates/:id     controllers.LawyerEducationController.updateCertificate(id: String)
-DELETE      /lawyers/education/certificates/:id     controllers.LawyerEducationController.deleteCertificate(id: String)
+POST        /lawyers/certificates                   controllers.LawyerEducationController.createCertificate
+GET         /lawyers/certificates                   controllers.LawyerEducationController.getCertificates
+PUT         /lawyers/certificates/:id               controllers.LawyerEducationController.updateCertificate(id: String)
+DELETE      /lawyers/certificates/:id               controllers.LawyerEducationController.deleteCertificate(id: String)
 
-POST        /lawyers/education/languages            controllers.LawyerEducationController.addLanguage(language: String)
-GET         /lawyers/education/languages            controllers.LawyerEducationController.getLanguages
+POST        /lawyers/languages                      controllers.LawyerEducationController.addLanguage(language: String)
+GET         /lawyers/languages                      controllers.LawyerEducationController.getLanguages
 
 GET         /api-docs.json/lawyers/experience       controllers.ApiHelpController.getResource(path = "/lawyers/experience")
 POST        /lawyers/experience                     controllers.LawyerExperienceController.createExperience
