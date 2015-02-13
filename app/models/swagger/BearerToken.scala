@@ -16,7 +16,9 @@ case class Profile(gender: String,
                    lastName: String,
                    middleName: String,
                    birthDate: Date,
-                   minRate: Int)
+                   minRate: Int,
+                   active: Boolean,
+                   availability: Boolean)
 
 case class Contacts(country: Option[String],
                     city: Option[String],

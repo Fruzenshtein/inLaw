@@ -65,7 +65,7 @@ object Lawyer {
       avatar = None,
       bearerToken = None,
       createdAt = new DateTime(),
-      profile = None,
+      profile = Some(Profile(None, None, None, None, None, None, active = true, availability = true)),
       contacts = None,
       education = None,
       experience = Some(Experience(0, None)),
@@ -81,7 +81,9 @@ case class Profile(gender: Option[String],
                    lastName: Option[String],
                    middleName: Option[String],
                    birthDate: Option[Date],
-                   minRate: Option[Int])
+                   minRate: Option[Int],
+                   active: Boolean,
+                   availability: Boolean)
 
 object Profile {
 
@@ -91,7 +93,9 @@ object Profile {
     (JsPath \ "lastName").formatNullable[String] and
     (JsPath \ "middleName").formatNullable[String] and
     (JsPath \ "birthDate").formatNullable[Date] and
-    (JsPath \ "minRate").formatNullable[Int]
+    (JsPath \ "minRate").formatNullable[Int] and
+    (JsPath \ "active").format[Boolean] and
+    (JsPath \ "availability").format[Boolean]
   )(Profile.apply, unlift(Profile.unapply))
 
 }
