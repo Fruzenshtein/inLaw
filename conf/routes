@@ -12,7 +12,7 @@ GET         /auth/logout                            controllers.AuthController.l
 
 GET         /api-docs.json/lawyers                  controllers.ApiHelpController.getResource(path = "/lawyers")
 POST        /lawyers                                controllers.LawyerController.createAccount
-GET         /lawyers                                controllers.LawyerController.filterLawyers(gender: Option[String], minRate: Option[Int], minExp: Option[Int], maxExp: Option[Int], competence: Option[String], language: Option[String])
+GET         /lawyers                                controllers.LawyerController.filterLawyers(gender: Option[String], minRate: Option[Int], minExp: Option[Int], maxExp: Option[Int], competence: Option[String], language: Option[String], availability: Option[Boolean])
 
 GET         /api-docs.json/lawyers/profile          controllers.ApiHelpController.getResource(path = "/lawyers/profile")
 PUT         /lawyers/profile                        controllers.LawyerProfileController.updateProfile
