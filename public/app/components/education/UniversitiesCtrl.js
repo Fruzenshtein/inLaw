@@ -28,13 +28,13 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
 
         //TODO add ability to remove selected University
         /*
-         1)
-         $scope.removeUniversity = function() {
+             1)
+                 $scope.removeUniversity = function() {
 
-         };
-         2) Add inline validation to HTML
-         3) Parse Degree >> master, bachelor, phd
-         */
+                 };
+             2) Add inline validation to HTML
+             3) Parse Degree >> master, bachelor, phd
+        */
 
         // Disable weekend selection
         $scope.disabled = function (date, mode) {

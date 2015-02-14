@@ -11,9 +11,10 @@
             </div>
         </div>
     </div>
-    <div class="panel-body">
+    <div class="panel-body" ng-repeat="university in education.universities track by university['id']">
         <fieldset ng-disabled="formStatus.isEditModeOpen">
-            <form name="universityForm" novalidate ng-repeat="university in education.universities track by university['id']">
+            <form name="universityForm" novalidate>
+                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <div class="form-group">
                     <label for="school">School</label>
                     <input type="text"

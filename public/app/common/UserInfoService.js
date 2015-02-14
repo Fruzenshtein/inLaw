@@ -54,11 +54,11 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Rest
         });
     };
 
-    function getUserCertificates(onSuccess, onError) {
-        baseProfileURL(urlConfig.certificates).then(function(onFulfilled) {
-            onSuccess(onFulfilled);
+    function getUserCertificates() {
+        return baseProfileURL(urlConfig.certificates).then(function(onFulfilled) {
+            return onSuccess(onFulfilled);
         },function(onReject) {
-            onError(onReject);
+            return onError(onReject);
         });
     };
 
