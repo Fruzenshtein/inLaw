@@ -60,6 +60,14 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
                     controller: 'CertificatesCtrl'
                 }
             }
+        }).state('experience', {
+            url: "/experience",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/app/components/experience/experience.html',
+                    controller: 'ExperienceCtrl'
+                }
+            }
         });
 
         // Without server side support html5 must be disabled.

@@ -1,23 +1,15 @@
 'use strict';
 /* Services */
 
-App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Restangular, $http, $state, $q ) {
-/*
-// TODO will experiment with Restangular
-    var baseProfileURL = Restangular.withConfig(function(Configurer){
-        Configurer.setBaseUrl('lawyers');
-        Configurer.setDefaultHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-        });
-    });
-*/
-    // Relative URLs object
+App.factory('$userInfo', ['$http', '$state', '$q',
+    function( $http, $state, $q ) {
+
     var urlConfig = {
         profile         : '/lawyers/profile',
         contacts        : '/lawyers/contacts',
         university      : '/lawyers/education/universities',
-        certificates    : '/lawyers/education/certificates'
+        certificates    : '/lawyers/education/certificates',
+        experiences     : '/lawyers/experience'
         },
         baseProfileURL = function(url) {
             return $http({
@@ -29,6 +21,12 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Rest
                         }
                     });
         };
+
+    //TODO: add a parser to check if a user has updated some form before or no
+    // (by 'id') and send appropriate request PUT or POST
+    function isNewUser() {
+
+    };
 
     function getUserProfile() {
         return baseProfileURL(urlConfig.profile).then(function(onFulfilled) {
@@ -56,6 +54,14 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Rest
 
     function getUserCertificates() {
         return baseProfileURL(urlConfig.certificates).then(function(onFulfilled) {
+            return onSuccess(onFulfilled);
+        },function(onReject) {
+            return onError(onReject);
+        });
+    };
+
+    function getUserExperience() {
+        return baseProfileURL(urlConfig.experiences).then(function(onFulfilled) {
             return onSuccess(onFulfilled);
         },function(onReject) {
             return onError(onReject);
@@ -100,6 +106,10 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Rest
                     info['certificates'] = _jsonData['data'];
                     deferred.resolve(_jsonData['data']);
                     return deferred.promise;
+                case urlConfig.experiences:
+                    info['experiences'] = _jsonData['data'];
+                    deferred.resolve(_jsonData['data']);
+                    return deferred.promise;
                 default:
                     onError(data); //TODO return error object and pass to reject()
                     deferred.reject();
@@ -120,10 +130,12 @@ App.factory('$userInfo', ['Restangular', '$http', '$state', '$q', function( Rest
         getUserContacts     : getUserContacts,
         getUserUniversity   : getUserUniversity,
         getUserCertificates : getUserCertificates,
+        getUserExperience   : getUserExperience,
         profile             : {},
         contacts            : {},
         universities        : {},
         certificates        : {},
+        experiences         : {},
         allowed             : false
     };
     return info;
