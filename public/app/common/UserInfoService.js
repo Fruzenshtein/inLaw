@@ -8,7 +8,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         profile         : '/lawyers/profile',
         contacts        : '/lawyers/contacts',
         university      : '/lawyers/universities',
-        certificates    : '/lawyers/education/certificates',
+        certificates    : '/lawyers/certificates',
         experiences     : '/lawyers/experience'
         },
         baseProfileURL = function(url) {
@@ -23,7 +23,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         };
 
     //TODO: add a parser to check if a user has updated some form before or no
-    // (by 'id') and send appropriate request PUT or POST
+    //TODO: (by 'id') and send appropriate request PUT or POST
     function isNewUser() {
 
     };
@@ -107,7 +107,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     deferred.resolve(_jsonData['data']);
                     return deferred.promise;
                 case urlConfig.experiences:
-                    info['experiences'] = _jsonData['data'];
+                    // For experiences the server returns {'total': 0} object if no data added
+                    info['experiences'] = _jsonData['data']['total'] ? _jsonData['data'] : {} ;
                     deferred.resolve(_jsonData['data']);
                     return deferred.promise;
                 default:

@@ -5,34 +5,52 @@ App.controller('CertificatesCtrl', ['$scope', '$http', '$userInfo', function($sc
 
     // if data had saved before, do not send a request
     if ( _.isEmpty($userInfo.certificates) ) {
-        var promiseGetCertificates = $userInfo.getUserUniversity();
+        var promiseGetCertificates = $userInfo.getUserCertificates();
         promiseGetCertificates.then(function (onFulfilled) {
-            $scope.education.certificates = onFulfilled || [];
+            $scope.certificates = onFulfilled || [{}];
         }, function (onReject) {
-            $scope.education.certificates = [];
+            $scope.certificates = [{}];
         });
     };
-    $scope.education = {};
-    $scope.education.certificates = $userInfo.certificates || [];
-
-    $scope.updateCertificates = function (certificateData) {
-        certificateData.date = moment(certificateData.date).format($scope.formats[1]);
-        $http({
-            method: 'POST',
-            url: '/lawyers/education/certificates',
-            data: certificateData,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+    $scope.certificate = {};
+    $scope.certificates = $userInfo.certificates || [{}];
+    $scope.certificateCounter = 0;
+    $scope.addCertificate = function () {
+        $scope.certificateTemplate = {
+            id: $scope.certificateCounter
+        };
+        $scope.certificateCounter += 1;
+        $scope.certificates.push($scope.certificateTemplate);
+    };
+    $scope.removeCertificate = function(obj) {
+        angular.forEach($scope.certificates, function(elem, index) {
+            if ( $scope.certificates[index]['id'] == obj['id'] ) {
+                $scope.certificates.splice(index, 1);
             }
-        }).
-            success(function (data, status, headers, config) {
-                $scope.formStatus.isEditModeOpen = true;
-                $scope.isUpdated = true;
+            // TODO: API call
+        })
+    };
+
+    $scope.updateCertificates = function (array) {
+        angular.forEach(array, function(elem, index) {
+            array[index].date = moment(array[index].date).format($scope.formats[1]);
+            $http({
+                method: 'POST',
+                url: '/lawyers/certificates',
+                data: array[index],
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                }
             }).
-            error(function (data, status, headers, config) {
-                $scope.error = 'Unexpected error. Please try again later.';
-            });
+                success(function (data, status, headers, config) {
+                    $scope.formStatus.isEditModeOpen = true;
+                    $scope.isUpdated = true;
+                }).
+                error(function (data, status, headers, config) {
+                    $scope.error = 'Unexpected error. Please try again later.';
+                });
+        });
     };
 
     $scope.formStatus = {
@@ -56,7 +74,7 @@ App.controller('CertificatesCtrl', ['$scope', '$http', '$userInfo', function($sc
     $scope.open = function ($event) {
         $event.preventDefault();
         $event.stopPropagation();
-        $scope.opened = true;
+        this.opened = true;
     };
 
     $scope.dateOptions = {

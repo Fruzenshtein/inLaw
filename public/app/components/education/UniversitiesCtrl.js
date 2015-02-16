@@ -8,13 +8,13 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
         if ( _.isEmpty($userInfo.universities) ) {
             var promiseGetUniversity = $userInfo.getUserUniversity();
             promiseGetUniversity.then(function (onFulfilled) {
-                $scope.universities = onFulfilled || [];
+                $scope.universities = onFulfilled || [{}];
             }, function (onReject) {
-                $scope.universities = [];
+                $scope.universities = [{}];
             });
         };
         $scope.university = {};
-        $scope.universities = $userInfo.universities || [];
+        $scope.universities = $userInfo.universities || [{}];
         $scope.universityCounter = 0;
         $scope.addUniversity = function () {
             $scope.universityTemplate = {
@@ -23,9 +23,6 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
             $scope.universityCounter += 1;
             $scope.universities.push($scope.universityTemplate);
         };
-
-        //TODO add ability to remove selected University
-
         $scope.removeUniversity = function(obj) {
             angular.forEach($scope.universities, function(elem, index) {
                 if ( $scope.universities[index]['id'] == obj['id'] ) {
@@ -33,16 +30,7 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
                 }
                 // TODO: API call
             })
-
         };
-        /*
-             1)
-                 $scope.removeUniversity = function() {
-
-                 };
-             2) Add inline validation to HTML
-             3) Parse Degree >> master, bachelor, phd
-        */
 
         // Disable weekend selection
         $scope.disabled = function (date, mode) {

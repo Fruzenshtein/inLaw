@@ -5,16 +5,18 @@
             <div>
                 <button type="button"
                         class="btn btn-default btn-sm"
-                        ng-click="addUniversity()">
+                        ng-click="addCertificate()">
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Certificate
                 </button>
             </div>
         </div>
     </div>
-    <div class="panel-body">
+    <div class="panel-body" ng-repeat="certificate in certificates track by certificate['id']">
         <fieldset ng-disabled="formStatus.isEditModeOpen">
             <form name="universityForm" novalidate>
-                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true" ng-click="removeCertificate(certificate)">&times;</span>
+                </button>
                 <div class="form-group">
                     <label for="cname">Name</label>
                     <input type="text"
@@ -74,7 +76,7 @@
         <button class="btn btn-default"
                 type="button"
                 ng-disabled="formStatus.isEditModeOpen"
-                ng-click="updateCertificates(certificate)">Update Certificate
+                ng-click="updateCertificates(certificates)">Update Certificate
         </button>
         <p ng-show="error" class="text-danger">{{ error }}</p>
         <p ng-show="isUpdated" class="text-danger">You have successfully updated the form!</p>
