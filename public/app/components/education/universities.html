@@ -11,10 +11,13 @@
             </div>
         </div>
     </div>
-    <div class="panel-body" ng-repeat="university in education.universities track by university['id']">
+    <div class="panel-body" ng-repeat="university in universities track by university['id']">
         <fieldset ng-disabled="formStatus.isEditModeOpen">
             <form name="universityForm" novalidate>
-                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button"
+                        class="close"
+                        aria-label="Close"><span aria-hidden="true" ng-click="removeUniversity(university)">&times;</span>
+                </button>
                 <div class="form-group">
                     <label for="school">School</label>
                     <input type="text"
@@ -94,11 +97,12 @@
     <div class="panel-footer">
         <button class="btn btn-default"
                 type="button"
-                ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit mode</button>
+                ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit mode
+        </button>
         <button class="btn btn-default"
                 type="button"
                 ng-disabled="formStatus.isEditModeOpen"
-                ng-click="updateEducation(university)">Update Education
+                ng-click="updateEducation(universities)">Update Education
         </button>
         <p ng-show="error" class="text-danger">{{ error }}</p>
         <p ng-show="isUpdated" class="text-danger">You have successfully updated the form!</p>

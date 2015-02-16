@@ -8,25 +8,33 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
         if ( _.isEmpty($userInfo.universities) ) {
             var promiseGetUniversity = $userInfo.getUserUniversity();
             promiseGetUniversity.then(function (onFulfilled) {
-                $scope.education.universities = onFulfilled || [];
+                $scope.universities = onFulfilled || [];
             }, function (onReject) {
-                $scope.education.universities = [];
+                $scope.universities = [];
             });
         };
-
-        // Provides separate scopes for universities
-        $scope.education = {};
-        $scope.education.universities = $userInfo.universities || [];
+        $scope.university = {};
+        $scope.universities = $userInfo.universities || [];
         $scope.universityCounter = 0;
         $scope.addUniversity = function () {
             $scope.universityTemplate = {
                 id: $scope.universityCounter
             };
             $scope.universityCounter += 1;
-            $scope.education.universities.push($scope.universityTemplate);
+            $scope.universities.push($scope.universityTemplate);
         };
 
         //TODO add ability to remove selected University
+
+        $scope.removeUniversity = function(obj) {
+            angular.forEach($scope.universities, function(elem, index) {
+                if ( $scope.universities[index]['id'] == obj['id'] ) {
+                    $scope.universities.splice(index, 1);
+                }
+                // TODO: API call
+            })
+
+        };
         /*
              1)
                  $scope.removeUniversity = function() {
@@ -75,24 +83,27 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
             isEditModeDisabled: false
         };
 
-        $scope.updateEducation = function (educationData) {
-            educationData.startDate = moment(educationData.startDate).format($scope.formats[1]);
-            educationData.endDate = moment(educationData.endDate).format($scope.formats[1]);
-            $http({
-                method: 'POST',
-                url: '/lawyers/education/universities',
-                data: educationData,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                }
-            }).
-                success(function (data, status, headers, config) {
-                    $scope.formStatus.isEditModeOpen = true;
-                    $scope.isUpdated = true;
+        $scope.updateEducation = function (array) {
+            angular.forEach(array, function(elem, index) {
+                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
+                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
+                // Send one object per time. TBD... improvement is added to API side with ability to send an array
+                $http({
+                    method: 'POST',
+                    url: '/lawyers/universities',
+                    data: array[index],
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
                 }).
-                error(function (data, status, headers, config) {
-                    $scope.error = 'Unexpected error. Please try again later.';
-                });
+                    success(function (data, status, headers, config) {
+                        $scope.formStatus.isEditModeOpen = true;
+                        $scope.isUpdated = true;
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                    });
+            });
         };
     }]);

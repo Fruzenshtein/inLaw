@@ -7,7 +7,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     var urlConfig = {
         profile         : '/lawyers/profile',
         contacts        : '/lawyers/contacts',
-        university      : '/lawyers/education/universities',
+        university      : '/lawyers/universities',
         certificates    : '/lawyers/education/certificates',
         experiences     : '/lawyers/experience'
         },

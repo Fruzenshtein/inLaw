@@ -11,12 +11,12 @@
             </div>
         </div>
     </div>
-    <div class="panel-body" ng-repeat="experience1 in experiences track by experience1['id']">
+    <div class="panel-body" ng-repeat="exper in experiences track by exper['id']">
         <fieldset ng-disabled="formStatus.isEditModeOpen">
             <form name="experienceForm" novalidate>
                 <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <div class="form-group">
-                    <label for="expName">Name</label>
+                    <label for="expName">Company Name</label>
                     <input type="text"
                            ng-model="experience.name"
                            class="form-control"
