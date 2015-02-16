@@ -14,7 +14,9 @@
     <div class="panel-body" ng-repeat="experience in experiences track by experience['id']">
         <fieldset ng-disabled="formStatus.isEditModeOpen">
             <form name="experienceForm" novalidate>
-                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true" ng-click="removeExperience(experience)">&times;</span>
+                </button>
                 <div class="form-group">
                     <label for="expName">Company Name</label>
                     <input type="text"
@@ -92,7 +94,7 @@
                         </div>
                     </div> <!-- /. close End year picker  -->
                 </div>
-                <div class="clearfix"></div>{{experience}}
+                <div class="clearfix"></div>{{experiences}}
             </form>
         </fieldset>
     </div>
@@ -103,8 +105,8 @@
         <button class="btn btn-default"
                 type="button"
                 ng-disabled="formStatus.isEditModeOpen"
-                ng-click="updateExperience(experience)">Update Experience
-        </button>{{experience}}
+                ng-click="updateExperience(experiences)">Update Experience
+        </button>
         <p ng-show="error" class="text-danger">{{ error }}</p>
         <p ng-show="isUpdated" class="text-danger">You have successfully updated the form!</p>
     </div>

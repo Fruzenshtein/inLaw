@@ -8,14 +8,16 @@ App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
         if ( _.isEmpty($userInfo.experiences) ) {
             var promiseGetExperience = $userInfo.getUserExperience();
             promiseGetExperience.then(function (onFulfilled) {
-                $scope.experiences = onFulfilled || [];
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
             }, function (onReject) {
-                $scope.experiences = [];
+                $scope.experiences = [{}];
             });
         };
 
         $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [];
+        $scope.experiences = $userInfo.experiences || [{}];
         $scope.experiencesCounter = 0;
         $scope.addExperience = function () {
             $scope.experiencesTemplate = {
@@ -23,6 +25,14 @@ App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
             };
             $scope.experiencesCounter += 1;
             $scope.experiences.push($scope.experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
+                    $scope.experiences.splice(index, 1);
+                }
+                // TODO: API call
+            })
         };
 
         // Disable weekend selection
@@ -65,25 +75,27 @@ App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
             isEditModeDisabled: false
         };
 
-        $scope.updateExperience = function (experienceData) {
-            experienceData.startDate = moment(experienceData.startDate).format($scope.formats[1]);
-            experienceData.endDate = moment(experienceData.endDate).format($scope.formats[1]);
-            console.log(experienceData);
-            $http({
-                method: 'POST',
-                url: '/lawyers/experience',
-                data: experienceData,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                }
-            }).
-                success(function (data, status, headers, config) {
-                    $scope.formStatus.isEditModeOpen = true;
-                    $scope.isUpdated = true;
+        $scope.updateExperience = function (array) {
+            angular.forEach(array, function(elem, index) {
+                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
+                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
+                $http({
+                    method: 'POST',
+                    url: '/lawyers/experience',
+                    data: array[index],
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
                 }).
-                error(function (data, status, headers, config) {
-                    $scope.error = 'Unexpected error. Please try again later.';
-                });
+                    success(function (data, status, headers, config) {
+                        $scope.formStatus.isEditModeOpen = true;
+                        $scope.isUpdated = true;
+                        $scope.error = '';
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                    });
+            });
         };
 }]);

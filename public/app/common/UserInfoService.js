@@ -107,9 +107,10 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     deferred.resolve(_jsonData['data']);
                     return deferred.promise;
                 case urlConfig.experiences:
-                    // For experiences the server returns {'total': 0} object if no data added
-                    info['experiences'] = _jsonData['data']['total'] ? _jsonData['data'] : {} ;
-                    deferred.resolve(_jsonData['data']);
+                    // For experiences the server returns {'workPlaces': [...]} object if data exists
+                    info['experiences'] = _jsonData['data']['workPlaces'] ?
+                        _jsonData['data']['workPlaces'] : {} ;
+                    deferred.resolve(info['experiences']);
                     return deferred.promise;
                 default:
                     onError(data); //TODO return error object and pass to reject()
