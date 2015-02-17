@@ -73,7 +73,7 @@ object LawyerController extends Controller with UserAccountForms with Security {
     value = "Get lawyers accounts",
     notes = "Filter lawyers accounts by parameters",
     httpMethod = "GET",
-    response = classOf[Lawyer])
+    response = classOf[models.swagger.LawyerSearchResult])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Lawyers list")))
   def filterLawyers(gender: Option[String], minRate: Option[Int], minExp: Option[Int], maxExp: Option[Int],
@@ -90,8 +90,25 @@ object LawyerController extends Controller with UserAccountForms with Security {
       genderQuery(gender, generalQuery)))))))
 
     val futureLawyers = LawyerService.filterLawyers(finalQuery)
+
+    def lawyerToJson(lawyer: Lawyer): JsObject = {
+
+      val lawyerJson = Json.obj("id" -> lawyer._id.get.stringify, "avatar" -> lawyer.avatar, "createdAt" -> lawyer.createdAt)
+
+      val profileJson = lawyer.profile match {
+        case Some(profile) => Json.obj("gender" -> profile.gender, "firstName" -> profile.firstName,
+          "lastName" -> profile.lastName, "middleName" -> profile.middleName, "birthDate" -> profile.birthDate,
+          "minRate" -> profile.minRate, "availability" -> profile.availability)
+        case None => Json.obj()
+      }
+
+      lawyerJson deepMerge profileJson
+    }
+
     futureLawyers map {
-      case seqLawyers => Ok(Json.toJson(seqLawyers))
+      case seqLawyers => {
+        Ok(Json.toJson(seqLawyers map(lawyer => lawyerToJson(lawyer))))
+      }
     }
 
   }

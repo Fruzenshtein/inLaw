@@ -2,6 +2,7 @@ package models.swagger
 
 import java.util.Date
 import models.Phone
+import org.joda.time.DateTime
 
 case class BearerToken(token: String)
 
@@ -10,6 +11,18 @@ case class UserAccountInfo(email: String, password: String, repeatPassword: Stri
 case class Credentials(email: String, password: String)
 
 case class InformationMessage(message: String)
+
+case class LawyerSearchResult(id: String,
+                              avatar: String,
+                              createdAt: DateTime,
+                              gender: String,
+                              firstName: String,
+                              lastName: String,
+                              middleName: String,
+                              birthDate: Date,
+                              minRate: Int,
+                              availability: Boolean)
+
 
 case class Profile(gender: String,
                    firstName: String,
