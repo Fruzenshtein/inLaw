@@ -30,6 +30,12 @@ object LawyerService {
     account
   }
 
+  def findById(id: String): Future[Option[Lawyer]] = {
+    val query = Json.obj("_id" -> Json.obj("$oid" -> id))
+    val account = collection.find(query).one[Lawyer]
+    account
+  }
+
   def filterLawyers(query: JsObject): Future[Seq[Lawyer]] = {
     val lawyers = collection.find(query)
       .cursor[Lawyer]
