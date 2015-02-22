@@ -68,6 +68,14 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
                     controller: 'ExperienceCtrl'
                 }
             }
+        }).state('filters', {
+            url: "/lawyers/filters",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/app/components/filters/filters.html',
+                    controller: 'FiltersCtrl'
+                }
+            }
         });
 
         // Without server side support html5 must be disabled.

@@ -1,0 +1,139 @@
+<div>
+    <div id="filters-block">
+        <form name="aFilters" class="menu-band container-fluid additional-filters" ng-show="true">
+            <ul class="row-fluid clearfix list-unstyled">
+                <li class="col-xs-3">
+                    <label>City:</label>
+                    <ui-select ng-model="address.selected"
+                               theme="bootstrap"
+                               ng-disabled="disabled"
+                               reset-search-input="false">
+                        <ui-select-match placeholder="Enter a city...">{{$select.selected.formatted_address}}</ui-select-match>
+                        <ui-select-choices repeat="address in addresses track by $index"
+                                           refresh="refreshAddresses($select.search)"
+                                           refresh-delay="0">
+                            <div ng-bind-html="address.formatted_address | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </li>
+                <li class="col-xs-3">
+                    <label>Profession:</label>
+                    <ui-select ng-model="profession.selected"
+                               theme="bootstrap"
+                               ng-disabled="disabled"
+                               reset-search-input="false">
+                        <ui-select-match placeholder="Enter a profession...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="profession in professions | filter: $select.search"
+                                           refresh-delay="0">
+                            <div ng-bind-html="profession.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </li>
+                <li class="col-xs-6">
+                    <label>Competence:</label>
+                    <ui-select ng-model="competence.selected" multiple
+                               theme="bootstrap"
+                               ng-disabled="disabled"
+                               reset-search-input="false">
+                        <ui-select-match placeholder="Enter a Competence...">{{$item.name}}</ui-select-match>
+                        <ui-select-choices repeat="competence in competences | filter: $select.search"
+                                           refresh-delay="0">
+                            <div ng-bind-html="competence.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>{{competence.selected}}
+                </li>
+            </ul>
+            <ul class="row-fluid clearfix list-unstyled">
+                <li class="col-xs-3">
+                    <label>Rate:</label>
+                    <ul class="list-inline input-pair">
+                        <li>
+                            <input name="rangeMin" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="additionalFl.rangeMin"
+                                   class="form-control"
+                                   placeholder="From"
+                                   ng-change="validateInputPair('rangeMin', 'rangeMax')"/>
+                        </li>
+                        <li>-</li>
+                        <li>
+                            <input name="rangeMax" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="additionalFl.rangeMax"
+                                   class="form-control"
+                                   placeholder="To"
+                                   ng-change="validateInputPair('rangeMin', 'rangeMax')"/>
+                        </li>
+                    </ul>
+                    <p class="text-danger" ng-if="aFilters.daysMin.$error.pattern && aFilters.daysMin.$dirty">
+                        Min day value should be a number
+                    </p>
+                    <p class="text-danger" ng-if="aFilters.daysMax.$error.pattern && aFilters.daysMax.$dirty">
+                        Max day value should be a number
+                    </p>
+                    <div ng-if="!aFilters.daysMax.$error.pattern && !aFilters.daysMin.$error.pattern">
+                        <p class="text-danger" ng-if="daysMin.requiredBothError">Both fields are required</p>
+                        <p class="text-danger" ng-if="daysMin.pairError && !daysMin.requiredBothError">Last day value can not be less than first one</p>
+                    </div>
+                </li>
+                <li class="col-sm-3">
+                    <label>Gender:</label>
+                    <ui-select ng-model="gender.selected" theme="bootstrap" ng-disabled="disabled">
+                        <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
+                            <span ng-bind-html="gender.name | highlight: $select.search"></span>
+                            <small ng-bind-html="gender.code | highlight: $select.search"></small>
+                        </ui-select-choices>
+                    </ui-select>
+                </li>
+                <li class="col-xs-3">
+                    <label>Working years:</label>
+                    <ul class="list-inline input-pair">
+                        <li>
+                            <input name="rangeMin" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="additionalFl.rangeMin"
+                                   class="form-control"
+                                   placeholder="From"
+                                   ng-change="validateInputPair('rangeMin', 'rangeMax')"/>
+                        </li>
+                        <li>-</li>
+                        <li>
+                            <input name="rangeMax" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="additionalFl.rangeMax"
+                                   class="form-control"
+                                   placeholder="To"
+                                   ng-change="validateInputPair('rangeMin', 'rangeMax')"/>
+                        </li>
+                    </ul>
+                    <p class="text-danger" ng-if="aFilters.daysMin.$error.pattern && aFilters.daysMin.$dirty">
+                        Min day value should be a number
+                    </p>
+                    <p class="text-danger" ng-if="aFilters.daysMax.$error.pattern && aFilters.daysMax.$dirty">
+                        Max day value should be a number
+                    </p>
+                    <div ng-if="!aFilters.daysMax.$error.pattern && !aFilters.daysMin.$error.pattern">
+                        <p class="text-danger" ng-if="daysMin.requiredBothError">Both fields are required</p>
+                        <p class="text-danger" ng-if="daysMin.pairError && !daysMin.requiredBothError">Last day value can not be less than first one</p>
+                    </div>
+                </li>
+            </ul>
+            <ul class="row-fluid clearfix list-unstyled">
+                <li class="col-sm-3">
+                    <label>Language:</label>
+                    <ui-select ng-model="language.selected" theme="bootstrap" ng-disabled="disabled">
+                        <ui-select-match placeholder="Select a language in the list...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="language in languages | filter: $select.search">
+                            <span ng-bind-html="language.name | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </li>
+                <li>
+                    <label>Availability:</label>
+                    <input type="checkbox">
+                </li>
+            </ul>
+            <div class="basic-filters">
+                <a href="" class="btn btn-primary">Show results</a>
+                <a href="" class="reset" ng-click="reset()">Reset all</a>
+            </div>
+        </form>
+    </div>
+</div>
