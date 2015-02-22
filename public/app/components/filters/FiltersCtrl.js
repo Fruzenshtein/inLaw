@@ -33,30 +33,30 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
         };
 
         $scope.profession = {};
-        $scope.professions = [
+        $scope.professions = [ //TODO: get from teh server
             {name: "Криминалньое"},
             {name: "Земельное"},
             {name: "Нотариус"}
         ];
         $scope.competence = {};
-        $scope.competences = [
+        $scope.competences = [ //TODO: get from teh server
             {name: "Криминалньое"},
             {name: "Земельное"},
             {name: "Нотариус"}
         ];
 
         $scope.gender = {};
-        $scope.genderTypes = [
+        $scope.genderTypes = [ //TODO: get from teh server
             {name: 'Male'},
             {name: 'Famele'}
         ];
         $scope.language = {};
-        $scope.languages = [
+        $scope.languages = [ //TODO: get from teh server
             {name: 'Ukrainian'},
             {name: 'English'}
         ];
 
-        $scope.additionalFl = {buy_side_lock_date:[],rate_lock_expires:[],funded_milestone_date:[]};
+        $scope.additionalFl = {};
         $scope.validateInputPair = function(_min, _max) {
             var min = $scope.additionalFl[_min],
                 max = $scope.additionalFl[_max];
@@ -78,8 +78,10 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
             } else {
                 setInvalid();
             }
-
-        }
+        };
+        $scope.removeFilter = function(filter) {
+            //TODO: reset all filters to default values
+        };
 
 
     }]);

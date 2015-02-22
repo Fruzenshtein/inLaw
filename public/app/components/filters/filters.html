@@ -1,5 +1,6 @@
-<div>
-    <div id="filters-block">
+<div class="panel panel-default">
+    <div class="panel-heading">Srearch for lawyers</div>
+    <div id="filters-block panel-body">
         <form name="aFilters" class="menu-band container-fluid additional-filters" ng-show="true">
             <ul class="row-fluid clearfix list-unstyled">
                 <li class="col-xs-3">
@@ -44,7 +45,7 @@
                 </li>
             </ul>
             <ul class="row-fluid clearfix list-unstyled">
-                <li class="col-xs-3">
+                <li class="col-xs-5">
                     <label>Rate:</label>
                     <ul class="list-inline input-pair">
                         <li>
@@ -52,7 +53,7 @@
                                    ng-model="additionalFl.rangeMin"
                                    class="form-control"
                                    placeholder="From"
-                                   ng-change="validateInputPair('rangeMin', 'rangeMax')"/>
+                                   ng-change="validateInputPair('rangeMin', 'rangeMax')" required/>
                         </li>
                         <li>-</li>
                         <li>
@@ -60,18 +61,18 @@
                                    ng-model="additionalFl.rangeMax"
                                    class="form-control"
                                    placeholder="To"
-                                   ng-change="validateInputPair('rangeMin', 'rangeMax')"/>
+                                   ng-change="validateInputPair('rangeMin', 'rangeMax')" required/>
                         </li>
                     </ul>
-                    <p class="text-danger" ng-if="aFilters.daysMin.$error.pattern && aFilters.daysMin.$dirty">
-                        Min day value should be a number
+                    <p class="text-danger" ng-if="aFilters.rangeMin.$error.pattern && aFilters.rangeMin.$dirty">
+                        Min rate value should be a number
                     </p>
-                    <p class="text-danger" ng-if="aFilters.daysMax.$error.pattern && aFilters.daysMax.$dirty">
-                        Max day value should be a number
+                    <p class="text-danger" ng-if="aFilters.rangeMax.$error.pattern && aFilters.rangeMax.$dirty">
+                        Max rate value should be a number
                     </p>
-                    <div ng-if="!aFilters.daysMax.$error.pattern && !aFilters.daysMin.$error.pattern">
-                        <p class="text-danger" ng-if="daysMin.requiredBothError">Both fields are required</p>
-                        <p class="text-danger" ng-if="daysMin.pairError && !daysMin.requiredBothError">Last day value can not be less than first one</p>
+                    <div ng-if="!aFilters.rangeMax.$error.pattern && !aFilters.rangeMin.$error.pattern">
+                        <p class="text-danger" ng-if="rangeMin.requiredBothError">Both fields are required</p>
+                        <p class="text-danger" ng-if="rangeMin.pairError && !rangeMin.requiredBothError">Last rate value can not be less than first one</p>
                     </div>
                 </li>
                 <li class="col-sm-3">
@@ -84,34 +85,34 @@
                         </ui-select-choices>
                     </ui-select>
                 </li>
-                <li class="col-xs-3">
+                <li class="col-xs-5">
                     <label>Working years:</label>
                     <ul class="list-inline input-pair">
                         <li>
-                            <input name="rangeMin" ng-pattern="/^\d{0,9}$/"
+                            <input name="wRangeMin" ng-pattern="/^\d{0,9}$/"
                                    ng-model="additionalFl.rangeMin"
                                    class="form-control"
                                    placeholder="From"
-                                   ng-change="validateInputPair('rangeMin', 'rangeMax')"/>
+                                   ng-change="validateInputPair('wRangeMin', 'wRangeMax')"/>
                         </li>
                         <li>-</li>
                         <li>
-                            <input name="rangeMax" ng-pattern="/^\d{0,9}$/"
+                            <input name="wRangeMax" ng-pattern="/^\d{0,9}$/"
                                    ng-model="additionalFl.rangeMax"
                                    class="form-control"
                                    placeholder="To"
-                                   ng-change="validateInputPair('rangeMin', 'rangeMax')"/>
+                                   ng-change="validateInputPair('wRangeMin', 'wRangeMax')"/>
                         </li>
                     </ul>
-                    <p class="text-danger" ng-if="aFilters.daysMin.$error.pattern && aFilters.daysMin.$dirty">
-                        Min day value should be a number
+                    <p class="text-danger" ng-if="aFilters.wRangeMin.$error.pattern && aFilters.wRangeMin.$dirty">
+                        Min working value should be a number
                     </p>
-                    <p class="text-danger" ng-if="aFilters.daysMax.$error.pattern && aFilters.daysMax.$dirty">
-                        Max day value should be a number
+                    <p class="text-danger" ng-if="aFilters.wRangeMax.$error.pattern && aFilters.wRangeMax.$dirty">
+                        Max working value should be a number
                     </p>
-                    <div ng-if="!aFilters.daysMax.$error.pattern && !aFilters.daysMin.$error.pattern">
-                        <p class="text-danger" ng-if="daysMin.requiredBothError">Both fields are required</p>
-                        <p class="text-danger" ng-if="daysMin.pairError && !daysMin.requiredBothError">Last day value can not be less than first one</p>
+                    <div ng-if="!aFilters.wRangeMax.$error.pattern && !aFilters.wRangeMin.$error.pattern">
+                        <p class="text-danger" ng-if="wRangeMin.requiredBothError">Both fields are required</p>
+                        <p class="text-danger" ng-if="wRangeMin.pairError && !wRangeMin.requiredBothError">Last working value can not be less than first one</p>
                     </div>
                 </li>
             </ul>
@@ -135,5 +136,10 @@
                 <a href="" class="reset" ng-click="reset()">Reset all</a>
             </div>
         </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div ui-view="filtersResult"></div>
     </div>
 </div>

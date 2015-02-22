@@ -74,6 +74,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
                 "mainView": {
                     templateUrl: 'assets/app/components/filters/filters.html',
                     controller: 'FiltersCtrl'
+                },
+                "filtersResult@filters": {
+                    templateUrl: 'assets/app/components/filters/noResult.html'
                 }
             }
         });
