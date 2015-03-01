@@ -6,8 +6,12 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
     function ($scope, $http, $userInfo) {
 
         $scope.filters = {};
+        $scope.tableState = {
+            isFound: false,
+            isEmpty: false
+        };
         $scope.refreshAddresses = function(address) {
-            var params = {address: address, sensor: false, language: 'uk'};
+            var params = {address: address, sensor: false, language: 'uk'}; //TODO: Update locale on the localization phase
             return $http.get(
                 'http://maps.googleapis.com/maps/api/geocode/json',
                 {params: params}
@@ -46,6 +50,7 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
             {name: 'Ukrainian'},
             {name: 'English'}
         ];
+        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 
         $scope.additionalFl = {};
         $scope.validateInputPair = function(_min, _max) {
@@ -75,6 +80,17 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
             $scope.filters = {};
         };
 
+        function convertTime(data) {
+            var data = data;
+            if (_.isEmpty(data)) {
+                return data;
+            }
+            angular.forEach(data, function(elem, index) {
+                if (_.isNull(data[index].birthDate)) return;
+                data[index].birthDate = moment(new Date(data[index].birthDate)).format($scope.formats[1]);
+            });
+            return data;
+        };
         $scope.getResults = function() {
             var params = {
                 // "city": $scope.filters.address ? $scope.filters.address.selected.name : undefined, TODO: backEnd support is needed
@@ -95,7 +111,13 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
 
             $http.get('/lawyers', { params: params })
                 .success(function (data, status, headers, config) {
-                    $scope.searchResponse = data;
+                    if ( _.isEmpty(data) ) {
+                        $scope.tableState.isFound = false;
+                        $scope.tableState.isEmpty = true
+                    }
+                    $scope.tableState.isFound = true;
+                    $scope.tableState.isEmpty = false;
+                    $scope.searchResponse = convertTime(data);
                 }).
                 error(function (data, status, headers, config) {
                     $scope.error = 'Unexpected error. Please try again later.';

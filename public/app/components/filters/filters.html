@@ -165,13 +165,13 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="text-center empty-section" ng-if="true">
-            <h4>You do not have search result yet, please use filters to get a suggestion.</h4>
+        <div class="text-center empty-section" ng-if="!tableState.isFound && !tableState.isEmpty">
+            <h4>You do not have search result yet, please use filters to get suggestions.</h4>
         </div>
-        <div class="text-center empty-section" ng-if="true">
+        <div class="text-center empty-section" ng-if="tableState.isEmpty">
             <h4>No search results found. Please, try another request</h4>
         </div>
-        <div ng-if="true">
+        <div ng-if="tableState.isFound">
             <div class="row">
                 <div class="col-sm-2">
                     <h5>Avatar</h5>
