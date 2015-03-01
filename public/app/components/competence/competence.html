@@ -1,0 +1,29 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h3>Competence</h3>
+            <h6>Please, enter your competences</h6>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="col-xs-6">
+            <label>Competence:</label>
+            <ui-select ng-model="filters.competence.selected" multiple
+                       theme="bootstrap"
+                       ng-disabled="disabled"
+                       reset-search-input="false">
+                <ui-select-match placeholder="Enter a Competence...">{{$item.name}}</ui-select-match>
+                <ui-select-choices repeat="competence in competences | filter: $select.search"
+                                   refresh-delay="0">
+                    <div ng-bind-html="competence.name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>{{competence.selected}}
+        </div>
+        <div class="panel-footer">
+            <button class="btn btn-default"
+                    type="button"
+                    ng-click="disable()">Edit mode
+            </button>
+        </div>
+    </div>
+</div>

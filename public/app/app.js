@@ -74,13 +74,17 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
                 "mainView": {
                     templateUrl: 'assets/app/components/filters/filters.html',
                     controller: 'FiltersCtrl'
-                },
-                "filtersResult@filters": {
-                    templateUrl: 'assets/app/components/filters/noResult.html'
+                }
+            }
+        }).state('competence', {
+            url: "/competences",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/app/components/competence/competence.html',
+                    controller: 'CompetenceCtrl'
                 }
             }
         });
-
         // Without server side support html5 must be disabled.
         return $locationProvider.html5Mode(false);
     }]);
