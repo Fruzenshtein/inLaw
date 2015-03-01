@@ -5,23 +5,7 @@
 App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
     function ($scope, $http, $userInfo) {
 
-        $scope.disabled = undefined;
-
-        $scope.enable = function() {
-            $scope.disabled = false;
-        };
-
-        $scope.disable = function() {
-            $scope.disabled = true;
-        };
-
-        $scope.clear = function() {
-            $scope.address.selected = undefined;
-            $scope.gender.selected = undefined;
-            $scope.language.selected = undefined;
-        };
-
-        $scope.address = {};
+        $scope.filters = {};
         $scope.refreshAddresses = function(address) {
             var params = {address: address, sensor: false, language: 'uk'};
             return $http.get(
@@ -31,26 +15,33 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
                     $scope.addresses = response.data.results;
                 });
         };
+        $scope.disabled = undefined;
+        $scope.enable = function() {
+            $scope.disabled = false;
+        };
+        $scope.disable = function() {
+            $scope.disabled = true;
+        };
+        $scope.clear = function() {
+            $scope.address.selected = undefined;
+            $scope.gender.selected = undefined;
+            $scope.language.selected = undefined;
+        };
 
-        $scope.profession = {};
         $scope.professions = [ //TODO: get from teh server
             {name: "Криминалньое"},
             {name: "Земельное"},
             {name: "Нотариус"}
         ];
-        $scope.competence = {};
         $scope.competences = [ //TODO: get from teh server
             {name: "Криминалньое"},
             {name: "Земельное"},
             {name: "Нотариус"}
         ];
-
-        $scope.gender = {};
         $scope.genderTypes = [ //TODO: get from teh server
             {name: 'Male'},
             {name: 'Famele'}
         ];
-        $scope.language = {};
         $scope.languages = [ //TODO: get from teh server
             {name: 'Ukrainian'},
             {name: 'English'}
@@ -79,9 +70,36 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
                 setInvalid();
             }
         };
-        $scope.removeFilter = function(filter) {
-            //TODO: reset all filters to default values
+        $scope.resetFilter = function() {
+            // Reset filters to default values
+            $scope.filters = {};
         };
 
+        $scope.getResults = function() {
+            var params = {
+                // "city": $scope.filters.address ? $scope.filters.address.selected.name : undefined, TODO: backEnd support is needed
+                "gender": $scope.filters.gender ? $scope.filters.gender.selected.name : undefined,
+                "firstName": $scope.filters.firstName,
+                "lastName": $scope.filters.lastName,
+                "middleName": $scope.filters.middleName,
+                // "birthDate": "", TODO: hided for now. Need clarification
+                // "competence": $scope.filters.competence ? $scope.filters.competence.selected.name : undefined, TODO: backEnd support is needed
+                // "profession": $scope.filters.profession ? $scope.filters.profession.selected.name : undefined, TODO: backEnd support is needed
+                // "language": $scope.filters.language ? $scope.filters.language.selected.name : undefined, TODO: backEnd support is needed
+                "minRate": $scope.filters.rangeMin,
+                // "maxRate": $scope.filters.rangeMax, TODO: backEnd support is needed
+                // "yearMin": $scope.filters.wRangeMin, TODO: backEnd support is needed
+                // "yearMax": $scope.filters.wRangeMax, TODO: backEnd support is needed
+                "availability": $scope.filters.availability
+            };
+
+            $http.get('/lawyers', { params: params })
+                .success(function (data, status, headers, config) {
+                    $scope.searchResponse = data;
+                }).
+                error(function (data, status, headers, config) {
+                    $scope.error = 'Unexpected error. Please try again later.';
+                });
+        };
 
     }]);
