@@ -8,22 +8,24 @@
     <div class="panel-body">
         <div class="col-xs-6">
             <label>Competence:</label>
-            <ui-select ng-model="filters.competence.selected" multiple
-                       theme="bootstrap"
-                       ng-disabled="disabled"
-                       reset-search-input="false">
-                <ui-select-match placeholder="Enter a Competence...">{{$item.name}}</ui-select-match>
-                <ui-select-choices repeat="competence in competences | filter: $select.search"
-                                   refresh-delay="0">
-                    <div ng-bind-html="competence.name | highlight: $select.search"></div>
+            <ui-select multiple
+                       tagging
+                       tagging-label="(custom 'new' label)"
+                       ng-model="myCompetences.competences"
+                       theme="bootstrap" sortable="true"
+                       ng-disabled="formStatus.isEditModeOpen"
+                       title="Choose a competence">
+                <ui-select-match placeholder="Enter a Competence...">{{$item}}</ui-select-match>
+                <ui-select-choices repeat="competence in competences | filter:$select.search">
+                    {{competence}}
                 </ui-select-choices>
-            </ui-select>{{competence.selected}}
+            </ui-select>
         </div>
-        <div class="panel-footer">
-            <button class="btn btn-default"
-                    type="button"
-                    ng-click="disable()">Edit mode
-            </button>
-        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-default"
+                type="button"
+                ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit mode
+        </button>
     </div>
 </div>
