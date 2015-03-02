@@ -1,8 +1,9 @@
 package controllers
 
+import javax.ws.rs.QueryParam
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import controllers.Security
 import forms.UserAccountForms
 import play.api.mvc._
 
@@ -76,8 +77,13 @@ object LawyerController extends Controller with UserAccountForms with Security {
     response = classOf[models.swagger.LawyerSearchResult])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Lawyers list")))
-  def filterLawyers(gender: Option[String], minRate: Option[Int], minExp: Option[Int], maxExp: Option[Int],
-                    competence: Option[String], language: Option[String], availability: Option[Boolean]) = Action.async {
+  def filterLawyers(@QueryParam("gender") gender: Option[String],
+                    @QueryParam("minRate") minRate: Option[Int],
+                    @QueryParam("minExp") minExp: Option[Int],
+                    @QueryParam("maxExp") maxExp: Option[Int],
+                    @QueryParam("competence") competence: Option[String],
+                    @QueryParam("language") language: Option[String],
+                    @QueryParam("availability") availability: Option[Boolean]) = Action.async {
 
     val generalQuery = Json.obj("profile.active" -> true)
 
@@ -160,5 +166,62 @@ object LawyerController extends Controller with UserAccountForms with Security {
       case Some(a) => generalQuery deepMerge Json.obj("profile.availability" -> a)
       case None => generalQuery
     }
+  }
+
+  @ApiOperation(
+    nickname = "lawyerById",
+    value = "Get lawyer by ID",
+    notes = "Get lawyer by ID",
+    httpMethod = "GET",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Lawyer object"),
+    new ApiResponse(code = 404, message = "Lawyer not found")))
+  def findById(@QueryParam("id") id: String) = Action.async {
+    implicit request =>
+
+      Logger.info(s"Looking for Lawyer with id: $id")
+      LawyerService.findById(id) map {
+        case Some(lawyer) => {
+          val lawyerJson = Json.obj("avatar" -> lawyer.avatar, "createdAt" -> lawyer.createdAt)
+
+          val profileJson = lawyer.profile match {
+            case Some(profile) => Json.obj("profile" -> profile)
+            case None => Json.obj()
+          }
+
+          //lawyerJson deepMerge profileJson
+
+          val contactsJson = lawyer.contacts match {
+            case Some(contacts) => Json.obj("contacts" -> contacts)
+            case None => Json.obj()
+          }
+
+          val educationJson = lawyer.education match {
+            case Some(education) => Json.obj("education" -> education)
+            case None => Json.obj()
+          }
+
+          val experienceJson = lawyer.experience match {
+            case Some(experience) => Json.obj("experience" -> experience)
+            case None => Json.obj()
+          }
+
+          val competencesJson = lawyer.competences match {
+            case Some(competences) => Json.obj("competences" -> competences)
+            case None => Json.obj()
+          }
+
+          Ok(lawyerJson deepMerge
+            profileJson deepMerge
+            contactsJson deepMerge
+            educationJson deepMerge
+            experienceJson deepMerge
+            competencesJson)
+        }
+        case None => NotFound
+      }
+
+
   }
 }

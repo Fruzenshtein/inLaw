@@ -31,7 +31,7 @@ object LawyerService {
   }
 
   def findById(id: String): Future[Option[Lawyer]] = {
-    val query = Json.obj("_id" -> Json.obj("$oid" -> id))
+    val query = Json.obj("profile.active" -> true, "_id" -> Json.obj("$oid" -> id))
     val account = collection.find(query).one[Lawyer]
     account
   }

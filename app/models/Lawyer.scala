@@ -65,7 +65,7 @@ object Lawyer {
       avatar = None,
       bearerToken = None,
       createdAt = new DateTime(),
-      profile = Some(Profile(None, None, None, None, None, None, active = true, availability = true)),
+      profile = Some(Profile(None, None, None, None, None, None, true, true)),
       contacts = None,
       education = None,
       experience = Some(Experience(0, None)),
@@ -82,8 +82,8 @@ case class Profile(gender: Option[String],
                    middleName: Option[String],
                    birthDate: Option[Date],
                    minRate: Option[Int],
-                   active: Boolean,
-                   availability: Boolean)
+                   active: Boolean = true,
+                   availability: Boolean = true)
 
 object Profile {
 
