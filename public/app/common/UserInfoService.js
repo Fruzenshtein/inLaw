@@ -9,7 +9,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         contacts        : '/lawyers/contacts',
         university      : '/lawyers/universities',
         certificates    : '/lawyers/certificates',
-        experiences     : '/lawyers/experience'
+        experiences     : '/lawyers/experience',
+        competence      : '/lawyers/competences'
         },
         baseProfileURL = function(url) {
             return $http({
@@ -68,6 +69,14 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         });
     };
 
+    function getUserCompetences() {
+        return baseProfileURL(urlConfig.competence).then(function(onFulfilled) {
+            return onSuccess(onFulfilled);
+        },function(onReject) {
+            return onError(onReject);
+        });
+    };
+
     function isAuthenticated(data) {
 
         if( _.isEmpty(data['data']) ) {
@@ -112,6 +121,10 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                         _jsonData['data']['workPlaces'] : {} ;
                     deferred.resolve(info['experiences']);
                     return deferred.promise;
+                case urlConfig.competence:
+                    info['competences'] = _jsonData['data'];
+                    deferred.resolve(_jsonData['data']);
+                    return deferred.promise;
                 default:
                     onError(data); //TODO return error object and pass to reject()
                     deferred.reject();
@@ -133,11 +146,13 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         getUserUniversity   : getUserUniversity,
         getUserCertificates : getUserCertificates,
         getUserExperience   : getUserExperience,
+        getUserCompetences  : getUserCompetences,
         profile             : {},
         contacts            : {},
         universities        : {},
         certificates        : {},
         experiences         : {},
+        competences         : {},
         allowed             : false
     };
     return info;

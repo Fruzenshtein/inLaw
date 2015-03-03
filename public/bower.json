@@ -2,9 +2,9 @@
   "name": "InLaw",
   "version": "0.0.1",
   "dependencies": {
-    "angular": "1.3.8",
+    "angular": "~1.3.14",
     "angular-ui-router": "git+https://github.com/angular-ui/ui-router.git",
-    "angular-ui-select": "~0.9.6",
+    "angular-ui-select": "~0.10.0",
     "restangular": "1.4.0",
     "angular-bootstrap": "0.12.0",
     "bootstrap": "3.3.1",
