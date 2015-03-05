@@ -102,13 +102,35 @@ object LawyerController extends Controller with UserAccountForms with Security {
       val lawyerJson = Json.obj("id" -> lawyer._id.get.stringify, "avatar" -> lawyer.avatar, "createdAt" -> lawyer.createdAt)
 
       val profileJson = lawyer.profile match {
-        case Some(profile) => Json.obj("gender" -> profile.gender, "firstName" -> profile.firstName,
-          "lastName" -> profile.lastName, "middleName" -> profile.middleName, "birthDate" -> profile.birthDate,
-          "minRate" -> profile.minRate, "availability" -> profile.availability)
+        case Some(profile) => Json.obj("profile" ->
+            Json.obj("gender" -> profile.gender, "firstName" -> profile.firstName,
+            "lastName" -> profile.lastName, "middleName" -> profile.middleName, "birthDate" -> profile.birthDate,
+            "minRate" -> profile.minRate, "availability" -> profile.availability)
+          )
         case None => Json.obj()
       }
 
-      lawyerJson deepMerge profileJson
+      val contactsJson = lawyer.contacts match {
+        case Some(contacts) => Json.obj("contacts" -> contacts)
+        case None => Json.obj()
+      }
+
+      val educationJson = lawyer.education match {
+        case Some(education) => Json.obj("education" -> education)
+        case None => Json.obj()
+      }
+
+      val experienceJson = lawyer.experience match {
+        case Some(experience) => Json.obj("experience" -> experience)
+        case None => Json.obj()
+      }
+
+      val competencesJson = lawyer.competences match {
+        case Some(competences) => Json.obj("competences" -> competences)
+        case None => Json.obj()
+      }
+
+      lawyerJson deepMerge profileJson deepMerge contactsJson deepMerge educationJson deepMerge experienceJson deepMerge competencesJson
     }
 
     futureLawyers map {
