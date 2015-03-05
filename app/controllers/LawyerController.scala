@@ -97,42 +97,6 @@ object LawyerController extends Controller with UserAccountForms with Security {
 
     val futureLawyers = LawyerService.filterLawyers(finalQuery)
 
-    def lawyerToJson(lawyer: Lawyer): JsObject = {
-
-      val lawyerJson = Json.obj("id" -> lawyer._id.get.stringify, "avatar" -> lawyer.avatar, "createdAt" -> lawyer.createdAt)
-
-      val profileJson = lawyer.profile match {
-        case Some(profile) => Json.obj("profile" ->
-            Json.obj("gender" -> profile.gender, "firstName" -> profile.firstName,
-            "lastName" -> profile.lastName, "middleName" -> profile.middleName, "birthDate" -> profile.birthDate,
-            "minRate" -> profile.minRate, "availability" -> profile.availability)
-          )
-        case None => Json.obj()
-      }
-
-      val contactsJson = lawyer.contacts match {
-        case Some(contacts) => Json.obj("contacts" -> contacts)
-        case None => Json.obj()
-      }
-
-      val educationJson = lawyer.education match {
-        case Some(education) => Json.obj("education" -> education)
-        case None => Json.obj()
-      }
-
-      val experienceJson = lawyer.experience match {
-        case Some(experience) => Json.obj("experience" -> experience)
-        case None => Json.obj()
-      }
-
-      val competencesJson = lawyer.competences match {
-        case Some(competences) => Json.obj("competences" -> competences)
-        case None => Json.obj()
-      }
-
-      lawyerJson deepMerge profileJson deepMerge contactsJson deepMerge educationJson deepMerge experienceJson deepMerge competencesJson
-    }
-
     futureLawyers map {
       case seqLawyers => {
         Ok(Json.toJson(seqLawyers map(lawyer => lawyerToJson(lawyer))))
@@ -190,6 +154,42 @@ object LawyerController extends Controller with UserAccountForms with Security {
     }
   }
 
+  private def lawyerToJson(lawyer: Lawyer): JsObject = {
+
+    val lawyerJson = Json.obj("id" -> lawyer._id.get.stringify, "avatar" -> lawyer.avatar, "createdAt" -> lawyer.createdAt)
+
+    val profileJson = lawyer.profile match {
+      case Some(profile) => Json.obj("profile" ->
+        Json.obj("gender" -> profile.gender, "firstName" -> profile.firstName,
+          "lastName" -> profile.lastName, "middleName" -> profile.middleName, "birthDate" -> profile.birthDate,
+          "minRate" -> profile.minRate, "availability" -> profile.availability)
+      )
+      case None => Json.obj()
+    }
+
+    val contactsJson = lawyer.contacts match {
+      case Some(contacts) => Json.obj("contacts" -> contacts)
+      case None => Json.obj()
+    }
+
+    val educationJson = lawyer.education match {
+      case Some(education) => Json.obj("education" -> education)
+      case None => Json.obj()
+    }
+
+    val experienceJson = lawyer.experience match {
+      case Some(experience) => Json.obj("experience" -> experience)
+      case None => Json.obj()
+    }
+
+    val competencesJson = lawyer.competences match {
+      case Some(competences) => Json.obj("competences" -> competences)
+      case None => Json.obj()
+    }
+
+    lawyerJson deepMerge profileJson deepMerge contactsJson deepMerge educationJson deepMerge experienceJson deepMerge competencesJson
+  }
+
   @ApiOperation(
     nickname = "lawyerById",
     value = "Get lawyer by ID",
@@ -205,43 +205,15 @@ object LawyerController extends Controller with UserAccountForms with Security {
       Logger.info(s"Looking for Lawyer with id: $id")
       LawyerService.findById(id) map {
         case Some(lawyer) => {
-          val lawyerJson = Json.obj("avatar" -> lawyer.avatar, "createdAt" -> lawyer.createdAt)
-
-          val profileJson = lawyer.profile match {
-            case Some(profile) => Json.obj("profile" -> profile)
-            case None => Json.obj()
+          lawyer.profile match {
+            case Some(profile) => profile.active match {
+              case true => Ok(lawyerToJson(lawyer))
+              case false => BadRequest(Json.obj("message" -> "Lawyer is not active"))
+            }
+            case None => BadRequest(Json.obj("message" -> "Lawyer is not active"))
           }
-
-          //lawyerJson deepMerge profileJson
-
-          val contactsJson = lawyer.contacts match {
-            case Some(contacts) => Json.obj("contacts" -> contacts)
-            case None => Json.obj()
-          }
-
-          val educationJson = lawyer.education match {
-            case Some(education) => Json.obj("education" -> education)
-            case None => Json.obj()
-          }
-
-          val experienceJson = lawyer.experience match {
-            case Some(experience) => Json.obj("experience" -> experience)
-            case None => Json.obj()
-          }
-
-          val competencesJson = lawyer.competences match {
-            case Some(competences) => Json.obj("competences" -> competences)
-            case None => Json.obj()
-          }
-
-          Ok(lawyerJson deepMerge
-            profileJson deepMerge
-            contactsJson deepMerge
-            educationJson deepMerge
-            experienceJson deepMerge
-            competencesJson)
         }
-        case None => NotFound
+        case None => NotFound(Json.obj("message" -> s"Lawyer with $id is not found"))
       }
 
 
