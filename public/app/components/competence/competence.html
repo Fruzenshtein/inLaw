@@ -12,6 +12,8 @@
                        tagging="tagTransform"
                        tagging-label="(custom 'new' label)"
                        ng-model="myCompetences.competences"
+                       on-select="setCompetence($item, 'select')"
+                       on-remove="setCompetence($item, 'remove')"
                        theme="bootstrap" sortable="true"
                        ng-disabled="formStatus.isEditModeOpen"
                        title="Choose a competence">

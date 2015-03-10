@@ -4,9 +4,6 @@
 App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
     function ($scope, $http, $userInfo, $timeout) {
 
-        $scope.myCompetences = {};
-        $scope.myCompetences.competences = [];
-        $scope.competences = [];
         // if data had saved before, do not send a request
         if ( _.isEmpty($userInfo.competences) ) {
             var promiseGetCompetences = $userInfo.getUserCompetences();
@@ -17,6 +14,9 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
             });
         };
 
+        $scope.myCompetences = {};
+        $scope.myCompetences.competences = $userInfo.competences || [];
+        $scope.competences = [];
         $scope.formStatus = {
             isEditModeOpen: true,
             isEditModeDisabled: false
@@ -35,13 +35,24 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
             };
             return item;
         };
-     /*
-        $scope.competences = [ //TODO: get from the server the list of labels
-            "Криминалньое",
-            "Земельное",
-            "Нотариус"
-        ];
-     */
+        $scope.setCompetence = function(competence, event) {
+            var competence = {competence: competence.name},
+                method = event == 'select' ? 'POST' : 'DELETE';
+            $http({
+                method: method,
+                url: '/lawyers/competences',
+                data: competence,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                }
+            }).
+                success(function (data, status, headers, config) {
 
+                }).
+                error(function (data, status, headers, config) {
+                    $scope.error = 'Unexpected error. Please try again later.';
+                });
+        }
 
     }]);
