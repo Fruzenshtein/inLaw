@@ -86,7 +86,7 @@
                                 ng-click="addPhone()">Add phone</button>
                     </div>
                 </div>
-                <div class="list-group" ng-repeat="phone in userContacts.phones track by phone['number']">
+                <div class="list-group" ng-repeat="phone in userContacts.phones track by phone['id']">
                     <div class="red-text" ng-show="contacts.phoneNumber.$dirty && contacts.phoneNumber.$invalid">
                         <small class="red-text" ng-show="contacts.middleName.$error.required">
                             Your phone is required
@@ -104,7 +104,8 @@
                                name="phoneNumber"
                                class="form-control"
                                placeholder="Phone number"
-                               ng-model="phone.number" required>
+                               ng-model="phone.number"
+                               ng-blur="isNumberUnique(phone.number)" required>
                     </div>
                 </div>
             </div>

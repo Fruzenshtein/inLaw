@@ -18,7 +18,7 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', function($scope,
         }).
             success(function(data, status, headers, config) {
                 //userinfo.getUserData(); TBD... if appropriate info need to be shown
-                sessionStorage.setItem(signUp.email, data.token);
+                sessionStorage.setItem('token', data.token);
                 $state.go('landing');
             }).
             error(function(data, status, headers, config) {

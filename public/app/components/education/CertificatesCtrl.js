@@ -24,10 +24,28 @@ App.controller('CertificatesCtrl', ['$scope', '$http', '$userInfo', function($sc
     };
     $scope.removeCertificate = function(obj) {
         angular.forEach($scope.certificates, function(elem, index) {
-            if ( $scope.certificates[index]['id'] == obj['id'] ) {
+            // if user added a form that not saved on the server yet, just delete UI
+            if ($userInfo.certificates.length != $scope.certificates.length &&
+                $scope.certificates[index]['id'] == obj['id']) {
                 $scope.certificates.splice(index, 1);
+                return;
             }
-            // TODO: API call
+            if ( $scope.certificates[index]['id'] == obj['id'] ) {
+                $http({
+                    method: 'DELETE',
+                    url: '/lawyers/certificates/' + obj['id'],
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                }).
+                    success(function (data, status, headers, config) {
+                        $scope.certificates.splice(index, 1);
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                    });
+            }
         })
     };
 

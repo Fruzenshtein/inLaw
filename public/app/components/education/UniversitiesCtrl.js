@@ -25,10 +25,28 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
         };
         $scope.removeUniversity = function(obj) {
             angular.forEach($scope.universities, function(elem, index) {
-                if ( $scope.universities[index]['id'] == obj['id'] ) {
+                // if user added a form that not saved on the server yet, just delete UI
+                if ($userInfo.universities.length != $scope.universities.length &&
+                    $scope.universities[index]['id'] == obj['id']) {
                     $scope.universities.splice(index, 1);
+                    return;
                 }
-                // TODO: API call
+                if ( $scope.universities[index]['id'] == obj['id'] ) {
+                    $http({
+                        method: 'DELETE',
+                        url: '/lawyers/universities/' + obj['id'],
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                        }
+                    }).
+                        success(function (data, status, headers, config) {
+                            $scope.universities.splice(index, 1);
+                        }).
+                        error(function (data, status, headers, config) {
+                            $scope.error = 'Unexpected error. Please try again later.';
+                        });
+                }
             })
         };
 

@@ -25,7 +25,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
 
     //TODO: add a parser to check if a user has updated some form before or no
     //TODO: (by 'id') and send appropriate request PUT or POST
-    function isNewUser() {
+    function isFormModified(onFulfilled) {
 
     };
 
@@ -79,10 +79,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
 
     function isAuthenticated(data) {
 
-        if( _.isEmpty(data['data']) ) {
-            //TODO
-            return false;
-        } else if (data['status'] == 401) {
+      if (data['status'] == 401) {
             $state.go('login');
             return false;
         } else if (data['status'] == 200) {

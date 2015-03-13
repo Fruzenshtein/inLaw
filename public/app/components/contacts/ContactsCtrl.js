@@ -4,11 +4,18 @@
 App.controller('ContactsCtrl', ['$scope', '$http',
     '$filter', '$userInfo', function ($scope, $http, $filter, $userInfo) {
 
+        // Default template for phone number
+        var defaultPhoneTemplate = [{
+            id: 'phone',
+            name: 'Work',
+            number: ''
+        }];
         // if data saved before do not send request
         if (_.isEmpty($userInfo.contacts)) {
-            var promiseGetProfile = $userInfo.getUserContacts();
-            promiseGetProfile.then(function (onFulfilled) {
+            var promiseGetContacts = $userInfo.getUserContacts();
+            promiseGetContacts.then(function (onFulfilled) {
                 $scope.userContacts = onFulfilled || {};
+                $scope.userContacts.phones = onFulfilled ? onFulfilled : defaultPhoneTemplate;
             }, function (onReject) {
                 $scope.userContacts = {};
             });
@@ -18,15 +25,8 @@ App.controller('ContactsCtrl', ['$scope', '$http',
             isEditModeOpen: true,
             isEditModeDisabled: false
         };
-
-        //TODO Add validation on phone numbers, it should be unique (ngRepeat based on number)
         $scope.phoneCounter = 0;
-        $scope.userContacts.phones = $userInfo.contacts.phones ||
-        [{
-            id: 'phone',
-            name: 'Work',
-            number: ''
-        }];
+        $scope.userContacts.phones = $userInfo.contacts.phones || defaultPhoneTemplate;
         $scope.addPhone = function () {
             $scope.phoneTemplate = {
                 id: 'phone' + $scope.phoneCounter,
@@ -39,6 +39,15 @@ App.controller('ContactsCtrl', ['$scope', '$http',
         $scope.removePhone = function () {
             $scope.phoneCounter -= 1;
             $scope.phones.length -= 1;
+        };
+
+        $scope.isNumberUnique = function(value) {
+            if (value == '') return;
+            angular.forEach($scope.userContacts.phones, function(elem, index) {
+                if (elem['number'] == value)
+                    console.log(elem['number']);
+                    return true;
+            })
         };
         $scope.updateContacts = function (contacts) {
             $http({
