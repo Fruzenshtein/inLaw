@@ -236,6 +236,7 @@ object LawyerService {
           updateTotalExp
         )
       }
+      case _ => Logger.info("Total experience wan not Int")
     }
 
   }
