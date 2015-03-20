@@ -1,0 +1,38 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h3>Competence</h3>
+            <h6>Please, enter your competences</h6>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="col-xs-6">
+            <label>Competence:</label>
+            <ui-select multiple
+                       tagging="tagTransform"
+                       tagging-label="(custom 'new' label)"
+                       ng-model="myCompetences.competences"
+                       on-select="setCompetence($item, 'select')"
+                       on-remove="setCompetence($item, 'remove')"
+                       theme="bootstrap" sortable="true"
+                       ng-disabled="formStatus.isEditModeOpen"
+                       title="Choose a competence">
+                <ui-select-match placeholder="Enter a Competence...">{{$item.name}}</ui-select-match>
+                <ui-select-choices repeat="competence in competences track by $index"
+                                   refresh="refreshCompetences($select.search)"
+                                   refresh-delay="0">
+                    <div ng-if="competence.isTag" ng-bind-html="'<small>(new)</small>'"></div>
+                    <small>
+                        {{competence.name}}
+                    </small>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-default"
+                type="button"
+                ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit mode
+        </button>
+    </div>
+</div>

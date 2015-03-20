@@ -1,0 +1,205 @@
+<div class="panel panel-default">
+    <div class="panel-heading">Srearch for lawyers</div>
+    <div id="filters-block panel-body">
+        <form name="aFilters" class="menu-band container-fluid additional-filters" ng-show="true">
+            <ul class="row-fluid clearfix list-unstyled">
+                <li class="col-xs-3">
+                    <label>First name:</label>
+                    <input type="text" class="form-control"
+                           name="firstName"
+                           ng-model="filters.firstName"
+                           placeholder="First name"/>
+                </li>
+                <li class="col-xs-3">
+                    <label>Last name:</label>
+                    <input type="text" class="form-control"
+                           name="LastName"
+                           ng-model="filters.LastName"
+                           placeholder="Last name"/>
+                </li>
+                <li class="col-xs-3">
+                    <label>Middle name:</label>
+                    <input type="text" class="form-control"
+                           name="middleName"
+                           ng-model="filters.middleName"
+                           placeholder="Midle name"/>
+                </li>
+            </ul>
+            <ul class="row-fluid clearfix list-unstyled">
+                <li class="col-xs-3">
+                    <label>City:</label>
+                    <ui-select ng-model="filters.address.selected"
+                               theme="bootstrap"
+                               ng-disabled="disabled"
+                               reset-search-input="false">
+                        <ui-select-match placeholder="Enter a city...">{{$select.selected.formatted_address}}</ui-select-match>
+                        <ui-select-choices repeat="address in addresses track by $index"
+                                           refresh="refreshAddresses($select.search)"
+                                           refresh-delay="0">
+                            <div ng-bind-html="address.formatted_address | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </li>
+                <li class="col-xs-3">
+                    <label>Profession:</label>
+                    <ui-select ng-model="filters.profession.selected"
+                               theme="bootstrap"
+                               ng-disabled="disabled"
+                               reset-search-input="false">
+                        <ui-select-match placeholder="Enter a profession...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="profession in professions | filter: $select.search"
+                                           refresh-delay="0">
+                            <div ng-bind-html="profession.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </li>
+                <li class="col-xs-6">
+                    <label>Competence:</label>
+                    <ui-select ng-model="filters.competence.selected" multiple
+                               theme="bootstrap"
+                               ng-disabled="disabled"
+                               reset-search-input="false">
+                        <ui-select-match placeholder="Enter a Competence...">{{$item.name}}</ui-select-match>
+                        <ui-select-choices repeat="competence in competences | filter: $select.search"
+                                           refresh-delay="0">
+                            <div ng-bind-html="competence.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>{{competence.selected}}
+                </li>
+            </ul>
+            <ul class="row-fluid clearfix list-unstyled">
+                <li class="col-xs-5">
+                    <label>Rate:</label>
+                    <ul class="list-inline input-pair">
+                        <li>
+                            <input name="rangeMin" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="filters.rangeMin"
+                                   class="form-control"
+                                   placeholder="From"
+                                   ng-change="validateInputPair('rangeMin', 'rangeMax')" required/>
+                        </li>
+                        <li>-</li>
+                        <li>
+                            <input name="rangeMax" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="filters.rangeMax"
+                                   class="form-control"
+                                   placeholder="To"
+                                   ng-change="validateInputPair('rangeMin', 'rangeMax')" required/>
+                        </li>
+                    </ul>
+                    <p class="text-danger" ng-if="aFilters.rangeMin.$error.pattern && aFilters.rangeMin.$dirty">
+                        Min rate value should be a number
+                    </p>
+                    <p class="text-danger" ng-if="aFilters.rangeMax.$error.pattern && aFilters.rangeMax.$dirty">
+                        Max rate value should be a number
+                    </p>
+                    <div ng-if="!aFilters.rangeMax.$error.pattern && !aFilters.rangeMin.$error.pattern">
+                        <p class="text-danger" ng-if="rangeMin.requiredBothError">Both fields are required</p>
+                        <p class="text-danger" ng-if="rangeMin.pairError && !rangeMin.requiredBothError">Last rate value can not be less than first one</p>
+                    </div>
+                </li>
+                <li class="col-sm-3">
+                    <label>Gender:</label>
+                    <ui-select ng-model="filters.gender.selected" theme="bootstrap" ng-disabled="disabled">
+                        <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
+                            <span ng-bind-html="gender.name | highlight: $select.search"></span>
+                            <small ng-bind-html="gender.code | highlight: $select.search"></small>
+                        </ui-select-choices>
+                    </ui-select>
+                </li>
+                <li class="col-xs-5">
+                    <label>Working years:</label>
+                    <ul class="list-inline input-pair">
+                        <li>
+                            <input name="wRangeMin" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="filters.wRangeMin"
+                                   class="form-control"
+                                   placeholder="From"
+                                   ng-change="validateInputPair('wRangeMin', 'wRangeMax')"/>
+                        </li>
+                        <li>-</li>
+                        <li>
+                            <input name="wRangeMax" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="filters.wRangeMax"
+                                   class="form-control"
+                                   placeholder="To"
+                                   ng-change="validateInputPair('wRangeMin', 'wRangeMax')"/>
+                        </li>
+                    </ul>
+                    <p class="text-danger" ng-if="aFilters.wRangeMin.$error.pattern && aFilters.wRangeMin.$dirty">
+                        Min working value should be a number
+                    </p>
+                    <p class="text-danger" ng-if="aFilters.wRangeMax.$error.pattern && aFilters.wRangeMax.$dirty">
+                        Max working value should be a number
+                    </p>
+                    <div ng-if="!aFilters.wRangeMax.$error.pattern && !aFilters.wRangeMin.$error.pattern">
+                        <p class="text-danger" ng-if="wRangeMin.requiredBothError">Both fields are required</p>
+                        <p class="text-danger" ng-if="wRangeMin.pairError && !wRangeMin.requiredBothError">Last working value can not be less than first one</p>
+                    </div>
+                </li>
+            </ul>
+            <ul class="row-fluid clearfix list-unstyled">
+                <li class="col-sm-3">
+                    <label>Language:</label>
+                    <ui-select ng-model="filters.language.selected" theme="bootstrap" ng-disabled="disabled">
+                        <ui-select-match placeholder="Select a language in the list...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="language in languages | filter: $select.search">
+                            <span ng-bind-html="language.name | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </li>
+                <li>
+                    <label>Availability:</label>
+                    <input type="checkbox" name="availability"
+                            ng-model="filters.availability"/>
+                </li>
+            </ul>
+            <div class="basic-filters">
+                <a href="" class="btn btn-primary"
+                        ng-click="getResults()">Show results</a>
+                <a href="" class="reset" ng-click="resetFilter()">Reset all</a>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="text-center empty-section" ng-if="!tableState.isFound && !tableState.isEmpty">
+            <h4>You do not have search result yet, please use filters to get suggestions.</h4>
+        </div>
+        <div class="text-center empty-section" ng-if="tableState.isEmpty">
+            <h4>No search results found. Please, try another request</h4>
+        </div>
+        <div ng-if="tableState.isFound">
+            <div class="row">
+                <div class="col-sm-2">
+                    <h5>Avatar</h5>
+                </div>
+                <div class="col-sm-2">
+                    <h5>First name</h5>
+                </div>
+                <div class="col-sm-2">
+                    <h5>Last name</h5>
+                </div>
+                <div class="col-sm-2">
+                    <h5>Middle name</h5>
+                </div>
+                <div class="col-sm-2">
+                    <h5>Birthday</h5>
+                </div>
+                <div class="col-sm-2">
+                    <h5>Rate</h5>
+                </div>
+            </div>
+            <div class="row" ng-repeat="lawyer in searchResponse">
+                <div class="col-sm-2">{{lawyer.avatar}}</div>
+                <div class="col-sm-2">{{lawyer.firstName}}</div>
+                <div class="col-sm-2">{{lawyer.lastName}}</div>
+                <div class="col-sm-2">{{lawyer.middleName}}</div>
+                <div class="col-sm-2">{{lawyer.birthDate}}</div>
+                <div class="col-sm-2">{{lawyer.minRate}}</div>
+            </div>
+        </div>
+    </div>
+</div>

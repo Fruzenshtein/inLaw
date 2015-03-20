@@ -1,0 +1,113 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h3>Experience</h3>
+            <div>
+                <button type="button"
+                        class="btn btn-default btn-sm"
+                        ng-click="addExperience()">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Experience
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body" ng-repeat="experience in experiences track by experience['id']">
+        <fieldset ng-disabled="formStatus.isEditModeOpen">
+            <form name="experienceForm" novalidate>
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true" ng-click="removeExperience(experience)">&times;</span>
+                </button>
+                <div class="form-group">
+                    <label for="expName">Company Name</label>
+                    <input type="text"
+                           ng-model="experience.name"
+                           class="form-control"
+                           id="expName"
+                           placeholder="Enter company name" required>
+                </div>
+                <div class="form-group">
+                    <label for="faculty">Position</label>
+                    <input type="text"
+                           ng-model="experience.position"
+                           class="form-control"
+                           id="faculty"
+                           placeholder="Enter your position">
+                </div>
+                <div class="form-group">
+                    <label for="responsibilities">Responsibilities</label>
+                    <textarea class="form-control"
+                              rows="3"
+                              ng-model="experience.responsibilities"
+                              id="responsibilities"
+                              placeholder="Responsibilities" required>
+
+                    </textarea>
+                </div>
+                <div class="form-group">
+                    <label for="responsibilities">Time Period</label>
+                    <div class=""> <!-- /. start year picker -->
+                        <div class="col-md-3">
+                            <p class="input-group">
+                                <input type="text"
+                                       class="form-control"
+                                       ng-model="experience.startDate"
+                                       datepicker-popup="MM-yyyy"
+                                       datepicker-options="dateOptions"
+                                       min-mode="'year'"
+                                       max-date="maxDate"
+                                       min-date="minDate"
+                                       datepicker-mode="'month'"
+                                       show-button-bar="false"
+                                       is-open="openedStart"
+                                       ng-required="true"
+                                       placeholder="Select start year"/>
+                      <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-default"
+                                ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                      </span>
+                            </p>
+                        </div>
+                    </div> <!-- /. close Start year picker  -->
+                    <div class=""> <!-- /. start End year picker -->
+                        <div class="col-md-3">
+                            <p class="input-group">
+                                <input type="text"
+                                       class="form-control"
+                                       ng-model="experience.endDate"
+                                       datepicker-popup="MM-yyyy"
+                                       datepicker-options="dateOptions"
+                                       min-mode="'year'"
+                                       max-date="maxDate"
+                                       min-date="minDate"
+                                       datepicker-mode="'month'"
+                                       show-button-bar="false"
+                                       is-open="openedEnd"
+                                       ng-required="true"
+                                       placeholder="Select end year"/>
+                      <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-default"
+                                ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                      </span>
+                            </p>
+                        </div>
+                    </div> <!-- /. close End year picker  -->
+                </div>
+                <div class="clearfix"></div>{{experiences}}
+            </form>
+        </fieldset>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-default"
+                type="button"
+                ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit mode</button>
+        <button class="btn btn-default"
+                type="button"
+                ng-disabled="formStatus.isEditModeOpen"
+                ng-click="updateExperience(experiences)">Update Experience
+        </button>
+        <p ng-show="error" class="text-danger">{{ error }}</p>
+        <p ng-show="isUpdated" class="text-danger">You have successfully updated the form!</p>
+    </div>
+</div>

@@ -1,0 +1,110 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h3>Education</h3>
+            <div>
+                <button type="button"
+                        class="btn btn-default btn-sm"
+                        ng-click="addUniversity()">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Education
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body" ng-repeat="university in universities track by university['id']">
+        <fieldset ng-disabled="formStatus.isEditModeOpen">
+            <form name="universityForm" novalidate>
+                <button type="button"
+                        class="close"
+                        aria-label="Close"><span aria-hidden="true" ng-click="removeUniversity(university)">&times;</span>
+                </button>
+                <div class="form-group">
+                    <label for="school">School</label>
+                    <input type="text"
+                           ng-model="university.name"
+                           class="form-control"
+                           id="school"
+                           placeholder="Enter school name" required>
+                </div>
+                <div class="form-group">
+                    <label for="faculty">Faculty</label>
+                    <input type="text"
+                           ng-model="university.faculty"
+                           class="form-control"
+                           id="faculty"
+                           placeholder="Faculty">
+                </div>
+                <div class="form-group">
+                    <label for="degree">Degree</label>
+                    <input type="text"
+                           ng-model="university.degree"
+                           class="form-control"
+                           id="degree"
+                           placeholder="Degree" required>
+                </div>
+                <div class=""> <!-- /. start year picker -->
+                    <div class="col-md-3">
+                        <p class="input-group">
+                            <input type="text"
+                                   class="form-control"
+                                   ng-model="university.startDate"
+                                   datepicker-popup="yyyy"
+                                   datepicker-options="dateOptions"
+                                   min-mode="'year'"
+                                   max-date="maxDate"
+                                   min-date="minDate"
+                                   datepicker-mode="'year'"
+                                   show-button-bar="false"
+                                   is-open="openedStart"
+                                   ng-required="true"
+                                   placeholder="Select start year"/>
+                  <span class="input-group-btn">
+                    <button type="button"
+                            class="btn btn-default"
+                            ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                        </p>
+                    </div>
+                </div> <!-- /. close Start year picker  -->
+                <div class=""> <!-- /. start End year picker -->
+                    <div class="col-md-3">
+                        <p class="input-group">
+                            <input type="text"
+                                   class="form-control"
+                                   ng-model="university.endDate"
+                                   datepicker-popup="yyyy"
+                                   datepicker-options="dateOptions"
+                                   min-mode="'year'"
+                                   max-date="maxDate"
+                                   min-date="minDate"
+                                   datepicker-mode="'year'"
+                                   show-button-bar="false"
+                                   is-open="openedEnd"
+                                   ng-required="true"
+                                   placeholder="Select end year"/>
+                  <span class="input-group-btn">
+                    <button type="button"
+                            class="btn btn-default"
+                            ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                        </p>
+                    </div>
+                </div> <!-- /. close End year picker  -->
+                <div class="clearfix"></div>{{universities}}
+            </form>
+        </fieldset>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-default"
+                type="button"
+                ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit mode
+        </button>
+        <button class="btn btn-default"
+                type="button"
+                ng-disabled="formStatus.isEditModeOpen"
+                ng-click="updateEducation(universities)">Update Education
+        </button>
+        <p ng-show="error" class="text-danger">{{ error }}</p>
+        <p ng-show="isUpdated" class="text-danger">You have successfully updated the form!</p>
+    </div>
+</div>

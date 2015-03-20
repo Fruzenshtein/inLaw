@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui.select', 'ngSanitize'])
+var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSanitize'])
     .config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function ($stateProvider, $locationProvider, $urlRouterProvider) {
 
         $urlRouterProvider.otherwise("/"); // root route
@@ -10,14 +10,14 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
             url: '/',
             views: {
                 "mainView": {
-                    "templateUrl": 'assets/app/components/landing/landing.html'
+                    "templateUrl": 'assets/devbuild/assets/components/landing/landing.html'
                 }
             }
         }).state('registration', {
             url: "/registration",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/app/components/registration/registration.html',
+                    templateUrl: 'assets/devbuild/assets/components/registration/registration.html',
                     controller: 'RegistrationCtrl'
                 }
             }
@@ -25,7 +25,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
             url: "/login",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/app/components/login/login.html',
+                    templateUrl: 'assets/devbuild/assets/components/login/login.html',
                     controller: 'LoginCtrl'
                 }
             }
@@ -33,7 +33,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
             url: "/profile",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/app/components/profile/profile.html',
+                    templateUrl: 'assets/devbuild/assets/components/profile/profile.html',
                     controller: 'ProfileCtrl'
                 }
             }
@@ -41,7 +41,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
             url: "/contacts",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/app/components/contacts/contacts.html',
+                    templateUrl: 'assets/devbuild/assets/components/contacts/contacts.html',
                     controller: 'ContactsCtrl'
                 }
             }
@@ -49,14 +49,14 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
             url: "/education",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/app/components/education/education.html'
+                    templateUrl: 'assets/devbuild/assets/components/education/education.html'
                 },
                 "universities@education": {
-                    templateUrl: 'assets/app/components/education/universities.html',
+                    templateUrl: 'assets/devbuild/assets/components/education/universities.html',
                     controller: 'UniversitiesCtrl'
                 },
                 "certificates@education": {
-                    templateUrl: 'assets/app/components/education/certificates.html',
+                    templateUrl: 'assets/devbuild/assets/components/education/certificates.html',
                     controller: 'CertificatesCtrl'
                 }
             }
@@ -64,7 +64,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
             url: "/experience",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/app/components/experience/experience.html',
+                    templateUrl: 'assets/devbuild/assets/components/experience/experience.html',
                     controller: 'ExperienceCtrl'
                 }
             }
@@ -72,7 +72,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
             url: "/lawyers/filters",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/app/components/filters/filters.html',
+                    templateUrl: 'assets/devbuild/assets/components/filters/filters.html',
                     controller: 'FiltersCtrl'
                 }
             }
@@ -80,7 +80,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'restangular', 'ui
             url: "/competences",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/app/components/competence/competence.html',
+                    templateUrl: 'assets/devbuild/assets/components/competence/competence.html',
                     controller: 'CompetenceCtrl'
                 }
             }
