@@ -10,7 +10,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         university      : '/lawyers/universities',
         certificates    : '/lawyers/certificates',
         experiences     : '/lawyers/experience',
-        competence      : '/lawyers/competences'
+        competence      : '/lawyers/competences',
+        languages       : '/lawyers/languages'
         },
         baseProfileURL = function(url) {
             return $http({
@@ -71,6 +72,14 @@ App.factory('$userInfo', ['$http', '$state', '$q',
 
     function getUserCompetences() {
         return baseProfileURL(urlConfig.competence).then(function(onFulfilled) {
+            return onSuccess(onFulfilled);
+        },function(onReject) {
+            return onError(onReject);
+        });
+    };
+
+    function getUserLanguages() {
+        return baseProfileURL(urlConfig.languages).then(function(onFulfilled) {
             return onSuccess(onFulfilled);
         },function(onReject) {
             return onError(onReject);
@@ -144,12 +153,14 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         getUserCertificates : getUserCertificates,
         getUserExperience   : getUserExperience,
         getUserCompetences  : getUserCompetences,
+        getUserLanguages    : getUserLanguages,
         profile             : {},
         contacts            : {},
         universities        : {},
         certificates        : {},
         experiences         : {},
         competences         : {},
+        languages           : {},
         allowed             : false
     };
     return info;

@@ -1,0 +1,36 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <h3>Language</h3>
+            <h6>Please, enter your language</h6>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="col-xs-6">
+            <label>Languages:</label>
+            <ui-select multiple tagging="tagTransform" tagging-tokens="SPACE|,|/"
+                       ng-model="languagesModel.selectedLanguages"
+                       on-select="addLanguages(languagesModel.selectedLanguages)"
+                       on-remove="addLanguages(languagesModel.selectedLanguages)"
+                       ng-disabled="formStatus.isEditModeOpen"
+                       theme="bootstrap"
+                       title="Choose a person">
+                <ui-select-match placeholder="Select person...">{{$item.language}}</ui-select-match>
+                <ui-select-choices repeat="language in languages">
+                    <div ng-if="language.isTag" ng-bind-html="language.language + ' ' + $select.taggingLabel | highlight: $select.search"></div>
+                    <div ng-if="!language.isTag" ng-bind-html="language.language | highlight: $select.search"></div>
+                    <small>
+                        language: {{language.language}}
+                    </small>
+                </ui-select-choices>
+            </ui-select>{{languagesModel.selectedLanguages}}
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-default"
+                type="button"
+                ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit mode
+        </button>
+        <p ng-show="error" class="text-danger">{{ error }}</p>
+    </div>
+</div>

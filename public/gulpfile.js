@@ -118,7 +118,6 @@ gulp.task('scriptsProd', function() {
         .pipe(gulp.dest(paths.dist + "javascripts/"));
 });
 
-
 gulp.task("stylesProd", function () {
     gulp.src(paths.styles)
         .pipe(concat("app.css"))

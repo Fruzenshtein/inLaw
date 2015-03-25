@@ -58,6 +58,10 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                 "certificates@education": {
                     templateUrl: 'assets/devbuild/assets/components/education/certificates.html',
                     controller: 'CertificatesCtrl'
+                },
+                "languages@education": {
+                    templateUrl: 'assets/devbuild/assets/components/education/languages.html',
+                    controller: 'LanguagesCtrl'
                 }
             }
         }).state('experience', {
