@@ -193,12 +193,14 @@
                 </div>
             </div>
             <div class="row" ng-repeat="lawyer in searchResponse">
-                <div class="col-sm-2">{{lawyer.avatar}}</div>
-                <div class="col-sm-2">{{lawyer.firstName}}</div>
-                <div class="col-sm-2">{{lawyer.lastName}}</div>
-                <div class="col-sm-2">{{lawyer.middleName}}</div>
-                <div class="col-sm-2">{{lawyer.birthDate}}</div>
-                <div class="col-sm-2">{{lawyer.minRate}}</div>
+                <div ui-sref="publicProfile({id: lawyer.id})">
+                    <div class="col-sm-2"><img ng-src="{{::lawyer.avatar}}"></div>
+                    <div class="col-sm-2">{{::lawyer.profile.firstName}}</div>
+                    <div class="col-sm-2">{{::lawyer.profile.lastName}}</div>
+                    <div class="col-sm-2">{{::lawyer.profile.middleName}}</div>
+                    <div class="col-sm-2">{{::lawyer.profile.birthDate}}</div>
+                    <div class="col-sm-2">{{::lawyer.profile.minRate}}</div>
+                </div>
             </div>
         </div>
     </div>

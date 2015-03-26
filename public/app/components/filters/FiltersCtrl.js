@@ -32,21 +32,21 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
             $scope.language.selected = undefined;
         };
 
-        $scope.professions = [ //TODO: get from teh server
+        $scope.professions = [ //TODO: get from the server
             {name: "Криминалньое"},
             {name: "Земельное"},
             {name: "Нотариус"}
         ];
-        $scope.competences = [ //TODO: get from teh server
+        $scope.competences = [ //TODO: get from the server
             {name: "Криминалньое"},
             {name: "Земельное"},
             {name: "Нотариус"}
         ];
-        $scope.genderTypes = [ //TODO: get from teh server
+        $scope.genderTypes = [ //TODO: get from the server
             {name: 'Male'},
             {name: 'Famele'}
         ];
-        $scope.languages = [ //TODO: get from teh server
+        $scope.languages = [ //TODO: get from the server
             {name: 'Ukrainian'},
             {name: 'English'}
         ];
@@ -86,8 +86,18 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
                 return data;
             }
             angular.forEach(data, function(elem, index) {
-                if (_.isNull(data[index].birthDate)) return;
-                data[index].birthDate = moment(new Date(data[index].birthDate)).format($scope.formats[1]);
+                if (_.isNull(data[index]['profile']['birthDate'])) return;
+                data[index]['profile']['birthDate'] = moment(new Date(data[index]['profile']['birthDate'])).format($scope.formats[1]);
+            });
+            return data;
+        };
+
+        function checkAvatar(data) {
+            angular.forEach(data, function(elem, index) {
+                if (_.isNull(data[index]['avatar'])) {
+                    // TODO add constant to CONSTANT object
+                    data[index]['avatar'] = 'assets/devbuild/images/mock_64.svg';
+                }
             });
             return data;
         };
@@ -118,6 +128,7 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
                     $scope.tableState.isFound = true;
                     $scope.tableState.isEmpty = false;
                     $scope.searchResponse = convertTime(data);
+                    $scope.searchResponse = checkAvatar(data);
                 }).
                 error(function (data, status, headers, config) {
                     $scope.error = 'Unexpected error. Please try again later.';

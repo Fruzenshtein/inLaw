@@ -88,6 +88,14 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     controller: 'CompetenceCtrl'
                 }
             }
+        }).state('publicProfile', {
+            url: "/public/:id",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/devbuild/assets/components/public/publicProfile.html',
+                    controller: 'PublicProfileCtrl'
+                }
+            }
         });
         // Without server side support html5 must be disabled.
         return $locationProvider.html5Mode(false);
