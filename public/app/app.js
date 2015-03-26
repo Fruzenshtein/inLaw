@@ -10,7 +10,8 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: '/',
             views: {
                 "mainView": {
-                    "templateUrl": 'assets/devbuild/assets/components/landing/landing.html'
+                    "templateUrl": 'assets/devbuild/assets/components/landing/landing.html',
+                    "controller": 'LandingPageCtrl'
                 }
             }
         }).state('registration', {

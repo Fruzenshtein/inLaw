@@ -1,6 +1,8 @@
 'use strict';
 
-App.controller('RegistrationCtrl',['$scope', '$state', '$http', function($scope, $state, $http) {
+App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo',
+    function($scope, $state, $http, $userInfo) {
+
     $scope.signUp = {};
 
     $scope.submit = function(signUp) {
@@ -17,8 +19,8 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', function($scope,
             headers: {'Content-Type': 'application/json'}
         }).
             success(function(data, status, headers, config) {
-                //userinfo.getUserData(); TBD... if appropriate info need to be shown
                 sessionStorage.setItem('token', data.token);
+                $userInfo.setUserStatus(true);
                 $state.go('landing');
             }).
             error(function(data, status, headers, config) {

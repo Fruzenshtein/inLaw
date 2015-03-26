@@ -1,9 +1,10 @@
 'use strict';
 
-App.controller('LoginCtrl', ['$scope', '$state', '$http', function($scope, $state, $http) {
+App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo',
+    function($scope, $state, $http, $userInfo) {
+
     $scope.signIn = {};
     $scope.error = false;
-    $scope.isLogin = true;
 
     $scope.submit = function(signIn) {
         var data = {
@@ -17,8 +18,8 @@ App.controller('LoginCtrl', ['$scope', '$state', '$http', function($scope, $stat
             headers: {'Content-Type': 'application/json'}
         }).
             success(function(data, status, headers, config) {
-                //UserInfoService.getUserData(); TBD... if appropriate info need to be shown
                 sessionStorage.setItem('token', data['token']);
+                $userInfo.setUserStatus(true);
                 $state.go('landing');
             }).
             error(function(data, status, headers, config) {

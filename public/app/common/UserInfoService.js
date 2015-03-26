@@ -87,6 +87,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     };
 
     function isAuthenticated(data) {
+      if (!sessionStorage.getItem('token')) return;
 
       if (data['status'] == 401) {
             $state.go('login');
@@ -98,12 +99,17 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         }
     };
 
+    function setUserStatus(isLoggedIn) {
+        var isLoggedIn = isLoggedIn || false;
+        info.isLoggedIn = isLoggedIn;
+    };
+
     function onSuccess(data) {
         try {
             var deferred = $q.defer();
             var _jsonData = angular.fromJson(data);
             if ( !isAuthenticated(_jsonData) ) return;
-
+            info.allowed = true;
             switch (data.config.url) {
                 case urlConfig.profile:
                     info['profile'] = _jsonData['data'];
@@ -142,7 +148,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     };
 
     function onError(data) {
-
+        isAuthenticated(data);
+        info.allowed = false;
     };
 
     var info = {
@@ -154,6 +161,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         getUserExperience   : getUserExperience,
         getUserCompetences  : getUserCompetences,
         getUserLanguages    : getUserLanguages,
+        setUserStatus       : setUserStatus,
         profile             : {},
         contacts            : {},
         universities        : {},
@@ -161,7 +169,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         experiences         : {},
         competences         : {},
         languages           : {},
-        allowed             : false
+        isLoggedIn          : false
     };
     return info;
 }]);

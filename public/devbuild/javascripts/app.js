@@ -10,7 +10,8 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: '/',
             views: {
                 "mainView": {
-                    "templateUrl": 'assets/devbuild/assets/components/landing/landing.html'
+                    "templateUrl": 'assets/devbuild/assets/components/landing/landing.html',
+                    "controller": 'LandingPageCtrl'
                 }
             }
         }).state('registration', {
@@ -197,6 +198,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     };
 
     function isAuthenticated(data) {
+      if (!sessionStorage.getItem('token')) return;
 
       if (data['status'] == 401) {
             $state.go('login');
@@ -208,12 +210,17 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         }
     };
 
+    function setUserStatus(isLoggedIn) {
+        var isLoggedIn = isLoggedIn || false;
+        info.isLoggedIn = isLoggedIn;
+    };
+
     function onSuccess(data) {
         try {
             var deferred = $q.defer();
             var _jsonData = angular.fromJson(data);
             if ( !isAuthenticated(_jsonData) ) return;
-
+            info.allowed = true;
             switch (data.config.url) {
                 case urlConfig.profile:
                     info['profile'] = _jsonData['data'];
@@ -252,7 +259,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     };
 
     function onError(data) {
-
+        isAuthenticated(data);
+        info.allowed = false;
     };
 
     var info = {
@@ -264,6 +272,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         getUserExperience   : getUserExperience,
         getUserCompetences  : getUserCompetences,
         getUserLanguages    : getUserLanguages,
+        setUserStatus       : setUserStatus,
         profile             : {},
         contacts            : {},
         universities        : {},
@@ -271,7 +280,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         experiences         : {},
         competences         : {},
         languages           : {},
-        allowed             : false
+        isLoggedIn          : false
     };
     return info;
 }]);
@@ -920,11 +929,22 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
     }]);
 
 'use strict';
+/* Controller */
 
-App.controller('LoginCtrl', ['$scope', '$state', '$http', function($scope, $state, $http) {
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$timeout',
+    function ($scope, $http, $userInfo) {
+
+    $scope.isLoggedIn = $userInfo.isLoggedIn;
+
+
+    }]);
+'use strict';
+
+App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo',
+    function($scope, $state, $http, $userInfo) {
+
     $scope.signIn = {};
     $scope.error = false;
-    $scope.isLogin = true;
 
     $scope.submit = function(signIn) {
         var data = {
@@ -938,8 +958,8 @@ App.controller('LoginCtrl', ['$scope', '$state', '$http', function($scope, $stat
             headers: {'Content-Type': 'application/json'}
         }).
             success(function(data, status, headers, config) {
-                //UserInfoService.getUserData(); TBD... if appropriate info need to be shown
                 sessionStorage.setItem('token', data['token']);
+                $userInfo.setUserStatus(true);
                 $state.go('landing');
             }).
             error(function(data, status, headers, config) {
@@ -1056,7 +1076,9 @@ App.controller('PublicProfileCtrl', ['$scope', '$http', '$userInfo', '$timeout',
     }]);
 'use strict';
 
-App.controller('RegistrationCtrl',['$scope', '$state', '$http', function($scope, $state, $http) {
+App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo',
+    function($scope, $state, $http, $userInfo) {
+
     $scope.signUp = {};
 
     $scope.submit = function(signUp) {
@@ -1073,8 +1095,8 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', function($scope,
             headers: {'Content-Type': 'application/json'}
         }).
             success(function(data, status, headers, config) {
-                //userinfo.getUserData(); TBD... if appropriate info need to be shown
                 sessionStorage.setItem('token', data.token);
+                $userInfo.setUserStatus(true);
                 $state.go('landing');
             }).
             error(function(data, status, headers, config) {

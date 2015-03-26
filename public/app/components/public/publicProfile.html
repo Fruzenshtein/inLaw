@@ -1,15 +1,67 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <div class="panel-title">
-            <h3>Public Profile</h3>
-        </div>
+        <h3 class="panel-title">Profile</h3>
     </div>
     <div class="panel-body">
-        <div class="col-xs-6">
-
+        <div class="row">
+            <div class="col-xs-6 col-md-3">
+                <div class="thumbnail">
+                    <img src="assets/devbuild/images/mock_171.svg" alt="profileImage">
+                </div>
+            </div>
+            <div class="col-xs-6 col-md-3">
+                <div class="caption">
+                   Full Name{{::lawyer.profile.firstName + ' ' + lawyer.profile.lastName + ' ' + lawyer.profile.middleName}}
+                </div>
+                <div class="caption">
+                   Birthday {{::lawyer.profile.birthDate}}
+                </div>
+                <div class="caption">
+                    Min Rate {{::lawyer.profile.minRate}}
+                </div>
+                <div class="caption">
+                    Phone numbers
+                </div>
+            </div>
         </div>
     </div>
-    <div class="panel-footer">
-
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Competences</h3>
+    </div>
+    <div class="panel-body">
+        <div class="caption">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default">Криминальное</button>
+                <button type="button" class="btn btn-default">Административное</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Education</h3>
+    </div>
+    <div class="panel-body">
+        <div class="caption">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default">...</button>
+                <button type="button" class="btn btn-default">...</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Experience</h3>
+    </div>
+    <div class="panel-body">
+        <div class="caption">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default">...</button>
+                <button type="button" class="btn btn-default">...</button>
+            </div>
+        </div>
     </div>
 </div>
