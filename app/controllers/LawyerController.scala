@@ -10,7 +10,7 @@ import play.api.mvc._
 import play.api.Logger
 import scala.concurrent.Future
 import play.api.libs.json.{JsObject, Json}
-import services.LawyerService
+import services.{EmailService, LawyerService}
 import models.{BearerToken, Lawyer}
 import com.wordnik.swagger.annotations._
 
@@ -56,6 +56,7 @@ object LawyerController extends Controller with UserAccountForms with Security {
                   val newBearerToken = BearerToken(BearerToken.generateToken(), models.Status.Active.toString, None)
                   val accountToSave = account copy (bearerToken = Some(newBearerToken))
                   LawyerService.add(accountToSave)
+                  EmailService.sendWelcomeEmail("userName", "UA")
                   Created(Json.obj("token" -> newBearerToken.bearer))
                 }
               }
