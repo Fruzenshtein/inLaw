@@ -12,6 +12,8 @@ import models._
 import scala.concurrent.Future
 import play.api.libs.json.{JsObject, Json}
 
+import scala.util.{Failure, Success}
+
 /**
  * Created by Alex on 11/23/14.
  */
@@ -218,12 +220,28 @@ object LawyerService {
             val startYear = calendar.get(Calendar.YEAR)
 
             endYear - startYear
-
           }
+          case None => 0
         }
+        case None => 0
       }
     }
 
+    totalExperience onComplete {
+      case Success(total) => {
+        Logger.info(s"Total experience is $total")
+        val updateTotalExp = Json.obj(
+          "$set" -> Json.obj(
+            "experience.total" -> total)
+        )
+        collection.update(
+          Json.obj("email" -> email),
+          updateTotalExp
+        )
+      }
+      case Failure(reason) => Logger.info("Failure: Total experience wan not defined")
+    }
+/*
     totalExperience map {
       case total: Int => {
         Logger.info(s"Total experience is $total")
@@ -238,7 +256,7 @@ object LawyerService {
       }
       case _ => Logger.info("Total experience wan not Int")
     }
-
+*/
   }
 
   def addLawyerCompetence(email: String, competence: String) = {

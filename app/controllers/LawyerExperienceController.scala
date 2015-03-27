@@ -74,6 +74,7 @@ object LawyerExperienceController extends Controller with Security with UserAcco
     value = "Put lawyers experience",
     notes = "Put lawyers experience",
     httpMethod = "PUT",
+
     response = classOf[models.swagger.InformationMessage])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "WorkPlace successfully updated"),
@@ -108,6 +109,8 @@ object LawyerExperienceController extends Controller with Security with UserAcco
                   case None => Future.successful (NotFound (Json.obj ("message" -> s"WorkPlace with id $id does not exist") ) )
                 }
               }
+              case None => Future.successful(Ok(Json.obj("message" -> "WorkPlaces do not exist")))
+
             }
             case None => Future.successful(Ok(Json.obj("message" -> "Experience does not exist")))
           }

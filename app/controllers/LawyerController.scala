@@ -23,7 +23,7 @@ object LawyerController extends Controller with UserAccountForms with Security {
   @ApiOperation(
     nickname = "createLawyerAccount",
     value = "Create lawyer account",
-    notes = "Lawyer Sign Up endpoint",
+    notes = "Lawyer Sign Up endpoint. Validation rules for password is length must be more than 6 characters.",
     httpMethod = "POST",
     response = classOf[models.swagger.BearerToken])
   @ApiResponses(Array(
