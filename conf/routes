@@ -36,6 +36,7 @@ DELETE      /lawyers/certificates/:id               controllers.LawyerEducationC
 
 POST        /lawyers/languages                      controllers.LawyerEducationController.addLanguage(language: String)
 GET         /lawyers/languages                      controllers.LawyerEducationController.getLanguages
+DELETE      /lawyers/languages                      controllers.LawyerEducationController.deleteLanguage(language: String)
 
 GET         /api-docs.json/lawyers/experience       controllers.ApiHelpController.getResource(path = "/lawyers/experience")
 POST        /lawyers/experience                     controllers.LawyerExperienceController.createExperience
