@@ -56,7 +56,6 @@ object CompetenceController extends Controller with Security with CompetenceForm
           }
         }
       )
-
   }
 
   @ApiOperation(
@@ -64,6 +63,7 @@ object CompetenceController extends Controller with Security with CompetenceForm
     value = "Get competences by first characters match",
     notes = "Get competences by first characters match",
     httpMethod = "GET",
+    responseContainer = "List",
     response = classOf[Competence])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Competences")
@@ -72,7 +72,8 @@ object CompetenceController extends Controller with Security with CompetenceForm
     implicit request =>
       CompetenceService.findCompetenceByFirstCharacters(competence) map {
         competences => {
-          Ok(Json.toJson(competences))
+          val compArray = competences.map((compObj: Competence) => compObj.name)
+          Ok(Json.toJson(compArray))
         }
       }
   }
