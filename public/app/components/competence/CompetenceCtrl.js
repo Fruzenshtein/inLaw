@@ -13,7 +13,6 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
                 $scope.myCompetences.competences = [];
             });
         };
-
         $scope.myCompetences = {};
         $scope.myCompetences.competences = $userInfo.competences || [];
         $scope.competences = [];
@@ -36,11 +35,12 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
             return item;
         };
         $scope.setCompetence = function(competence, event) {
-            var competence = {competence: competence.name},
-                method = event == 'select' ? 'POST' : 'DELETE';
+            var competence = {competence: competence},
+                method = event == 'select' ? 'POST' : 'DELETE',
+                url = method == 'DELETE' ? '/lawyers/competences?competence='+ competence.competence : '/lawyers/competences';
             $http({
                 method: method,
-                url: '/lawyers/competences',
+                url: url,
                 data: competence,
                 headers: {
                     'Content-Type': 'application/json',

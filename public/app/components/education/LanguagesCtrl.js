@@ -13,29 +13,26 @@ App.controller('LanguagesCtrl', ['$scope', '$http', '$userInfo', '$timeout',
                 $scope.languages = [];
             });
         };
-        $scope.languagesModel = {};
         $scope.language = {};
-        $scope.languages = [
-            { language: 'United States' },
-            { language: 'Argentina' },
-            { language: 'Colombia' },
-            { language: 'Ecuador' }
-        ];
+        $scope.languages = $userInfo.languages || [];
+        $scope.languagesModel = {};
         $scope.formStatus = {
             isEditModeOpen: true,
             isEditModeDisabled: false
         };
         $scope.tagTransform = function (newTag) {
             var item = {
-                language: newTag.toLowerCase()
+                name: newTag
             };
+
             return item;
         };
-        $scope.addLanguages = function(languages) {
+        $scope.setLanguages = function(language, event) {
+            var language = {language: language},
+                method = event == 'select' ? 'POST' : 'DELETE';
             $http({
-                method:  'POST',
-                url: '/lawyers/languages',
-                data: languages,
+                method:  method,
+                url: '/lawyers/languages?language=' + language.language,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('token')

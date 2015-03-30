@@ -9,7 +9,7 @@
         <div class="col-xs-6">
             <label>Competence:</label>
             <ui-select multiple
-                       tagging="tagTransform"
+                       tagging
                        tagging-label="(custom 'new' label)"
                        ng-model="myCompetences.competences"
                        on-select="setCompetence($item, 'select')"
@@ -17,13 +17,12 @@
                        theme="bootstrap" sortable="true"
                        ng-disabled="formStatus.isEditModeOpen"
                        title="Choose a competence">
-                <ui-select-match placeholder="Enter a Competence...">{{$item.name}}</ui-select-match>
-                <ui-select-choices repeat="competence in competences track by $index"
+                <ui-select-match placeholder="Enter a Competence...">{{$item}}</ui-select-match>
+                <ui-select-choices repeat="competence in competences"
                                    refresh="refreshCompetences($select.search)"
                                    refresh-delay="0">
-                    <div ng-if="competence.isTag" ng-bind-html="'<small>(new)</small>'"></div>
                     <small>
-                        {{competence.name}}
+                        {{competence}}
                     </small>
                 </ui-select-choices>
             </ui-select>

@@ -217,8 +217,9 @@ App.factory('$userInfo', ['$http', '$state', '$q',
 
     function onSuccess(data) {
         try {
-            var deferred = $q.defer();
-            var _jsonData = angular.fromJson(data);
+            var deferred = $q.defer(),
+                container,
+                _jsonData = angular.fromJson(data);
             if ( !isAuthenticated(_jsonData) ) return;
             info.allowed = true;
             switch (data.config.url) {
@@ -246,6 +247,10 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     return deferred.promise;
                 case urlConfig.competence:
                     info['competences'] = _jsonData['data'];
+                    deferred.resolve(_jsonData['data']);
+                    return deferred.promise;
+                case urlConfig.languages:
+                    info['languages'] = _jsonData['data'];
                     deferred.resolve(_jsonData['data']);
                     return deferred.promise;
                 default:
@@ -279,7 +284,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         certificates        : {},
         experiences         : {},
         competences         : {},
-        languages           : {},
+        languages           : [],
         isLoggedIn          : false
     };
     return info;
@@ -299,7 +304,6 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
                 $scope.myCompetences.competences = [];
             });
         };
-
         $scope.myCompetences = {};
         $scope.myCompetences.competences = $userInfo.competences || [];
         $scope.competences = [];
@@ -322,11 +326,12 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
             return item;
         };
         $scope.setCompetence = function(competence, event) {
-            var competence = {competence: competence.name},
-                method = event == 'select' ? 'POST' : 'DELETE';
+            var competence = {competence: competence},
+                method = event == 'select' ? 'POST' : 'DELETE',
+                url = method == 'DELETE' ? '/lawyers/competences?competence='+ competence.competence : '/lawyers/competences';
             $http({
                 method: method,
-                url: '/lawyers/competences',
+                url: url,
                 data: competence,
                 headers: {
                     'Content-Type': 'application/json',
@@ -534,29 +539,26 @@ App.controller('LanguagesCtrl', ['$scope', '$http', '$userInfo', '$timeout',
                 $scope.languages = [];
             });
         };
-        $scope.languagesModel = {};
         $scope.language = {};
-        $scope.languages = [
-            { language: 'United States' },
-            { language: 'Argentina' },
-            { language: 'Colombia' },
-            { language: 'Ecuador' }
-        ];
+        $scope.languages = $userInfo.languages || [];
+        $scope.languagesModel = {};
         $scope.formStatus = {
             isEditModeOpen: true,
             isEditModeDisabled: false
         };
         $scope.tagTransform = function (newTag) {
             var item = {
-                language: newTag.toLowerCase()
+                name: newTag
             };
+
             return item;
         };
-        $scope.addLanguages = function(languages) {
+        $scope.setLanguages = function(language, event) {
+            var language = {language: language},
+                method = event == 'select' ? 'POST' : 'DELETE';
             $http({
-                method:  'POST',
-                url: '/lawyers/languages',
-                data: languages,
+                method:  method,
+                url: '/lawyers/languages?language=' + language.language,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('token')
@@ -688,107 +690,6 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
             });
         };
     }]);
-'use strict';
-/* Controller */
-
-App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
-
-        // if data had been saved before, do not send a request
-        if ( _.isEmpty($userInfo.experiences) ) {
-            var promiseGetExperience = $userInfo.getUserExperience();
-            promiseGetExperience.then(function (onFulfilled) {
-                // assign [{}] object if request returns an empty object.
-                // [{}] - is used to build default html template
-                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
-            }, function (onReject) {
-                $scope.experiences = [{}];
-            });
-        };
-
-        $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [{}];
-        $scope.experiencesCounter = 0;
-        $scope.addExperience = function () {
-            $scope.experiencesTemplate = {
-                id: $scope.experiencesCounter
-            };
-            $scope.experiencesCounter += 1;
-            $scope.experiences.push($scope.experiencesTemplate);
-        };
-        $scope.removeExperience = function(obj) {
-            angular.forEach($scope.experiences, function(elem, index) {
-                if ( $scope.experiences[index]['id'] == obj['id'] ) {
-                    $scope.experiences.splice(index, 1);
-                }
-                // TODO: API call
-            })
-        };
-
-        // Disable weekend selection
-        $scope.disabled = function (date, mode) {
-            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-        };
-
-        $scope.toggleMin = function () {
-            var years100ago = new Date();
-            // Time 100 years ago
-            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
-            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
-        };
-        $scope.toggleMin();
-        $scope.maxDate = new Date();
-
-        $scope.openStart = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedEnd = false;
-            this.openedStart = true;
-        };
-        $scope.openEnd = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedStart = false;
-            this.openedEnd = true;
-        };
-
-        $scope.dateOptions = {
-            formatYear: 'yyyy',
-            minMode: 'month'
-        };
-
-        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        $scope.format = $scope.formats[0];
-
-        $scope.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-
-        $scope.updateExperience = function (array) {
-            angular.forEach(array, function(elem, index) {
-                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
-                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
-                $http({
-                    method: 'POST',
-                    url: '/lawyers/experience',
-                    data: array[index],
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                    }
-                }).
-                    success(function (data, status, headers, config) {
-                        $scope.formStatus.isEditModeOpen = true;
-                        $scope.isUpdated = true;
-                        $scope.error = '';
-                    }).
-                    error(function (data, status, headers, config) {
-                        $scope.error = 'Unexpected error. Please try again later.';
-                    });
-            });
-        };
-}]);
 'use strict';
 /* Controller */
 
@@ -928,6 +829,107 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
 
     }]);
 
+'use strict';
+/* Controller */
+
+App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
+    function ($scope, $http, $userInfo) {
+
+        // if data had been saved before, do not send a request
+        if ( _.isEmpty($userInfo.experiences) ) {
+            var promiseGetExperience = $userInfo.getUserExperience();
+            promiseGetExperience.then(function (onFulfilled) {
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
+            }, function (onReject) {
+                $scope.experiences = [{}];
+            });
+        };
+
+        $scope.experience = {};
+        $scope.experiences = $userInfo.experiences || [{}];
+        $scope.experiencesCounter = 0;
+        $scope.addExperience = function () {
+            $scope.experiencesTemplate = {
+                id: $scope.experiencesCounter
+            };
+            $scope.experiencesCounter += 1;
+            $scope.experiences.push($scope.experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
+                    $scope.experiences.splice(index, 1);
+                }
+                // TODO: API call
+            })
+        };
+
+        // Disable weekend selection
+        $scope.disabled = function (date, mode) {
+            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+        };
+
+        $scope.toggleMin = function () {
+            var years100ago = new Date();
+            // Time 100 years ago
+            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
+            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
+        };
+        $scope.toggleMin();
+        $scope.maxDate = new Date();
+
+        $scope.openStart = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            this.openedEnd = false;
+            this.openedStart = true;
+        };
+        $scope.openEnd = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            this.openedStart = false;
+            this.openedEnd = true;
+        };
+
+        $scope.dateOptions = {
+            formatYear: 'yyyy',
+            minMode: 'month'
+        };
+
+        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.format = $scope.formats[0];
+
+        $scope.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+
+        $scope.updateExperience = function (array) {
+            angular.forEach(array, function(elem, index) {
+                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
+                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
+                $http({
+                    method: 'POST',
+                    url: '/lawyers/experience',
+                    data: array[index],
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                }).
+                    success(function (data, status, headers, config) {
+                        $scope.formStatus.isEditModeOpen = true;
+                        $scope.isUpdated = true;
+                        $scope.error = '';
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                    });
+            });
+        };
+}]);
 'use strict';
 /* Controller */
 

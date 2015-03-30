@@ -8,22 +8,22 @@
     <div class="panel-body">
         <div class="col-xs-6">
             <label>Languages:</label>
-            <ui-select multiple tagging="tagTransform" tagging-tokens="SPACE|,|/"
-                       ng-model="languagesModel.selectedLanguages"
-                       on-select="addLanguages(languagesModel.selectedLanguages)"
-                       on-remove="addLanguages(languagesModel.selectedLanguages)"
-                       ng-disabled="formStatus.isEditModeOpen"
+            <ui-select multiple
+                       tagging
+                       tagging-label="(custom 'new' label)"
+                       ng-model="languages"
+                       on-select="setLanguages($item, 'select')"
+                       on-remove="setLanguages($item, 'remove')"
                        theme="bootstrap"
-                       title="Choose a person">
-                <ui-select-match placeholder="Select person...">{{$item.language}}</ui-select-match>
+                       ng-disabled="formStatus.isEditModeOpen"
+                       title="Choose a language">
+                <ui-select-match placeholder="Select a language...">{{$item}}</ui-select-match>
                 <ui-select-choices repeat="language in languages">
-                    <div ng-if="language.isTag" ng-bind-html="language.language + ' ' + $select.taggingLabel | highlight: $select.search"></div>
-                    <div ng-if="!language.isTag" ng-bind-html="language.language | highlight: $select.search"></div>
                     <small>
-                        language: {{language.language}}
+                        {{language}}
                     </small>
                 </ui-select-choices>
-            </ui-select>{{languagesModel.selectedLanguages}}
+            </ui-select>
         </div>
     </div>
     <div class="panel-footer">

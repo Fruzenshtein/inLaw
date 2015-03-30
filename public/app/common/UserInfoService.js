@@ -106,8 +106,9 @@ App.factory('$userInfo', ['$http', '$state', '$q',
 
     function onSuccess(data) {
         try {
-            var deferred = $q.defer();
-            var _jsonData = angular.fromJson(data);
+            var deferred = $q.defer(),
+                container,
+                _jsonData = angular.fromJson(data);
             if ( !isAuthenticated(_jsonData) ) return;
             info.allowed = true;
             switch (data.config.url) {
@@ -135,6 +136,10 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     return deferred.promise;
                 case urlConfig.competence:
                     info['competences'] = _jsonData['data'];
+                    deferred.resolve(_jsonData['data']);
+                    return deferred.promise;
+                case urlConfig.languages:
+                    info['languages'] = _jsonData['data'];
                     deferred.resolve(_jsonData['data']);
                     return deferred.promise;
                 default:
@@ -168,7 +173,7 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         certificates        : {},
         experiences         : {},
         competences         : {},
-        languages           : {},
+        languages           : [],
         isLoggedIn          : false
     };
     return info;
