@@ -186,6 +186,18 @@ object LawyerService {
     )
   }
 
+  def deleteLanguage(email: String, language: String) = {
+    val removeLang = Json.obj(
+      "$pull" -> Json.obj(
+        "education.languages" -> language
+      )
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      removeLang
+    )
+  }
+
   def totalExperienceRecalculation(email: String) = {
     Logger.info(s"Recalculation of total experience for user $email")
     val query = Json.obj("email" -> email)

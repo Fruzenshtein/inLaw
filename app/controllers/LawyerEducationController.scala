@@ -328,4 +328,42 @@ object LawyerEducationController extends Controller with Security with UserAccou
       }
   }
 
+  @ApiOperation(
+    nickname = "languages",
+    value = "Delete lawyers language",
+    notes = "Delete a language in lawyer account by its name (e.g. English)",
+    httpMethod = "DELETE",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Language successfully deleted"),
+    new ApiResponse(code = 400, message = "Bad arguments"),
+    new ApiResponse(code = 404, message = "")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)))
+  def deleteLanguage(@QueryParam("language") language: String) = isAuthenticated { implicit acc =>
+    implicit request => {
+
+      Logger.info("Deleting language...")
+      Logger.info("Language: "+language)
+
+      acc.education match {
+        case Some(someEdu) => someEdu.languages match {
+          case Some(languages) => {
+            if (languages.contains(language)) {
+              LawyerService.deleteLanguage(acc.email, language)
+              Future(Ok(Json.obj("message" -> "Language successfully deleted")))
+            } else
+              Future.successful(NotFound(Json.obj("message" -> s"Language does not exist")))
+          }
+          case None => Future.successful(NotFound(Json.obj("message" -> "Languages do not exist")))
+        }
+        case None => Future.successful(NotFound(Json.obj("message" -> "Education does not exist")))
+      }
+
+
+
+    }
+  }
+
 }
