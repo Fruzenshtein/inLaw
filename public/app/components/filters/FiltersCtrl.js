@@ -2,14 +2,22 @@
 /* Controller */
 
 
-App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
+App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', '$filterService',
+    function ($scope, $http, $userInfo, LanguagesList, $filterService) {
 
+        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         $scope.filters = {};
         $scope.tableState = {
             isFound: false,
             isEmpty: false
         };
+        $scope.competences = [];
+        $scope.genderTypes = [ //TODO: get from the server
+            { name: 'Male', id: 'm' },
+            { name: 'Female', id: 'f' }
+        ];
+        $scope.languages = LanguagesList.languages;
+
         $scope.refreshAddresses = function(address) {
             var params = {address: address, sensor: false, language: 'uk'}; //TODO: Update locale on the localization phase
             return $http.get(
@@ -19,38 +27,20 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
                     $scope.addresses = response.data.results;
                 });
         };
-        $scope.disabled = undefined;
-        $scope.enable = function() {
-            $scope.disabled = false;
+        $scope.refreshCompetences = function(search) {
+            var params = {competence: search};
+            return $http.get(
+                '/competences', {params: params}
+            ).then(function(response) {
+                    $scope.competences = response.data;
+                });
         };
-        $scope.disable = function() {
-            $scope.disabled = true;
-        };
+
         $scope.clear = function() {
             $scope.address.selected = undefined;
             $scope.gender.selected = undefined;
             $scope.language.selected = undefined;
         };
-
-        $scope.professions = [ //TODO: get from the server
-            {name: "Криминалньое"},
-            {name: "Земельное"},
-            {name: "Нотариус"}
-        ];
-        $scope.competences = [ //TODO: get from the server
-            {name: "Криминалньое"},
-            {name: "Земельное"},
-            {name: "Нотариус"}
-        ];
-        $scope.genderTypes = [ //TODO: get from the server
-            {name: 'Male'},
-            {name: 'Famele'}
-        ];
-        $scope.languages = [ //TODO: get from the server
-            {name: 'Ukrainian'},
-            {name: 'English'}
-        ];
-        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 
         $scope.additionalFl = {};
         $scope.validateInputPair = function(_min, _max) {
@@ -101,21 +91,30 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
             });
             return data;
         };
+        $scope.getSelectedLawyer = function(lawyerID) {
+            $filterService.saveSelectedLawyer(lawyerID);
+        };
         $scope.getResults = function() {
+            // TODO: send just 'filter' object. Waiting backend support for multiple chaises.
             var params = {
-                // "city": $scope.filters.address ? $scope.filters.address.selected.name : undefined, TODO: backEnd support is needed
-                "gender": $scope.filters.gender ? $scope.filters.gender.selected.name : undefined,
+                "city": $scope.filters.address
+                    ? $scope.filters.address.selected.address_components[0].long_name
+                    : undefined,
+                "gender": $scope.filters.gender
+                    ? $scope.filters.gender.selected.id
+                    : undefined,
                 "firstName": $scope.filters.firstName,
                 "lastName": $scope.filters.lastName,
-                "middleName": $scope.filters.middleName,
-                // "birthDate": "", TODO: hided for now. Need clarification
-                // "competence": $scope.filters.competence ? $scope.filters.competence.selected.name : undefined, TODO: backEnd support is needed
-                // "profession": $scope.filters.profession ? $scope.filters.profession.selected.name : undefined, TODO: backEnd support is needed
-                // "language": $scope.filters.language ? $scope.filters.language.selected.name : undefined, TODO: backEnd support is needed
+                "competence": $scope.filters.competence
+                    ? $scope.filters.competence.selected[0]
+                    : undefined,
+                "language": $scope.filters.language
+                    ? $scope.filters.language.selected.name
+                    : undefined,
                 "minRate": $scope.filters.rangeMin,
                 // "maxRate": $scope.filters.rangeMax, TODO: backEnd support is needed
-                // "yearMin": $scope.filters.wRangeMin, TODO: backEnd support is needed
-                // "yearMax": $scope.filters.wRangeMax, TODO: backEnd support is needed
+                "yearMin": $scope.filters.wRangeMin,
+                "yearMax": $scope.filters.wRangeMax,
                 "availability": $scope.filters.availability
             };
 
@@ -129,6 +128,8 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
                     $scope.tableState.isEmpty = false;
                     $scope.searchResponse = convertTime(data);
                     $scope.searchResponse = checkAvatar(data);
+                    // Save filter results to Service
+                    $filterService.saveFoundLawyers(data);
                 }).
                 error(function (data, status, headers, config) {
                     $scope.error = 'Unexpected error. Please try again later.';

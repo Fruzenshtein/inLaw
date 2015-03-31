@@ -37,7 +37,9 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
         $scope.setCompetence = function(competence, event) {
             var competence = {competence: competence},
                 method = event == 'select' ? 'POST' : 'DELETE',
-                url = method == 'DELETE' ? '/lawyers/competences?competence='+ competence.competence : '/lawyers/competences';
+                url = method == 'DELETE'
+                    ? '/lawyers/competences?competence='+ competence.competence
+                    : '/lawyers/competences';
             $http({
                 method: method,
                 url: url,

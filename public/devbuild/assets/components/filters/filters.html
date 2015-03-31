@@ -14,15 +14,8 @@
                     <label>Last name:</label>
                     <input type="text" class="form-control"
                            name="LastName"
-                           ng-model="filters.LastName"
+                           ng-model="filters.lastName"
                            placeholder="Last name"/>
-                </li>
-                <li class="col-xs-3">
-                    <label>Middle name:</label>
-                    <input type="text" class="form-control"
-                           name="middleName"
-                           ng-model="filters.middleName"
-                           placeholder="Midle name"/>
                 </li>
             </ul>
             <ul class="row-fluid clearfix list-unstyled">
@@ -40,29 +33,17 @@
                         </ui-select-choices>
                     </ui-select>
                 </li>
-                <li class="col-xs-3">
-                    <label>Profession:</label>
-                    <ui-select ng-model="filters.profession.selected"
-                               theme="bootstrap"
-                               ng-disabled="disabled"
-                               reset-search-input="false">
-                        <ui-select-match placeholder="Enter a profession...">{{$select.selected.name}}</ui-select-match>
-                        <ui-select-choices repeat="profession in professions | filter: $select.search"
-                                           refresh-delay="0">
-                            <div ng-bind-html="profession.name | highlight: $select.search"></div>
-                        </ui-select-choices>
-                    </ui-select>
-                </li>
                 <li class="col-xs-6">
                     <label>Competence:</label>
                     <ui-select ng-model="filters.competence.selected" multiple
                                theme="bootstrap"
                                ng-disabled="disabled"
                                reset-search-input="false">
-                        <ui-select-match placeholder="Enter a Competence...">{{$item.name}}</ui-select-match>
+                        <ui-select-match placeholder="Enter a Competence...">{{$item}}</ui-select-match>
                         <ui-select-choices repeat="competence in competences | filter: $select.search"
+                                           refresh="refreshCompetences($select.search)"
                                            refresh-delay="0">
-                            <div ng-bind-html="competence.name | highlight: $select.search"></div>
+                            <div ng-bind-html="competence | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>{{competence.selected}}
                 </li>
@@ -104,7 +85,6 @@
                         <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
                             <span ng-bind-html="gender.name | highlight: $select.search"></span>
-                            <small ng-bind-html="gender.code | highlight: $select.search"></small>
                         </ui-select-choices>
                     </ui-select>
                 </li>
@@ -193,7 +173,7 @@
                 </div>
             </div>
             <div class="row" ng-repeat="lawyer in searchResponse">
-                <div ui-sref="publicProfile({id: lawyer.id})">
+                <div ui-sref="publicProfile({id: lawyer.id})" ng-click="getSelectedLawyer({id: lawyer.id})">
                     <div class="col-sm-2"><img ng-src="{{::lawyer.avatar}}"></div>
                     <div class="col-sm-2">{{::lawyer.profile.firstName}}</div>
                     <div class="col-sm-2">{{::lawyer.profile.lastName}}</div>

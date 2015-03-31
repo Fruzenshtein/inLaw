@@ -108,6 +108,34 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
 App.factory('$filterService', ['$http', '$state', '$q',
     function( $http, $state ) {
 
+        var listOfFoundLawyers = [],
+            selectedLawyerID = '',
+            selectedLawyerObj = {};
+
+        function saveFoundLawyers(array) {
+            if (_.isArray(array) && _.isEmpty(array)) return;
+            listOfFoundLawyers = array;
+        };
+        function saveSelectedLawyer(lawyerID) {
+            selectedLawyerID = lawyerID.id;
+        };
+        function getSelectedLawyerObj() {
+            angular.forEach(listOfFoundLawyers, function(elem, index) {
+                if (selectedLawyerID === elem['id']) {
+                    selectedLawyerObj = elem;
+                }
+            });
+            return selectedLawyerObj;
+        };
+
+        return {
+            selectedLawyerObj    : selectedLawyerObj,
+            listOfFoundLawyers   : listOfFoundLawyers,
+            saveFoundLawyers     : saveFoundLawyers,
+            saveSelectedLawyer   : saveSelectedLawyer,
+            getSelectedLawyerObj : getSelectedLawyerObj
+        }
+
     }]);
 'use strict';
 /* Services */
@@ -290,6 +318,208 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     return info;
 }]);
 'use strict';
+/* Constants */
+
+App.constant('LanguagesList', {
+    languages : [
+        /*
+        {"code": "ab", "name": "Abkhaz", "nativeName": "аҧсуа"},
+        {"code": "aa", "name": "Afar", "nativeName": "Afaraf"},
+        {"code": "af", "name": "Afrikaans", "nativeName": "Afrikaans"},
+        {"code": "ak", "name": "Akan", "nativeName": "Akan"},
+        {"code": "sq", "name": "Albanian", "nativeName": "Shqip"},
+        {"code": "am", "name": "Amharic", "nativeName": "አማርኛ"},
+        {"code": "ar", "name": "Arabic", "nativeName": "العربية"},
+        {"code": "an", "name": "Aragonese", "nativeName": "Aragonés"},
+        {"code": "hy", "name": "Armenian", "nativeName": "Հայերեն"},
+        {"code": "as", "name": "Assamese", "nativeName": "অসমীয়া"},
+        {"code": "av", "name": "Avaric", "nativeName": "авар мацӀ, магӀарул мацӀ"},
+        {"code": "ae", "name": "Avestan", "nativeName": "avesta"},
+        {"code": "ay", "name": "Aymara", "nativeName": "aymar aru"},
+        {"code": "az", "name": "Azerbaijani", "nativeName": "azərbaycan dili"},
+        {"code": "bm", "name": "Bambara", "nativeName": "bamanankan"},
+        {"code": "ba", "name": "Bashkir", "nativeName": "башҡорт теле"},
+        {"code": "eu", "name": "Basque", "nativeName": "euskara, euskera"},
+        {"code": "be", "name": "Belarusian", "nativeName": "Беларуская"},
+        {"code": "bn", "name": "Bengali", "nativeName": "বাংলা"},
+        {"code": "bh", "name": "Bihari", "nativeName": "भोजपुरी"},
+        {"code": "bi", "name": "Bislama", "nativeName": "Bislama"},
+        {"code": "bs", "name": "Bosnian", "nativeName": "bosanski jezik"},
+        {"code": "br", "name": "Breton", "nativeName": "brezhoneg"},
+        {"code": "bg", "name": "Bulgarian", "nativeName": "български език"},
+        {"code": "my", "name": "Burmese", "nativeName": "ဗမာစာ"},
+        {"code": "ca", "name": "Catalan; Valencian", "nativeName": "Català"},
+        {"code": "ch", "name": "Chamorro", "nativeName": "Chamoru"},
+        {"code": "ce", "name": "Chechen", "nativeName": "нохчийн мотт"},
+        {"code": "ny", "name": "Chichewa; Chewa; Nyanja", "nativeName": "chiCheŵa, chinyanja"},
+        {"code": "zh", "name": "Chinese", "nativeName": "中文 (Zhōngwén), 汉语, 漢語"},
+        {"code": "cv", "name": "Chuvash", "nativeName": "чӑваш чӗлхи"},
+        {"code": "kw", "name": "Cornish", "nativeName": "Kernewek"},
+        {"code": "co", "name": "Corsican", "nativeName": "corsu, lingua corsa"},
+        {"code": "cr", "name": "Cree", "nativeName": "ᓀᐦᐃᔭᐍᐏᐣ"},
+        {"code": "hr", "name": "Croatian", "nativeName": "hrvatski"},
+        {"code": "cs", "name": "Czech", "nativeName": "česky, čeština"},
+        {"code": "da", "name": "Danish", "nativeName": "dansk"},
+        {"code": "dv", "name": "Divehi; Dhivehi; Maldivian;", "nativeName": "ދިވެހި"},
+        */
+        {"code": "nl", "name": "Dutch", "nativeName": "Nederlands, Vlaams"},
+        {"code": "en", "name": "English", "nativeName": "English"},
+        /*
+        {"code": "eo", "name": "Esperanto", "nativeName": "Esperanto"},
+        {"code": "et", "name": "Estonian", "nativeName": "eesti, eesti keel"},
+        {"code": "ee", "name": "Ewe", "nativeName": "Eʋegbe"},
+        {"code": "fo", "name": "Faroese", "nativeName": "føroyskt"},
+        {"code": "fj", "name": "Fijian", "nativeName": "vosa Vakaviti"},
+        {"code": "fi", "name": "Finnish", "nativeName": "suomi, suomen kieli"},
+        */
+        {"code": "fr", "name": "French", "nativeName": "français, langue française"},
+        /*
+        {"code": "ff", "name": "Fula; Fulah; Pulaar; Pular", "nativeName": "Fulfulde, Pulaar, Pular"},
+        {"code": "gl", "name": "Galician", "nativeName": "Galego"},
+        {"code": "ka", "name": "Georgian", "nativeName": "ქართული"},
+        */
+        {"code": "de", "name": "German", "nativeName": "Deutsch"},
+        /*
+        {"code": "el", "name": "Greek, Modern", "nativeName": "Ελληνικά"},
+        {"code": "gn", "name": "Guaraní", "nativeName": "Avañeẽ"},
+        {"code": "gu", "name": "Gujarati", "nativeName": "ગુજરાતી"},
+        {"code": "ht", "name": "Haitian; Haitian Creole", "nativeName": "Kreyòl ayisyen"},
+        {"code": "ha", "name": "Hausa", "nativeName": "Hausa, هَوُسَ"},
+        {"code": "he", "name": "Hebrew (modern)", "nativeName": "עברית"},
+        {"code": "hz", "name": "Herero", "nativeName": "Otjiherero"},
+        {"code": "hi", "name": "Hindi", "nativeName": "हिन्दी, हिंदी"},
+        {"code": "ho", "name": "Hiri Motu", "nativeName": "Hiri Motu"},
+        {"code": "hu", "name": "Hungarian", "nativeName": "Magyar"},
+        {"code": "ia", "name": "Interlingua", "nativeName": "Interlingua"},
+        {"code": "id", "name": "Indonesian", "nativeName": "Bahasa Indonesia"},
+        {"code": "ie", "name": "Interlingue", "nativeName": "Originally called Occidental; then Interlingue after WWII"},
+        {"code": "ga", "name": "Irish", "nativeName": "Gaeilge"},
+        {"code": "ig", "name": "Igbo", "nativeName": "Asụsụ Igbo"},
+        {"code": "ik", "name": "Inupiaq", "nativeName": "Iñupiaq, Iñupiatun"},
+        {"code": "io", "name": "Ido", "nativeName": "Ido"},
+        {"code": "is", "name": "Icelandic", "nativeName": "Íslenska"},
+        {"code": "it", "name": "Italian", "nativeName": "Italiano"},
+        {"code": "iu", "name": "Inuktitut", "nativeName": "ᐃᓄᒃᑎᑐᑦ"},
+        {"code": "ja", "name": "Japanese", "nativeName": "日本語 (にほんご／にっぽんご)"},
+        {"code": "jv", "name": "Javanese", "nativeName": "basa Jawa"},
+        {"code": "kl", "name": "Kalaallisut, Greenlandic", "nativeName": "kalaallisut, kalaallit oqaasii"},
+        {"code": "kn", "name": "Kannada", "nativeName": "ಕನ್ನಡ"},
+        {"code": "kr", "name": "Kanuri", "nativeName": "Kanuri"},
+        {"code": "ks", "name": "Kashmiri", "nativeName": "कश्मीरी, كشميري‎"},
+        {"code": "kk", "name": "Kazakh", "nativeName": "Қазақ тілі"},
+        {"code": "km", "name": "Khmer", "nativeName": "ភាសាខ្មែរ"},
+        {"code": "ki", "name": "Kikuyu, Gikuyu", "nativeName": "Gĩkũyũ"},
+        {"code": "rw", "name": "Kinyarwanda", "nativeName": "Ikinyarwanda"},
+        {"code": "ky", "name": "Kirghiz, Kyrgyz", "nativeName": "кыргыз тили"},
+        {"code": "kv", "name": "Komi", "nativeName": "коми кыв"},
+        {"code": "kg", "name": "Kongo", "nativeName": "KiKongo"},
+        {"code": "ko", "name": "Korean", "nativeName": "한국어 (韓國語), 조선말 (朝鮮語)"},
+        {"code": "ku", "name": "Kurdish", "nativeName": "Kurdî, كوردی‎"},
+        {"code": "kj", "name": "Kwanyama, Kuanyama", "nativeName": "Kuanyama"},
+        {"code": "la", "name": "Latin", "nativeName": "latine, lingua latina"},
+        {"code": "lb", "name": "Luxembourgish, Letzeburgesch", "nativeName": "Lëtzebuergesch"},
+        {"code": "lg", "name": "Luganda", "nativeName": "Luganda"},
+        {"code": "li", "name": "Limburgish, Limburgan, Limburger", "nativeName": "Limburgs"},
+        {"code": "ln", "name": "Lingala", "nativeName": "Lingála"},
+        {"code": "lo", "name": "Lao", "nativeName": "ພາສາລາວ"},
+        {"code": "lt", "name": "Lithuanian", "nativeName": "lietuvių kalba"},
+        {"code": "lu", "name": "Luba-Katanga", "nativeName": ""},
+        {"code": "lv", "name": "Latvian", "nativeName": "latviešu valoda"},
+        {"code": "gv", "name": "Manx", "nativeName": "Gaelg, Gailck"},
+        {"code": "mk", "name": "Macedonian", "nativeName": "македонски јазик"},
+        {"code": "mg", "name": "Malagasy", "nativeName": "Malagasy fiteny"},
+        {"code": "ms", "name": "Malay", "nativeName": "bahasa Melayu, بهاس ملايو‎"},
+        {"code": "ml", "name": "Malayalam", "nativeName": "മലയാളം"},
+        {"code": "mt", "name": "Maltese", "nativeName": "Malti"},
+        {"code": "mi", "name": "Māori", "nativeName": "te reo Māori"},
+        {"code": "mr", "name": "Marathi (Marāṭhī)", "nativeName": "मराठी"},
+        {"code": "mh", "name": "Marshallese", "nativeName": "Kajin M̧ajeļ"},
+        {"code": "mn", "name": "Mongolian", "nativeName": "монгол"},
+        {"code": "na", "name": "Nauru", "nativeName": "Ekakairũ Naoero"},
+        {"code": "nv", "name": "Navajo, Navaho", "nativeName": "Diné bizaad, Dinékʼehǰí"},
+        {"code": "nb", "name": "Norwegian Bokmål", "nativeName": "Norsk bokmål"},
+        {"code": "nd", "name": "North Ndebele", "nativeName": "isiNdebele"},
+        {"code": "ne", "name": "Nepali", "nativeName": "नेपाली"},
+        {"code": "ng", "name": "Ndonga", "nativeName": "Owambo"},
+        {"code": "nn", "name": "Norwegian Nynorsk", "nativeName": "Norsk nynorsk"},
+        {"code": "no", "name": "Norwegian", "nativeName": "Norsk"},
+        {"code": "ii", "name": "Nuosu", "nativeName": "ꆈꌠ꒿ Nuosuhxop"},
+        {"code": "nr", "name": "South Ndebele", "nativeName": "isiNdebele"},
+        {"code": "oc", "name": "Occitan", "nativeName": "Occitan"},
+        {"code": "oj", "name": "Ojibwe, Ojibwa", "nativeName": "ᐊᓂᔑᓈᐯᒧᐎᓐ"},
+        {"code": "cu", "name": "Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic",
+            "nativeName": "ѩзыкъ словѣньскъ"},
+        {"code": "om", "name": "Oromo", "nativeName": "Afaan Oromoo"},
+        {"code": "or", "name": "Oriya", "nativeName": "ଓଡ଼ିଆ"},
+        {"code": "os", "name": "Ossetian, Ossetic", "nativeName": "ирон æвзаг"},
+        {"code": "pa", "name": "Panjabi, Punjabi", "nativeName": "ਪੰਜਾਬੀ, پنجابی‎"},
+        {"code": "pi", "name": "Pāli", "nativeName": "पाऴि"},
+        {"code": "fa", "name": "Persian", "nativeName": "فارسی"},
+        {"code": "pl", "name": "Polish", "nativeName": "polski"},
+        {"code": "ps", "name": "Pashto, Pushto", "nativeName": "پښتو"},
+        {"code": "pt", "name": "Portuguese", "nativeName": "Português"},
+        {"code": "qu", "name": "Quechua", "nativeName": "Runa Simi, Kichwa"},
+        {"code": "rm", "name": "Romansh", "nativeName": "rumantsch grischun"},
+        {"code": "rn", "name": "Kirundi", "nativeName": "kiRundi"},
+        {"code": "ro", "name": "Romanian, Moldavian, Moldovan", "nativeName": "română"},
+        */
+        {"code": "ru", "name": "Russian", "nativeName": "русский язык"},
+        /*
+        {"code": "sa", "name": "Sanskrit (Saṁskṛta)", "nativeName": "संस्कृतम्"},
+        {"code": "sc", "name": "Sardinian", "nativeName": "sardu"},
+        {"code": "sd", "name": "Sindhi", "nativeName": "सिन्धी, سنڌي، سندھی‎"},
+        {"code": "se", "name": "Northern Sami", "nativeName": "Davvisámegiella"},
+        {"code": "sm", "name": "Samoan", "nativeName": "gagana faa Samoa"},
+        {"code": "sg", "name": "Sango", "nativeName": "yângâ tî sängö"},
+        {"code": "sr", "name": "Serbian", "nativeName": "српски језик"},
+        {"code": "gd", "name": "Scottish Gaelic; Gaelic", "nativeName": "Gàidhlig"},
+        {"code": "sn", "name": "Shona", "nativeName": "chiShona"},
+        {"code": "si", "name": "Sinhala, Sinhalese", "nativeName": "සිංහල"},
+        {"code": "sk", "name": "Slovak", "nativeName": "slovenčina"},
+        {"code": "sl", "name": "Slovene", "nativeName": "slovenščina"},
+        {"code": "so", "name": "Somali", "nativeName": "Soomaaliga, af Soomaali"},
+        {"code": "st", "name": "Southern Sotho", "nativeName": "Sesotho"},
+        {"code": "es", "name": "Spanish; Castilian", "nativeName": "español, castellano"},
+        {"code": "su", "name": "Sundanese", "nativeName": "Basa Sunda"},
+        {"code": "sw", "name": "Swahili", "nativeName": "Kiswahili"},
+        {"code": "ss", "name": "Swati", "nativeName": "SiSwati"},
+        {"code": "sv", "name": "Swedish", "nativeName": "svenska"},
+        {"code": "ta", "name": "Tamil", "nativeName": "தமிழ்"},
+        {"code": "te", "name": "Telugu", "nativeName": "తెలుగు"},
+        {"code": "tg", "name": "Tajik", "nativeName": "тоҷикӣ, toğikī, تاجیکی‎"},
+        {"code": "th", "name": "Thai", "nativeName": "ไทย"},
+        {"code": "ti", "name": "Tigrinya", "nativeName": "ትግርኛ"},
+        {"code": "bo", "name": "Tibetan Standard, Tibetan, Central", "nativeName": "བོད་ཡིག"},
+        {"code": "tk", "name": "Turkmen", "nativeName": "Türkmen, Түркмен"},
+        {"code": "tl", "name": "Tagalog", "nativeName": "Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔"},
+        {"code": "tn", "name": "Tswana", "nativeName": "Setswana"},
+        {"code": "to", "name": "Tonga (Tonga Islands)", "nativeName": "faka Tonga"},
+        {"code": "tr", "name": "Turkish", "nativeName": "Türkçe"},
+        {"code": "ts", "name": "Tsonga", "nativeName": "Xitsonga"},
+        {"code": "tt", "name": "Tatar", "nativeName": "татарча, tatarça, تاتارچا‎"},
+        {"code": "tw", "name": "Twi", "nativeName": "Twi"},
+        {"code": "ty", "name": "Tahitian", "nativeName": "Reo Tahiti"},
+        {"code": "ug", "name": "Uighur, Uyghur", "nativeName": "Uyƣurqə, ئۇيغۇرچە‎"},
+        */
+        {"code": "uk", "name": "Ukrainian", "nativeName": "українська"},
+        /*
+        {"code": "ur", "name": "Urdu", "nativeName": "اردو"},
+        {"code": "uz", "name": "Uzbek", "nativeName": "zbek, Ўзбек, أۇزبېك‎"},
+        {"code": "ve", "name": "Venda", "nativeName": "Tshivenḓa"},
+        {"code": "vi", "name": "Vietnamese", "nativeName": "Tiếng Việt"},
+        {"code": "vo", "name": "Volapük", "nativeName": "Volapük"},
+        {"code": "wa", "name": "Walloon", "nativeName": "Walon"},
+        {"code": "cy", "name": "Welsh", "nativeName": "Cymraeg"},
+        {"code": "wo", "name": "Wolof", "nativeName": "Wollof"},
+        {"code": "fy", "name": "Western Frisian", "nativeName": "Frysk"},
+        {"code": "xh", "name": "Xhosa", "nativeName": "isiXhosa"},
+        {"code": "yi", "name": "Yiddish", "nativeName": "ייִדיש"},
+        {"code": "yo", "name": "Yoruba", "nativeName": "Yorùbá"},
+        {"code": "za", "name": "Zhuang, Chuang", "nativeName": "Saɯ cueŋƅ, Saw cuengh"}
+        */
+    ]
+});
+'use strict';
 /* Controller */
 
 App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
@@ -328,7 +558,9 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
         $scope.setCompetence = function(competence, event) {
             var competence = {competence: competence},
                 method = event == 'select' ? 'POST' : 'DELETE',
-                url = method == 'DELETE' ? '/lawyers/competences?competence='+ competence.competence : '/lawyers/competences';
+                url = method == 'DELETE'
+                    ? '/lawyers/competences?competence='+ competence.competence
+                    : '/lawyers/competences';
             $http({
                 method: method,
                 url: url,
@@ -418,6 +650,107 @@ App.controller('ContactsCtrl', ['$scope', '$http',
                 });
         }
     }]);
+'use strict';
+/* Controller */
+
+App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
+    function ($scope, $http, $userInfo) {
+
+        // if data had been saved before, do not send a request
+        if ( _.isEmpty($userInfo.experiences) ) {
+            var promiseGetExperience = $userInfo.getUserExperience();
+            promiseGetExperience.then(function (onFulfilled) {
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
+            }, function (onReject) {
+                $scope.experiences = [{}];
+            });
+        };
+
+        $scope.experience = {};
+        $scope.experiences = $userInfo.experiences || [{}];
+        $scope.experiencesCounter = 0;
+        $scope.addExperience = function () {
+            $scope.experiencesTemplate = {
+                id: $scope.experiencesCounter
+            };
+            $scope.experiencesCounter += 1;
+            $scope.experiences.push($scope.experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
+                    $scope.experiences.splice(index, 1);
+                }
+                // TODO: API call
+            })
+        };
+
+        // Disable weekend selection
+        $scope.disabled = function (date, mode) {
+            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+        };
+
+        $scope.toggleMin = function () {
+            var years100ago = new Date();
+            // Time 100 years ago
+            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
+            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
+        };
+        $scope.toggleMin();
+        $scope.maxDate = new Date();
+
+        $scope.openStart = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            this.openedEnd = false;
+            this.openedStart = true;
+        };
+        $scope.openEnd = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            this.openedStart = false;
+            this.openedEnd = true;
+        };
+
+        $scope.dateOptions = {
+            formatYear: 'yyyy',
+            minMode: 'month'
+        };
+
+        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.format = $scope.formats[0];
+
+        $scope.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+
+        $scope.updateExperience = function (array) {
+            angular.forEach(array, function(elem, index) {
+                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
+                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
+                $http({
+                    method: 'POST',
+                    url: '/lawyers/experience',
+                    data: array[index],
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                }).
+                    success(function (data, status, headers, config) {
+                        $scope.formStatus.isEditModeOpen = true;
+                        $scope.isUpdated = true;
+                        $scope.error = '';
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                    });
+            });
+        };
+}]);
 'use strict';
 /* Controller */
 
@@ -694,14 +1027,22 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
 /* Controller */
 
 
-App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
+App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', '$filterService',
+    function ($scope, $http, $userInfo, LanguagesList, $filterService) {
 
+        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         $scope.filters = {};
         $scope.tableState = {
             isFound: false,
             isEmpty: false
         };
+        $scope.competences = [];
+        $scope.genderTypes = [ //TODO: get from the server
+            { name: 'Male', id: 'm' },
+            { name: 'Female', id: 'f' }
+        ];
+        $scope.languages = LanguagesList.languages;
+
         $scope.refreshAddresses = function(address) {
             var params = {address: address, sensor: false, language: 'uk'}; //TODO: Update locale on the localization phase
             return $http.get(
@@ -711,38 +1052,20 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
                     $scope.addresses = response.data.results;
                 });
         };
-        $scope.disabled = undefined;
-        $scope.enable = function() {
-            $scope.disabled = false;
+        $scope.refreshCompetences = function(search) {
+            var params = {competence: search};
+            return $http.get(
+                '/competences', {params: params}
+            ).then(function(response) {
+                    $scope.competences = response.data;
+                });
         };
-        $scope.disable = function() {
-            $scope.disabled = true;
-        };
+
         $scope.clear = function() {
             $scope.address.selected = undefined;
             $scope.gender.selected = undefined;
             $scope.language.selected = undefined;
         };
-
-        $scope.professions = [ //TODO: get from the server
-            {name: "Криминалньое"},
-            {name: "Земельное"},
-            {name: "Нотариус"}
-        ];
-        $scope.competences = [ //TODO: get from the server
-            {name: "Криминалньое"},
-            {name: "Земельное"},
-            {name: "Нотариус"}
-        ];
-        $scope.genderTypes = [ //TODO: get from the server
-            {name: 'Male'},
-            {name: 'Famele'}
-        ];
-        $scope.languages = [ //TODO: get from the server
-            {name: 'Ukrainian'},
-            {name: 'English'}
-        ];
-        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 
         $scope.additionalFl = {};
         $scope.validateInputPair = function(_min, _max) {
@@ -793,21 +1116,30 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
             });
             return data;
         };
+        $scope.getSelectedLawyer = function(lawyerID) {
+            $filterService.saveSelectedLawyer(lawyerID);
+        };
         $scope.getResults = function() {
+            // TODO: send just 'filter' object. Waiting backend support for multiple chaises.
             var params = {
-                // "city": $scope.filters.address ? $scope.filters.address.selected.name : undefined, TODO: backEnd support is needed
-                "gender": $scope.filters.gender ? $scope.filters.gender.selected.name : undefined,
+                "city": $scope.filters.address
+                    ? $scope.filters.address.selected.address_components[0].long_name
+                    : undefined,
+                "gender": $scope.filters.gender
+                    ? $scope.filters.gender.selected.id
+                    : undefined,
                 "firstName": $scope.filters.firstName,
                 "lastName": $scope.filters.lastName,
-                "middleName": $scope.filters.middleName,
-                // "birthDate": "", TODO: hided for now. Need clarification
-                // "competence": $scope.filters.competence ? $scope.filters.competence.selected.name : undefined, TODO: backEnd support is needed
-                // "profession": $scope.filters.profession ? $scope.filters.profession.selected.name : undefined, TODO: backEnd support is needed
-                // "language": $scope.filters.language ? $scope.filters.language.selected.name : undefined, TODO: backEnd support is needed
+                "competence": $scope.filters.competence
+                    ? $scope.filters.competence.selected[0]
+                    : undefined,
+                "language": $scope.filters.language
+                    ? $scope.filters.language.selected.name
+                    : undefined,
                 "minRate": $scope.filters.rangeMin,
                 // "maxRate": $scope.filters.rangeMax, TODO: backEnd support is needed
-                // "yearMin": $scope.filters.wRangeMin, TODO: backEnd support is needed
-                // "yearMax": $scope.filters.wRangeMax, TODO: backEnd support is needed
+                "yearMin": $scope.filters.wRangeMin,
+                "yearMax": $scope.filters.wRangeMax,
                 "availability": $scope.filters.availability
             };
 
@@ -821,6 +1153,8 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
                     $scope.tableState.isEmpty = false;
                     $scope.searchResponse = convertTime(data);
                     $scope.searchResponse = checkAvatar(data);
+                    // Save filter results to Service
+                    $filterService.saveFoundLawyers(data);
                 }).
                 error(function (data, status, headers, config) {
                     $scope.error = 'Unexpected error. Please try again later.';
@@ -829,107 +1163,6 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo',
 
     }]);
 
-'use strict';
-/* Controller */
-
-App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
-
-        // if data had been saved before, do not send a request
-        if ( _.isEmpty($userInfo.experiences) ) {
-            var promiseGetExperience = $userInfo.getUserExperience();
-            promiseGetExperience.then(function (onFulfilled) {
-                // assign [{}] object if request returns an empty object.
-                // [{}] - is used to build default html template
-                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
-            }, function (onReject) {
-                $scope.experiences = [{}];
-            });
-        };
-
-        $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [{}];
-        $scope.experiencesCounter = 0;
-        $scope.addExperience = function () {
-            $scope.experiencesTemplate = {
-                id: $scope.experiencesCounter
-            };
-            $scope.experiencesCounter += 1;
-            $scope.experiences.push($scope.experiencesTemplate);
-        };
-        $scope.removeExperience = function(obj) {
-            angular.forEach($scope.experiences, function(elem, index) {
-                if ( $scope.experiences[index]['id'] == obj['id'] ) {
-                    $scope.experiences.splice(index, 1);
-                }
-                // TODO: API call
-            })
-        };
-
-        // Disable weekend selection
-        $scope.disabled = function (date, mode) {
-            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-        };
-
-        $scope.toggleMin = function () {
-            var years100ago = new Date();
-            // Time 100 years ago
-            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
-            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
-        };
-        $scope.toggleMin();
-        $scope.maxDate = new Date();
-
-        $scope.openStart = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedEnd = false;
-            this.openedStart = true;
-        };
-        $scope.openEnd = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedStart = false;
-            this.openedEnd = true;
-        };
-
-        $scope.dateOptions = {
-            formatYear: 'yyyy',
-            minMode: 'month'
-        };
-
-        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        $scope.format = $scope.formats[0];
-
-        $scope.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-
-        $scope.updateExperience = function (array) {
-            angular.forEach(array, function(elem, index) {
-                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
-                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
-                $http({
-                    method: 'POST',
-                    url: '/lawyers/experience',
-                    data: array[index],
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                    }
-                }).
-                    success(function (data, status, headers, config) {
-                        $scope.formStatus.isEditModeOpen = true;
-                        $scope.isUpdated = true;
-                        $scope.error = '';
-                    }).
-                    error(function (data, status, headers, config) {
-                        $scope.error = 'Unexpected error. Please try again later.';
-                    });
-            });
-        };
-}]);
 'use strict';
 /* Controller */
 
@@ -1069,10 +1302,31 @@ App.controller('ProfileCtrl', ['$scope', '$http',
 'use strict';
 /* Controller */
 
-App.controller('PublicProfileCtrl', ['$scope', '$http', '$userInfo', '$timeout',
-    function ($scope, $http, $userInfo) {
+App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$location',
+    function ($scope, $http, $filterService, $location) {
 
+        var userProfileObj = $filterService.getSelectedLawyerObj();
+        // if data had saved before, do not send a request
+        if ( _.isEmpty(userProfileObj) ) {
+            var promiseGetPublicProfile = getPublicProfile();
+            promiseGetPublicProfile.then(function (onFulfilled) {
 
+            }, function (onReject) {
+
+            });
+        };
+
+        function getPublicProfile() {
+            // get profile ID from the URL, starting from 'public/' url
+            var profileUrlId = $location.url().slice(8);
+            return $http({
+                        method: 'GET',
+                        url: '/lawyers/public/' + profileUrlId,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                   });
+        };
 
 
     }]);
