@@ -4,7 +4,7 @@ import javax.ws.rs.QueryParam
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import forms.UserAccountForms
+import forms.{LawyerFilterForm, UserAccountForms}
 import play.api.mvc._
 
 import play.api.Logger
@@ -18,7 +18,7 @@ import com.wordnik.swagger.annotations._
  * Created by Alex on 11/23/14.
  */
 @Api(value = "/lawyers", description = "Operations with account")
-object LawyerController extends Controller with UserAccountForms with Security {
+object LawyerController extends Controller with UserAccountForms with LawyerFilterForm with Security {
 
   @ApiOperation(
     nickname = "createLawyerAccount",
@@ -74,34 +74,38 @@ object LawyerController extends Controller with UserAccountForms with Security {
     nickname = "filterLawyers",
     value = "Get lawyers accounts",
     notes = "Filter lawyers accounts by parameters",
-    httpMethod = "GET",
+    httpMethod = "POST",
     response = classOf[models.swagger.LawyerSearchResult])
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "Lawyers list")))
-  def filterLawyers(@QueryParam("gender") gender: Option[String],
-                    @QueryParam("minRate") minRate: Option[Int],
-                    @QueryParam("minExp") minExp: Option[Int],
-                    @QueryParam("maxExp") maxExp: Option[Int],
-                    @QueryParam("competence") competence: Option[String],
-                    @QueryParam("language") language: Option[String],
-                    @QueryParam("availability") availability: Option[Boolean]) = Action.async {
+  @ApiResponses(Array(new ApiResponse(code = 200, message = "Lawyers list")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Search parameters by which you want to filter lawyers", required = true, dataType = "forms.LawyerFilter", paramType = "body")))
+  def filterLawyers() = Action.async {
+    implicit request => {
+      lawyerFilterForm.bindFromRequest fold(
+      formWithErrors => {
+        Logger.info("Create Lawyer account has validation errors")
+        Future.successful(BadRequest(formWithErrors.errorsAsJson))
+      },
+      filterObj => {
+        val generalQuery = Json.obj("profile.active" -> true)
 
-    val generalQuery = Json.obj("profile.active" -> true)
+        val finalQuery = availabilityQuery(filterObj.availability,
+          languageQuery(filterObj.languages,
+            competenceQuery(filterObj.competences,
+              maxExperienceQuery(filterObj.maxExp,
+                minExperienceQuery(filterObj.minExp,
+                  minRateQuery(filterObj.minRate,
+                    genderQuery(filterObj.gender, generalQuery)))))))
 
-    val finalQuery = availabilityQuery(availability,
-      languageQuery(language,
-      competenceQuery(competence,
-      maxExperienceQuery(maxExp,
-      minExperienceQuery(minExp,
-      minRateQuery(minRate,
-      genderQuery(gender, generalQuery)))))))
+        val futureLawyers = LawyerService.filterLawyers(finalQuery)
 
-    val futureLawyers = LawyerService.filterLawyers(finalQuery)
-
-    futureLawyers map {
-      case seqLawyers => {
-        Ok(Json.toJson(seqLawyers map(lawyer => lawyerToJson(lawyer))))
+        futureLawyers map {
+          case seqLawyers => {
+            Ok(Json.toJson(seqLawyers map(lawyer => lawyerToJson(lawyer))))
+          }
+        }
       }
+      )
     }
 
   }
@@ -134,16 +138,24 @@ object LawyerController extends Controller with UserAccountForms with Security {
     }
   }
 
-  def competenceQuery(competence: Option[String], generalQuery: JsObject) = {
-    competence match {
-      case Some(c) => generalQuery deepMerge Json.obj("competences" -> c)
+  def competenceQuery(competences: Option[List[String]], generalQuery: JsObject) = {
+    competences match {
+      case Some(c) => generalQuery deepMerge Json.obj(
+        "competences" -> Json.obj(
+          "$all" -> c
+        )
+      )
       case None => generalQuery
     }
   }
 
-  def languageQuery(language: Option[String], generalQuery: JsObject) = {
-    language match {
-      case Some(l) => generalQuery deepMerge Json.obj("education.languages" -> l)
+  def languageQuery(languages: Option[List[String]], generalQuery: JsObject) = {
+    languages match {
+      case Some(langs) => generalQuery deepMerge Json.obj(
+        "education.languages" -> Json.obj(
+          "$all" -> langs
+        )
+      )
       case None => generalQuery
     }
   }
