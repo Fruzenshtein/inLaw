@@ -36,12 +36,6 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
                 });
         };
 
-        $scope.clear = function() {
-            $scope.address.selected = undefined;
-            $scope.gender.selected = undefined;
-            $scope.language.selected = undefined;
-        };
-
         $scope.additionalFl = {};
         $scope.validateInputPair = function(_min, _max) {
             var min = $scope.additionalFl[_min],
@@ -95,30 +89,16 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
             $filterService.saveSelectedLawyer(lawyerID);
         };
         $scope.getResults = function() {
-            // TODO: send just 'filter' object. Waiting backend support for multiple chaises.
-            var params = {
-                "city": $scope.filters.address
-                    ? $scope.filters.address.selected.address_components[0].long_name
-                    : undefined,
-                "gender": $scope.filters.gender
-                    ? $scope.filters.gender.selected.id
-                    : undefined,
-                "firstName": $scope.filters.firstName,
-                "lastName": $scope.filters.lastName,
-                "competence": $scope.filters.competence
-                    ? $scope.filters.competence.selected[0]
-                    : undefined,
-                "language": $scope.filters.language
-                    ? $scope.filters.language.selected.name
-                    : undefined,
-                "minRate": $scope.filters.rangeMin,
-                // "maxRate": $scope.filters.rangeMax, TODO: backEnd support is needed
-                "yearMin": $scope.filters.wRangeMin,
-                "yearMax": $scope.filters.wRangeMax,
-                "availability": $scope.filters.availability
-            };
-
-            $http.get('/lawyers', { params: params })
+            // rewrite form obj to needed format
+            var params = angular.copy($scope.filters);
+            delete params.address; // delete google obj
+            params.city = $scope.filters.address
+                ? $scope.filters.address.selected.address_components[0].long_name
+                : undefined;
+            params.gender = $scope.filters.gender
+                ? $scope.filters.gender.id
+                : undefined;
+            $http.post('/lawyers/filter', params)
                 .success(function (data, status, headers, config) {
                     if ( _.isEmpty(data) ) {
                         $scope.tableState.isFound = false;

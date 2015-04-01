@@ -35,17 +35,17 @@
                 </li>
                 <li class="col-xs-6">
                     <label>Competence:</label>
-                    <ui-select ng-model="filters.competence.selected" multiple
+                    <ui-select ng-model="filters.competences" multiple
                                theme="bootstrap"
                                ng-disabled="disabled"
-                               reset-search-input="false">
+                               reset-search-input="true">
                         <ui-select-match placeholder="Enter a Competence...">{{$item}}</ui-select-match>
                         <ui-select-choices repeat="competence in competences | filter: $select.search"
                                            refresh="refreshCompetences($select.search)"
                                            refresh-delay="0">
                             <div ng-bind-html="competence | highlight: $select.search"></div>
                         </ui-select-choices>
-                    </ui-select>{{competence.selected}}
+                    </ui-select>{{competence}}
                 </li>
             </ul>
             <ul class="row-fluid clearfix list-unstyled">
@@ -53,35 +53,35 @@
                     <label>Rate:</label>
                     <ul class="list-inline input-pair">
                         <li>
-                            <input name="rangeMin" ng-pattern="/^\d{0,9}$/"
-                                   ng-model="filters.rangeMin"
+                            <input name="minRate" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="filters.minRate"
                                    class="form-control"
                                    placeholder="From"
-                                   ng-change="validateInputPair('rangeMin', 'rangeMax')" required/>
+                                   ng-change="validateInputPair('minRate', 'maxRate')" required/>
                         </li>
                         <li>-</li>
                         <li>
-                            <input name="rangeMax" ng-pattern="/^\d{0,9}$/"
-                                   ng-model="filters.rangeMax"
+                            <input name="maxRate" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="filters.maxRate"
                                    class="form-control"
                                    placeholder="To"
-                                   ng-change="validateInputPair('rangeMin', 'rangeMax')" required/>
+                                   ng-change="validateInputPair('minRate', 'maxRate')" required/>
                         </li>
                     </ul>
-                    <p class="text-danger" ng-if="aFilters.rangeMin.$error.pattern && aFilters.rangeMin.$dirty">
+                    <p class="text-danger" ng-if="aFilters.minRate.$error.pattern && aFilters.minRate.$dirty">
                         Min rate value should be a number
                     </p>
-                    <p class="text-danger" ng-if="aFilters.rangeMax.$error.pattern && aFilters.rangeMax.$dirty">
+                    <p class="text-danger" ng-if="aFilters.maxRate.$error.pattern && aFilters.maxRate.$dirty">
                         Max rate value should be a number
                     </p>
-                    <div ng-if="!aFilters.rangeMax.$error.pattern && !aFilters.rangeMin.$error.pattern">
-                        <p class="text-danger" ng-if="rangeMin.requiredBothError">Both fields are required</p>
-                        <p class="text-danger" ng-if="rangeMin.pairError && !rangeMin.requiredBothError">Last rate value can not be less than first one</p>
+                    <div ng-if="!aFilters.maxRate.$error.pattern && !aFilters.minRate.$error.pattern">
+                        <p class="text-danger" ng-if="minRate.requiredBothError">Both fields are required</p>
+                        <p class="text-danger" ng-if="minRate.pairError && !minRate.requiredBothError">Last rate value can not be less than first one</p>
                     </div>
                 </li>
                 <li class="col-sm-3">
                     <label>Gender:</label>
-                    <ui-select ng-model="filters.gender.selected" theme="bootstrap" ng-disabled="disabled">
+                    <ui-select ng-model="filters.gender" theme="bootstrap" ng-disabled="disabled">
                         <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
                             <span ng-bind-html="gender.name | highlight: $select.search"></span>
@@ -92,40 +92,43 @@
                     <label>Working years:</label>
                     <ul class="list-inline input-pair">
                         <li>
-                            <input name="wRangeMin" ng-pattern="/^\d{0,9}$/"
-                                   ng-model="filters.wRangeMin"
+                            <input name="minExp" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="filters.minExp"
                                    class="form-control"
                                    placeholder="From"
-                                   ng-change="validateInputPair('wRangeMin', 'wRangeMax')"/>
+                                   ng-change="validateInputPair('minExp', 'maxExp')"/>
                         </li>
                         <li>-</li>
                         <li>
-                            <input name="wRangeMax" ng-pattern="/^\d{0,9}$/"
-                                   ng-model="filters.wRangeMax"
+                            <input name="maxExp" ng-pattern="/^\d{0,9}$/"
+                                   ng-model="filters.maxExp"
                                    class="form-control"
                                    placeholder="To"
-                                   ng-change="validateInputPair('wRangeMin', 'wRangeMax')"/>
+                                   ng-change="validateInputPair('minExp', 'maxExp')"/>
                         </li>
                     </ul>
-                    <p class="text-danger" ng-if="aFilters.wRangeMin.$error.pattern && aFilters.wRangeMin.$dirty">
+                    <p class="text-danger" ng-if="aFilters.minExp.$error.pattern && aFilters.minExp.$dirty">
                         Min working value should be a number
                     </p>
-                    <p class="text-danger" ng-if="aFilters.wRangeMax.$error.pattern && aFilters.wRangeMax.$dirty">
+                    <p class="text-danger" ng-if="aFilters.maxExp.$error.pattern && aFilters.maxExp.$dirty">
                         Max working value should be a number
                     </p>
-                    <div ng-if="!aFilters.wRangeMax.$error.pattern && !aFilters.wRangeMin.$error.pattern">
-                        <p class="text-danger" ng-if="wRangeMin.requiredBothError">Both fields are required</p>
-                        <p class="text-danger" ng-if="wRangeMin.pairError && !wRangeMin.requiredBothError">Last working value can not be less than first one</p>
+                    <div ng-if="!aFilters.maxExp.$error.pattern && !aFilters.minExp.$error.pattern">
+                        <p class="text-danger" ng-if="minExp.requiredBothError">Both fields are required</p>
+                        <p class="text-danger" ng-if="minExp.pairError && !minExp.requiredBothError">Last working value can not be less than first one</p>
                     </div>
                 </li>
             </ul>
             <ul class="row-fluid clearfix list-unstyled">
                 <li class="col-sm-3">
                     <label>Language:</label>
-                    <ui-select ng-model="filters.language.selected" theme="bootstrap" ng-disabled="disabled">
-                        <ui-select-match placeholder="Select a language in the list...">{{$select.selected.name}}</ui-select-match>
+                    <ui-select ng-model="filters.languages" multiple
+                               theme="bootstrap"
+                               ng-disabled="disabled"
+                               reset-search-input="true">
+                        <ui-select-match placeholder="Select a language in the list...">{{$item}}</ui-select-match>
                         <ui-select-choices repeat="language in languages | filter: $select.search">
-                            <span ng-bind-html="language.name | highlight: $select.search"></span>
+                            <div ng-bind-html="language | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>
                 </li>

@@ -1,8 +1,8 @@
 'use strict';
 /* Controller */
 
-App.controller('LanguagesCtrl', ['$scope', '$http', '$userInfo', '$timeout',
-    function ($scope, $http, $userInfo) {
+App.controller('LanguagesCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList',
+    function ($scope, $http, $userInfo, LanguagesList) {
 
         // if data had saved before, do not send a request
         if ( _.isEmpty($userInfo.languages) ) {
