@@ -14,6 +14,7 @@ GET         /api-docs.json/lawyers                  controllers.ApiHelpControlle
 POST        /lawyers                                controllers.LawyerController.createAccount
 POST        /lawyers/filter                         controllers.LawyerController.filterLawyers
 GET         /lawyers/public/:id                     controllers.LawyerController.findById(id: String)
+PUT         /lawyers/change-password                controllers.LawyerController.changePassword
 
 GET         /api-docs.json/lawyers/profile          controllers.ApiHelpController.getResource(path = "/lawyers/profile")
 PUT         /lawyers/profile                        controllers.LawyerProfileController.updateProfile

@@ -2,6 +2,9 @@ package controllers
 
 import javax.ws.rs.QueryParam
 
+import controllers.LawyerContactsController._
+import utils.CryptUtils
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import forms.{LawyerFilterForm, UserAccountForms}
@@ -214,7 +217,6 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
     new ApiResponse(code = 404, message = "Lawyer not found")))
   def findById(@QueryParam("id") id: String) = Action.async {
     implicit request =>
-
       Logger.info(s"Looking for Lawyer with id: $id")
       LawyerService.findById(id) map {
         case Some(lawyer) => {
@@ -228,7 +230,38 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
         }
         case None => NotFound(Json.obj("message" -> s"Lawyer with $id is not found"))
       }
-
-
   }
+
+  @ApiOperation(
+    nickname = "changePassword",
+    value = "Change password",
+    notes = "Changes password of logged in user",
+    httpMethod = "PUT",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Password successfully updated"),
+    new ApiResponse(code = 400, message = "Old password does not match")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Object contains old a new passwords", dataType = "forms.ChangePassword", paramType = "body", required = true),
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def changePassword = isAuthenticated { implicit acc =>
+    implicit request => {
+      changePasswordForm.bindFromRequest fold(
+        formWithErrors => {
+          Logger.info("Password validation failed")
+          Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+        },
+        passwordInfo => {
+          Logger.info("Updating of Lawyer password...")
+          if (CryptUtils.isMatch(acc.password, passwordInfo.oldPassword)) {
+            LawyerService.updatePassword(acc.email, CryptUtils.encryptPassword(passwordInfo.newPassword))
+            Future(Ok(Json.obj("message" -> "Password successfully updated")))
+          } else
+            Future(BadRequest(Json.obj("message" -> "Old password does not match")))
+        }
+      )
+    }
+  }
+
 }
