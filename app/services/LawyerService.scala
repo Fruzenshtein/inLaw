@@ -62,6 +62,17 @@ object LawyerService {
     updateAction
   }
 
+  def updatePassword(email: String, password: String) = {
+    val updatedPassword = Json.obj(
+      "$set" -> Json.obj(
+        "password" -> password)
+    )
+    val updateAction = collection.update(
+      Json.obj("email" -> email),
+      updatedPassword)
+    updateAction
+  }
+
   def updateProfile(email: String, profile: Profile) = {
     val updateProfile = Json.obj(
       "$set" -> Json.obj(

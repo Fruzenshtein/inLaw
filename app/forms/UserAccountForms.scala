@@ -20,6 +20,13 @@ trait UserAccountForms extends LawyerValidators {
       (UserAccountInfo.apply)(UserAccountInfo.unapply)
   )
 
+  val changePasswordForm = Form(
+  mapping(
+    "oldPassword" -> nonEmptyText(minLength = 6),
+    "newPassword" -> nonEmptyText(minLength = 6)
+  )(ChangePassword.apply)(ChangePassword.unapply)
+  )
+
   val credentialsForm = Form(mapping(
     "email" -> email,
     "password" -> nonEmptyText(minLength = 6))

@@ -11,4 +11,8 @@ object CryptUtils {
     password.bcrypt
   }
 
+  def isMatch(oldPassword: String, newPassword: String) = {
+    newPassword.isBcryptedWithCache(oldPassword)
+  }
+
 }
