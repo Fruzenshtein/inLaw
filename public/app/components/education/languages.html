@@ -10,7 +10,7 @@
             <label>Languages:</label>
             <ui-select multiple
                        tagging
-                       tagging-label="(custom 'new' label)"
+                       tagging-label="false"
                        ng-model="languages"
                        on-select="setLanguages($item, 'select')"
                        on-remove="setLanguages($item, 'remove')"
@@ -18,7 +18,7 @@
                        ng-disabled="formStatus.isEditModeOpen"
                        title="Choose a language">
                 <ui-select-match placeholder="Select a language...">{{$item}}</ui-select-match>
-                <ui-select-choices repeat="language in languages">
+                <ui-select-choices repeat="language in listOfLanguages">
                     <small>
                         {{language}}
                     </small>

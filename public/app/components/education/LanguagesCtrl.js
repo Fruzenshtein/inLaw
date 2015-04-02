@@ -15,6 +15,7 @@ App.controller('LanguagesCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList'
         };
         $scope.language = {};
         $scope.languages = $userInfo.languages || [];
+        $scope.listOfLanguages = LanguagesList.languages;
         $scope.languagesModel = {};
         $scope.formStatus = {
             isEditModeOpen: true,

@@ -3,12 +3,11 @@
 
 App.constant('LanguagesList', {
     languages : [
-        'Dutch',
         'English',
         'French',
         'German',
-        'Russian',
-        'Ukrainian'
+        'Русский',
+        'Українська'
      /*   hided for first version
         {"code": "nl", "name": "Dutch", "nativeName": "Nederlands, Vlaams"},
         {"code": "en", "name": "English", "nativeName": "English"},

@@ -16,7 +16,8 @@ App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$loca
         };
 
         function getPublicProfile() {
-            // get profile ID from the URL, starting from 'public/' url
+            // get a profile ID from the URL, starting from 'public/' url
+            // if user uses a direct url to load the profile
             var profileUrlId = $location.url().slice(8);
             return $http({
                         method: 'GET',
@@ -26,6 +27,14 @@ App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$loca
                         }
                    });
         };
+
+
+        $scope.profile = userProfileObj.profile;
+        $scope.competences = userProfileObj.competences;
+        $scope.education = userProfileObj.education;
+        $scope.experiences = userProfileObj.experience.total == 0
+            ? []
+            : userProfileObj.experience.workPlaces;
 
 
     }]);

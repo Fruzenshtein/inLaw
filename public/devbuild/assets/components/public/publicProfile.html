@@ -11,13 +11,13 @@
             </div>
             <div class="col-xs-6 col-md-3">
                 <div class="caption">
-                   Full Name{{::lawyer.profile.firstName + ' ' + lawyer.profile.lastName + ' ' + lawyer.profile.middleName}}
+                   {{::profile.firstName + ' ' + profile.lastName + ' ' + profile.middleName}}
                 </div>
                 <div class="caption">
-                   Birthday {{::lawyer.profile.birthDate}}
+                   {{::profile.birthDate}}
                 </div>
                 <div class="caption">
-                    Min Rate {{::lawyer.profile.minRate}}
+                    {{::profile.minRate}}
                 </div>
                 <div class="caption">
                     Phone numbers
@@ -32,23 +32,38 @@
     </div>
     <div class="panel-body">
         <div class="caption">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default">Криминальное</button>
-                <button type="button" class="btn btn-default">Административное</button>
+            <div class="btn-group" role="group" ng-repeat="competence in competences">
+                <button type="button" class="btn btn-default" disabled="disabled">{{::competence}}</button>
             </div>
         </div>
     </div>
 </div>
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">Education</h3>
+        <h3 class="panel-title">Languages</h3>
     </div>
     <div class="panel-body">
         <div class="caption">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default">...</button>
-                <button type="button" class="btn btn-default">...</button>
+            <div class="btn-group" role="group" ng-repeat="language in education.languages">
+                <button type="button" class="btn btn-default" disabled="disabled">{{::language}}</button>
+
             </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Universities</h3>
+    </div>
+    <div class="panel-body">
+        <div class="caption" ng-repeat="university in education.universities">
+            <ul class="list-group">
+                <li class="list-group-item disabled">{{::university.name}}</li>
+                <li class="list-group-item">{{::university.degree}}</li>
+                <li class="list-group-item">{{::university.faculty}}</li>
+                <li class="list-group-item">{{::university.startDate}}</li>
+                <li class="list-group-item">{{::university.endDate}}</li>
+            </ul>
         </div>
     </div>
 </div>
@@ -57,11 +72,29 @@
         <h3 class="panel-title">Experience</h3>
     </div>
     <div class="panel-body">
-        <div class="caption">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default">...</button>
-                <button type="button" class="btn btn-default">...</button>
-            </div>
+        <div class="caption" ng-repeat="experience in experiences">
+            <ul class="list-group">
+                <li class="list-group-item disabled">{{::experience.name}}</li>
+                <li class="list-group-item">{{::experience.position}}</li>
+                <li class="list-group-item">{{::experience.responsibilities}}</li>
+                <li class="list-group-item">{{::experience.startDate}}</li>
+                <li class="list-group-item">{{::experience.endDate}}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Certificates</h3>
+    </div>
+    <div class="panel-body">
+        <div class="caption" ng-repeat="certificate in education.certificates">
+            <ul class="list-group">
+                <li class="list-group-item disabled">{{::certificate.name}}</li>
+                <li class="list-group-item">{{::certificate.licenseCode}}</li>
+                <li class="list-group-item">{{::certificate.date}}</li>
+
+            </ul>
         </div>
     </div>
 </div>
