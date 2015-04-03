@@ -6,7 +6,7 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
 
     this.cancel = $scope.$dismiss;
 
-    this.submit = function (email, password) {
+    $scope.submit = function (email, password) {
         var data = {
             'email': email,
             'password': password

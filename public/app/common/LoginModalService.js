@@ -4,7 +4,8 @@
 App.service('LoginModalService', function ($modal, $rootScope) {
 
     function assignCurrentUser (user) {
-        $rootScope.currentUser = user.token || sessionStorage.getItem('token');
+        sessionStorage.setItem('token', user.data.token);
+        $rootScope.currentUser = user.data.token || sessionStorage.getItem('token');
         return user;
     };
 

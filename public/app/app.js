@@ -4,9 +4,10 @@
 App.run(function ($rootScope, $state, LoginModalService) {
 
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
-        var requireLogin = toState.data.requireLogin;
+        var requireLogin = toState.data.requireLogin,
+            currentUser = $rootScope.currentUser || sessionStorage.getItem('token');
 
-        if (requireLogin && typeof $rootScope.currentUser === '') {
+        if (requireLogin && !currentUser) {
             event.preventDefault();
 
             LoginModalService()
