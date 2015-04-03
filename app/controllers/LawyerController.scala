@@ -92,13 +92,17 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
       filterObj => {
         val generalQuery = Json.obj("profile.active" -> true)
 
-        val finalQuery = availabilityQuery(filterObj.availability,
+        val finalQuery = lastNameQuery(filterObj.lastName,
+          firstNameQuery(filterObj.firstName,
+          availabilityQuery(filterObj.availability,
           languageQuery(filterObj.languages,
-            competenceQuery(filterObj.competences,
-              maxExperienceQuery(filterObj.maxExp,
-                minExperienceQuery(filterObj.minExp,
-                  minRateQuery(filterObj.minRate,
-                    genderQuery(filterObj.gender, generalQuery)))))))
+          competenceQuery(filterObj.competences,
+          maxExperienceQuery(filterObj.maxExp,
+          minExperienceQuery(filterObj.minExp,
+          minRateQuery(filterObj.minRate,
+          genderQuery(filterObj.gender, generalQuery)))))))))
+
+        Logger.info("Filter object: "+finalQuery.toString)
 
         val futureLawyers = LawyerService.filterLawyers(finalQuery)
 
@@ -116,7 +120,7 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
   def genderQuery(gender: Option[String], generalQuery: JsObject) = {
     gender match {
       case Some(g) => generalQuery deepMerge Json.obj("profile.gender" -> g)
-      case None => Json.obj()
+      case None => generalQuery
     }
   }
 
@@ -166,6 +170,20 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
   def availabilityQuery(availability: Option[Boolean], generalQuery: JsObject) = {
     availability match {
       case Some(a) => generalQuery deepMerge Json.obj("profile.availability" -> a)
+      case None => generalQuery
+    }
+  }
+
+  def lastNameQuery(lastNameOpt: Option[String], generalQuery: JsObject) = {
+    lastNameOpt match {
+      case Some(lastName) => generalQuery deepMerge Json.obj("profile.lastName" -> lastName)
+      case None => generalQuery
+    }
+  }
+
+  def firstNameQuery(firstNameOpt: Option[String], generalQuery: JsObject) = {
+    firstNameOpt match {
+      case Some(firstName) => generalQuery deepMerge Json.obj("profile.firstName" -> firstName)
       case None => generalQuery
     }
   }
