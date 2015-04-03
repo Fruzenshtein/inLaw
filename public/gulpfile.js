@@ -25,7 +25,7 @@ var paths = {
     ],
     "scripts": [
         'app/routes.js',
-        'app/run.js',
+        'app/app.js',
         'app/**/*.js'
     ],
     "fonts": ['fonts/*.*'],

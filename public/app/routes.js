@@ -13,6 +13,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     "templateUrl": 'assets/devbuild/assets/components/landing/landing.html',
                     "controller": 'LandingPageCtrl'
                 }
+            },
+            data: {
+                requireLogin: true
             }
         }).state('registration', {
             url: "/registration",
@@ -21,6 +24,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/registration/registration.html',
                     controller: 'RegistrationCtrl'
                 }
+            },
+            data: {
+                requireLogin: false
             }
         }).state('login', {
             url: "/login",
@@ -29,6 +35,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/login/login.html',
                     controller: 'LoginCtrl'
                 }
+            },
+            data: {
+                requireLogin: false
             }
         }).state('profile', {
             url: "/profile",
@@ -37,6 +46,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/profile/profile.html',
                     controller: 'ProfileCtrl'
                 }
+            },
+            data: {
+                requireLogin: true
             }
         }).state('contacts', {
             url: "/contacts",
@@ -45,6 +57,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/contacts/contacts.html',
                     controller: 'ContactsCtrl'
                 }
+            },
+            data: {
+                requireLogin: true
             }
         }).state('education', {
             url: "/education",
@@ -64,6 +79,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/education/languages.html',
                     controller: 'LanguagesCtrl'
                 }
+            },
+            data: {
+                requireLogin: true
             }
         }).state('experience', {
             url: "/experience",
@@ -72,6 +90,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/experience/experience.html',
                     controller: 'ExperienceCtrl'
                 }
+            },
+            data: {
+                requireLogin: true
             }
         }).state('filters', {
             url: "/lawyers/filters",
@@ -80,6 +101,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/filters/filters.html',
                     controller: 'FiltersCtrl'
                 }
+            },
+            data: {
+                requireLogin: false
             }
         }).state('competence', {
             url: "/competences",
@@ -88,6 +112,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/competence/competence.html',
                     controller: 'CompetenceCtrl'
                 }
+            },
+            data: {
+                requireLogin: true
             }
         }).state('publicProfile', {
             url: "/public/:id",
@@ -96,6 +123,9 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                     templateUrl: 'assets/devbuild/assets/components/public/publicProfile.html',
                     controller: 'PublicProfileCtrl'
                 }
+            },
+            data: {
+                requireLogin: false
             }
         });
         // Without server side support html5 must be disabled.

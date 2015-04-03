@@ -1,10 +1,11 @@
 'use strict';
 /* Controller */
 
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$timeout',
-    function ($scope, $http, $userInfo) {
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$userInfo',
+    function ($scope, $http, $userInfo, $rootScope) {
 
-    $scope.isLoggedIn = $userInfo.isLoggedIn;
+        //For the test needs
+    $scope.currentUser = $rootScope.currentUser || $userInfo.isLoggedIn || sessionStorage.getItem('token');
 
 
     }]);
