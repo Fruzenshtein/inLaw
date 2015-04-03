@@ -23,7 +23,11 @@ var paths = {
         'bower_components/lodash/dist/lodash.js',
         'bower_components/moment/moment.js'
     ],
-    "scripts": ['app/**/*.js'],
+    "scripts": [
+        'app/routes.js',
+        'app/run.js',
+        'app/**/*.js'
+    ],
     "fonts": ['fonts/*.*'],
     "templates": ['app/**/*.html'],
     "images": ['images/*.*'],
