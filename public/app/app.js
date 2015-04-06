@@ -1,22 +1,14 @@
 'use strict';
 /*  App block */
 
-App.run(function ($rootScope, $state, LoginModalService) {
+App.run(function ($rootScope, $state, AuthService) {
 
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
         var requireLogin = toState.data.requireLogin,
-            currentUser = $rootScope.currentUser || sessionStorage.getItem('token');
+            currentUser = $rootScope.currentUser || AuthService.isAuthenticated();
 
-        if (requireLogin && !currentUser) {
-            event.preventDefault();
-
-            LoginModalService()
-                .then(function () {
-                    return $state.go(toState.name, toParams);
-                })
-                .catch(function () {
-                    return $state.go('login');
-                });
+        if ( requireLogin && !currentUser ) {
+            $state.go('login');
         }
     });
 
@@ -25,36 +17,26 @@ App.run(function ($rootScope, $state, LoginModalService) {
 App.config(function ($httpProvider) {
 
     $httpProvider.interceptors.push(function ($timeout, $q, $injector) {
-        var LoginModalService, $http, $state;
+        var $http, $state;
 
         // this trick must be done so that we don't receive
         // `Uncaught Error: [$injector:cdep] Circular dependency found`
         $timeout(function () {
-            LoginModalService = $injector.get('LoginModalService');
             $http = $injector.get('$http');
             $state = $injector.get('$state');
         });
 
         return {
             responseError: function (rejection) {
-                if (rejection.status !== 401) {
-                    return rejection;
-                }
-
                 var deferred = $q.defer();
-
-                LoginModalService()
-                    .then(function () {
-                        deferred.resolve( $http(rejection.config) );
-                    })
-                    .catch(function () {
-                        $state.go('login');
-                        deferred.reject(rejection);
-                    });
-
+                if (rejection.status == 401) {
+                    $state.go('login');
+                    deferred.reject(rejection);
+                 }
                 return deferred.promise;
             }
         };
+
     });
 
 });

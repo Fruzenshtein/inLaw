@@ -135,22 +135,14 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
 'use strict';
 /*  App block */
 
-App.run(function ($rootScope, $state, LoginModalService) {
+App.run(function ($rootScope, $state, AuthService) {
 
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
         var requireLogin = toState.data.requireLogin,
-            currentUser = $rootScope.currentUser || sessionStorage.getItem('token');
+            currentUser = $rootScope.currentUser || AuthService.isAuthenticated();
 
-        if (requireLogin && !currentUser) {
-            event.preventDefault();
-
-            LoginModalService()
-                .then(function () {
-                    return $state.go(toState.name, toParams);
-                })
-                .catch(function () {
-                    return $state.go('login');
-                });
+        if ( requireLogin && !currentUser ) {
+            $state.go('login');
         }
     });
 
@@ -159,37 +151,51 @@ App.run(function ($rootScope, $state, LoginModalService) {
 App.config(function ($httpProvider) {
 
     $httpProvider.interceptors.push(function ($timeout, $q, $injector) {
-        var LoginModalService, $http, $state;
+        var $http, $state;
 
         // this trick must be done so that we don't receive
         // `Uncaught Error: [$injector:cdep] Circular dependency found`
         $timeout(function () {
-            LoginModalService = $injector.get('LoginModalService');
             $http = $injector.get('$http');
             $state = $injector.get('$state');
         });
 
         return {
             responseError: function (rejection) {
-                if (rejection.status !== 401) {
-                    return rejection;
-                }
-
                 var deferred = $q.defer();
-
-                LoginModalService()
-                    .then(function () {
-                        deferred.resolve( $http(rejection.config) );
-                    })
-                    .catch(function () {
-                        $state.go('login');
-                        deferred.reject(rejection);
-                    });
-
+                if (rejection.status == 401) {
+                    $state.go('login');
+                    deferred.reject(rejection);
+                 }
                 return deferred.promise;
             }
         };
+
     });
+
+});
+'use strict';
+/* Service */
+
+App.factory('AuthService', function ($rootScope, $http) {
+
+    var authService = {};
+    authService.login = function(creadentials) {
+        return $http({
+            method: 'POST',
+            url: '/auth/login',
+            data: creadentials,
+            headers: {'Content-Type': 'application/json'}
+        });
+    };
+    authService.isAuthenticated = function() {
+        return sessionStorage.getItem('token');
+    };
+    authService.setCurrentUser = function(user) {
+        sessionStorage.setItem('token', user);
+    };
+
+    return authService;
 
 });
 'use strict';
@@ -227,28 +233,6 @@ App.factory('$filterService', ['$http', '$state', '$q',
         }
 
     }]);
-'use strict';
-/* Service */
-
-App.service('LoginModalService', function ($modal, $rootScope) {
-
-    function assignCurrentUser (user) {
-        sessionStorage.setItem('token', user.data.token);
-        $rootScope.currentUser = user.data.token || sessionStorage.getItem('token');
-        return user;
-    };
-
-    return function() {
-        var instance = $modal.open({
-            templateUrl: 'assets/devbuild/assets/components/login/loginModal.html',
-            controller: 'LoginModalCtrl',
-            controllerAs: 'LoginModalCtrl'
-        });
-
-        return instance.result.then(assignCurrentUser);
-    };
-
-});
 'use strict';
 /* Services */
 
@@ -957,6 +941,17 @@ App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
 'use strict';
 /* Controller */
 
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$userInfo',
+    function ($scope, $http, $userInfo, $rootScope) {
+
+        //For the test needs
+    $scope.currentUser = $rootScope.currentUser || $userInfo.isLoggedIn || sessionStorage.getItem('token');
+
+
+    }]);
+'use strict';
+/* Controller */
+
 
 App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', '$filterService',
     function ($scope, $http, $userInfo, LanguagesList, $filterService) {
@@ -1075,49 +1070,23 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
     }]);
 
 'use strict';
-/* Controller */
 
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$userInfo',
-    function ($scope, $http, $userInfo, $rootScope) {
-
-        //For the test needs
-    $scope.currentUser = $rootScope.currentUser || $userInfo.isLoggedIn || sessionStorage.getItem('token');
-
-
-    }]);
-'use strict';
-
-App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo',
-    function($scope, $state, $http, $userInfo) {
+App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthService', '$rootScope',
+    function($scope, $state, $http, $userInfo, AuthService, $rootScope) {
 
     $scope.signIn = {};
     $scope.error = false;
-
     $scope.submit = function(signIn) {
-        var data = {
-            'email': signIn.email,
-            'password': signIn.password
-        };
-        $http({
-            method: 'POST',
-            url: '/auth/login',
-            data: data,
-            headers: {'Content-Type': 'application/json'}
-        }).
-            success(function(data, status, headers, config) {
-                sessionStorage.setItem('token', data['token']);
-                $userInfo.setUserStatus(true);
+        AuthService.login(signIn)
+            .success(function(data, status, headers, config) {
+                $rootScope.currentUser = data['token'];
+                AuthService.setCurrentUser(data['token']);
                 $state.go('landing');
-            }).
-            error(function(data, status, headers, config) {
+        })
+            .error(function(data, status, headers, config) {
                 $scope.error = true;
-            });
+        });
     };
-
-    $scope.cleanError = function() {
-        this.error = false;
-    };
-
 
 }]);
 'use strict';
@@ -1145,46 +1114,6 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
     };
 
 }]);
-'use strict';
-/* Controller */
-
-App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$location',
-    function ($scope, $http, $filterService, $location) {
-
-        var userProfileObj = $filterService.getSelectedLawyerObj();
-        // if data had saved before, do not send a request
-        if ( _.isEmpty(userProfileObj) ) {
-            var promiseGetPublicProfile = getPublicProfile();
-            promiseGetPublicProfile.then(function (onFulfilled) {
-
-            }, function (onReject) {
-
-            });
-        };
-
-        function getPublicProfile() {
-            // get a profile ID from the URL, starting from 'public/' url
-            // if user uses a direct url to load the profile
-            var profileUrlId = $location.url().slice(8);
-            return $http({
-                        method: 'GET',
-                        url: '/lawyers/public/' + profileUrlId,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                   });
-        };
-
-
-        $scope.profile = userProfileObj.profile;
-        $scope.competences = userProfileObj.competences;
-        $scope.education = userProfileObj.education;
-        $scope.experiences = userProfileObj.experience.total == 0
-            ? []
-            : userProfileObj.experience.workPlaces;
-
-
-    }]);
 'use strict';
 /* Controller */
 
@@ -1276,6 +1205,46 @@ App.controller('ProfileCtrl', ['$scope', '$http',
 
 }]);
 
+'use strict';
+/* Controller */
+
+App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$location',
+    function ($scope, $http, $filterService, $location) {
+
+        var userProfileObj = $filterService.getSelectedLawyerObj();
+        // if data had saved before, do not send a request
+        if ( _.isEmpty(userProfileObj) ) {
+            var promiseGetPublicProfile = getPublicProfile();
+            promiseGetPublicProfile.then(function (onFulfilled) {
+
+            }, function (onReject) {
+
+            });
+        };
+
+        function getPublicProfile() {
+            // get a profile ID from the URL, starting from 'public/' url
+            // if user uses a direct url to load the profile
+            var profileUrlId = $location.url().slice(8);
+            return $http({
+                        method: 'GET',
+                        url: '/lawyers/public/' + profileUrlId,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                   });
+        };
+
+
+        $scope.profile = userProfileObj.profile;
+        $scope.competences = userProfileObj.competences;
+        $scope.education = userProfileObj.education;
+        $scope.experiences = userProfileObj.experience.total == 0
+            ? []
+            : userProfileObj.experience.workPlaces;
+
+
+    }]);
 'use strict';
 
 App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo',

@@ -1,35 +1,20 @@
 'use strict';
 
-App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo',
-    function($scope, $state, $http, $userInfo) {
+App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthService', '$rootScope',
+    function($scope, $state, $http, $userInfo, AuthService, $rootScope) {
 
     $scope.signIn = {};
     $scope.error = false;
-
     $scope.submit = function(signIn) {
-        var data = {
-            'email': signIn.email,
-            'password': signIn.password
-        };
-        $http({
-            method: 'POST',
-            url: '/auth/login',
-            data: data,
-            headers: {'Content-Type': 'application/json'}
-        }).
-            success(function(data, status, headers, config) {
-                sessionStorage.setItem('token', data['token']);
-                $userInfo.setUserStatus(true);
+        AuthService.login(signIn)
+            .success(function(data, status, headers, config) {
+                $rootScope.currentUser = data['token'];
+                AuthService.setCurrentUser(data['token']);
                 $state.go('landing');
-            }).
-            error(function(data, status, headers, config) {
+        })
+            .error(function(data, status, headers, config) {
                 $scope.error = true;
-            });
+        });
     };
-
-    $scope.cleanError = function() {
-        this.error = false;
-    };
-
 
 }]);
