@@ -1,3 +1,90 @@
+<div class="ui centered grid">
+    <div class="ten wide column">
+        <form class="ui form segment">
+            <div class="ui error message"></div>
+            <h4 class="center aligned column">ПРОФАЙЛ</h4>
+            <div class="two fields">
+                <div class="field">
+                    <label>Ім'я</label>
+                    <input placeholder="Ім'я" name="name" type="text">
+                </div>
+                <div class="field">
+                    <label>Стать:</label>
+                    <ui-select ng-model="filters.gender" theme="bootstrap">
+                        <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
+                            <span ng-bind-html="gender.name | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="field">
+                <label>Призвище</label>
+                <input placeholder="Призвище" name="lastName" type="text">
+            </div>
+            <div class="field">
+                <label>По-батькові</label>
+                <input name="middleName" placeholder="По-батькові" type="password">
+            </div>
+            <div class="ui horizontal divider">
+                День народженнч
+            </div>
+            <div class="tree fields">
+                <div class="field">
+                    <label></label>
+                    <ui-select ng-model="filters.gender" theme="bootstrap">
+                        <ui-select-match placeholder="Виберить день...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
+                            <span ng-bind-html="gender.name | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="field">
+                    <div class="field">
+                        <label></label>
+                        <ui-select ng-model="filters.gender" theme="bootstrap">
+                            <ui-select-match placeholder="Виберить місяць...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
+                                <span ng-bind-html="gender.name | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="field">
+                        <label></label>
+                        <ui-select ng-model="filters.gender" theme="bootstrap">
+                            <ui-select-match placeholder="Виберить рік...">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
+                                <span ng-bind-html="gender.name | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="ui horizontal divider">Мінімальний рейт</div>
+            <div class="field slider-input">
+                <label>{{minRate}}</label>
+                <input type="range"
+                       name="minRate"
+                       min="0"
+                       max="5000"
+                       ng-model="minRate">
+            </div>
+            <div class="ui blue submit button">Submit</div>
+            <div class="ui reset button">Reset</div>
+            <div class="ui clear button">Clear</div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
 <div class="container">
     <form class="form-horizontal col-sm-8" name="profile" novalidate>
         <fieldset ng-disabled="formStatus.isEditModeOpen">

@@ -14,27 +14,33 @@ var gulp = require('gulp'),
 var paths = {
     "dist": "devbuild/",
     "vendorScripts": [
+        'bower_components/jquery/dist/jquery.js',
         'bower_components/angular/angular.js',
-        'bower_components/angular-bootstrap/ui-bootstrap.js',
+       // 'bower_components/angular-bootstrap/ui-bootstrap.js',
         'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
         'bower_components/angular-ui-router/release/angular-ui-router.js',
         'bower_components/angular-sanitize/angular-sanitize.js',
         'bower_components/angular-ui-select/dist/select.js',
         'bower_components/lodash/dist/lodash.js',
-        'bower_components/moment/moment.js'
+        'bower_components/moment/moment.js',
+        'bower_components/semantic-ui/dist/semantic.js'
     ],
     "scripts": [
         'app/routes.js',
         'app/app.js',
         'app/**/*.js'
     ],
-    "fonts": ['fonts/*.*'],
+    "fonts": [
+        'fonts/*.*',
+        'bower_components/semantic-ui/dist/themes/default/assets/fonts/*.*'
+    ],
     "templates": ['app/**/*.html'],
     "images": ['images/*.*'],
     "styles": ['app/**/*.css'],
     "vendorStyle": [
         'bower_components/bootstrap/dist/css/*.css',
-        'bower_components/angular-ui-select/dist/select.css'
+        'bower_components/angular-ui-select/dist/select.css',
+        'bower_components/semantic-ui/dist/semantic.css'
     ]
 };
 

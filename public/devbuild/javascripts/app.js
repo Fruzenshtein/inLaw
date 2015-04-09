@@ -165,8 +165,8 @@ App.config(function ($httpProvider) {
                 var deferred = $q.defer();
                 if (rejection.status == 401) {
                     $state.go('login');
-                    deferred.reject(rejection);
                  }
+                deferred.reject(rejection);
                 return deferred.promise;
             }
         };
@@ -174,6 +174,7 @@ App.config(function ($httpProvider) {
     });
 
 });
+
 'use strict';
 /* Service */
 
@@ -432,6 +433,86 @@ App.constant('LanguagesList', {
         {"code": "uk", "name": "Ukrainian", "nativeName": "українська"},
      */
     ]
+});
+'use strict';
+/* Constants */
+
+App.constant('ValidationRules', {
+    en: {
+        email: {
+            identifier: 'email',
+            optional: false,
+            rules: [
+                {
+                    type: 'email',
+                    prompt: 'Please enter a valid e-mail'
+                },
+                {
+                    type: 'empty',
+                    prompt: 'Please enter your email'
+                }
+            ]
+        },
+        password: {
+            identifier: 'password',
+            optional: false,
+            rules: [
+                {
+                    type: 'empty',
+                    prompt: 'Please enter your password'
+                },
+                {
+                    type: 'length[6]',
+                    prompt: 'Your password must be at least 6 characters'
+                }
+            ]
+        },
+        passwordConfirm: {
+            identifier: 'cpassword',
+            rules: [{
+                type: 'match[password]',
+                prompt: 'Password don\'t match'
+            }]
+        }
+    },
+    uk: {
+        email: {
+            identifier: 'email',
+            optional: false,
+            rules: [
+                {
+                    type: 'email',
+                    prompt: 'Будь-ласка введіть коректну електнонну адресу'
+                },
+                {
+                    type: 'empty',
+                    prompt: 'Будь-ласка введіть Вашу електронну адресу'
+                }
+            ]
+        },
+        password: {
+            identifier: 'password',
+            optional: false,
+            rules: [
+                {
+                    type: 'empty',
+                    prompt: 'Будь-ласка введіть Ваш пароль'
+                },
+                {
+                    type: 'length[6]',
+                    prompt: 'Ваш пароль повинен складатись щонайменш з 6 сімволів'
+                }
+            ]
+        },
+        passwordConfirm: {
+            identifier: 'cpassword',
+            rules: [{
+                type: 'match[password]',
+                prompt: 'Паролі не співпадають'
+            }]
+        }
+
+    }
 });
 'use strict';
 /* Controller */
@@ -1071,22 +1152,31 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
 
 'use strict';
 
-App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthService', '$rootScope',
-    function($scope, $state, $http, $userInfo, AuthService, $rootScope) {
+App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthService', '$rootScope', 'ValidationRules',
+    function($scope, $state, $http, $userInfo, AuthService, $rootScope, ValidationRules) {
 
-    $scope.signIn = {};
-    $scope.error = false;
-    $scope.submit = function(signIn) {
-        AuthService.login(signIn)
-            .success(function(data, status, headers, config) {
-                $rootScope.currentUser = data['token'];
-                AuthService.setCurrentUser(data['token']);
-                $state.go('landing');
-        })
-            .error(function(data, status, headers, config) {
-                $scope.error = true;
-        });
-    };
+        $scope.signIn = {};
+        $scope.error = false;
+        $scope.submit = function(signIn) {
+            AuthService.login(signIn)
+                .success(function(data, status, headers, config) {
+                    $rootScope.currentUser = data['token'];
+                    AuthService.setCurrentUser(data['token']);
+                    $state.go('landing');
+            })
+                .error(function(data, status, headers, config) {
+                    $scope.error = data.message;
+            });
+        };
+
+        // *** JQUERY SECTION ***
+
+        // Login form validation
+        (function ($) {
+            $('.ui.form')
+                .form(ValidationRules.uk);
+        })(jQuery);
+
 
 }]);
 'use strict';
@@ -1171,6 +1261,11 @@ App.controller('ProfileCtrl', ['$scope', '$http',
         "show-button-bar": false,
         "startingDay": 0
     };
+        $scope.genderTypes = [ //TODO: get from the server
+            { name: 'Чоловіча', id: 'm' },
+            { name: 'Жіноча', id: 'f' }
+        ];
+        $scope.filters = {};
 
     $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd/MM/yyyy', 'shortDate'];
     $scope.format = $scope.formats[2];
@@ -1247,38 +1342,50 @@ App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$loca
     }]);
 'use strict';
 
-App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo',
-    function($scope, $state, $http, $userInfo) {
+App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'ValidationRules',
+    function($scope, $state, $http, $userInfo, ValidationRules) {
 
-    $scope.signUp = {};
+        $scope.signUp = {};
+        $scope.error = false;
+        $scope.loading = false;
 
-    $scope.submit = function(signUp) {
-        var data = {
-            "email": signUp.email,
-            "password": signUp.password,
-            "repeatPassword": signUp.cpassword
+        $scope.submit = function(signUp) {
+            var data = {
+                "email": signUp.email,
+                "password": signUp.password,
+                "repeatPassword": signUp.cpassword
+            };
+            $scope.loading = true;
+
+            $http({
+                method: 'POST',
+                url: '/lawyers',
+                data: data,
+                headers: {'Content-Type': 'application/json'}
+            }).
+                success(function(data, status, headers, config) {
+                    sessionStorage.setItem('token', data.token);
+                    $userInfo.setUserStatus(true);
+                    $state.go('landing');
+                }).
+                error(function(data, status, headers, config) {
+                    $scope.loading = false;
+                    $scope.error = data.message;
+                });
         };
 
-        $http({
-            method: 'POST',
-            url: '/lawyers',
-            data: data,
-            headers: {'Content-Type': 'application/json'}
-        }).
-            success(function(data, status, headers, config) {
-                sessionStorage.setItem('token', data.token);
-                $userInfo.setUserStatus(true);
-                $state.go('landing');
-            }).
-            error(function(data, status, headers, config) {
-                $scope.error = true;
-                status == 400 ? $scope.commonError = data.message :
-                    $scope.commonError = 'Unexpected error. Please try again later.'
-            });
-    };
+        $scope.cleanError = function() {
+            this.error = false;
+        };
 
-    $scope.cleanError = function() {
-        this.error = false;
-    };
+        // *** JQUERY SECTION ***
+        // Activate checkbox
+        $('.ui.checkbox').checkbox();
+        // Registration form validation
+        (function ($) {
+            $('.ui.form')
+                .form(ValidationRules.uk);
+        })(jQuery);
 
-}]);
+
+    }]);

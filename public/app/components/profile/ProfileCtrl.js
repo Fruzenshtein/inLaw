@@ -55,6 +55,11 @@ App.controller('ProfileCtrl', ['$scope', '$http',
         "show-button-bar": false,
         "startingDay": 0
     };
+        $scope.genderTypes = [ //TODO: get from the server
+            { name: 'Чоловіча', id: 'm' },
+            { name: 'Жіноча', id: 'f' }
+        ];
+        $scope.filters = {};
 
     $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd/MM/yyyy', 'shortDate'];
     $scope.format = $scope.formats[2];

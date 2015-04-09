@@ -67,16 +67,3 @@ input[type="range"]::-ms-thumb {
     border: 0;
     background: linear-gradient(transparent,rgba(0,0,0,.05))#fff;
 }
-.empty-section {
-    background: #fff url('../../../devbuild/images/briefcase.png') no-repeat center;
-    height: 300px;
-}
-
-body {
-    background-image: url('../../../assets/devbuild/images/Treestone.jpg');
-    height: 100%;
-}
-.red-text {
-    color: #e25a5a;
-    margin-left: 105px;
-}

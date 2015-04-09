@@ -1,37 +1,49 @@
 'use strict';
 
-App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo',
-    function($scope, $state, $http, $userInfo) {
+App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'ValidationRules',
+    function($scope, $state, $http, $userInfo, ValidationRules) {
 
-    $scope.signUp = {};
+        $scope.signUp = {};
+        $scope.error = false;
+        $scope.loading = false;
 
-    $scope.submit = function(signUp) {
-        var data = {
-            "email": signUp.email,
-            "password": signUp.password,
-            "repeatPassword": signUp.cpassword
+        $scope.submit = function(signUp) {
+            var data = {
+                "email": signUp.email,
+                "password": signUp.password,
+                "repeatPassword": signUp.cpassword
+            };
+            $scope.loading = true;
+
+            $http({
+                method: 'POST',
+                url: '/lawyers',
+                data: data,
+                headers: {'Content-Type': 'application/json'}
+            }).
+                success(function(data, status, headers, config) {
+                    sessionStorage.setItem('token', data.token);
+                    $userInfo.setUserStatus(true);
+                    $state.go('landing');
+                }).
+                error(function(data, status, headers, config) {
+                    $scope.loading = false;
+                    $scope.error = data.message;
+                });
         };
 
-        $http({
-            method: 'POST',
-            url: '/lawyers',
-            data: data,
-            headers: {'Content-Type': 'application/json'}
-        }).
-            success(function(data, status, headers, config) {
-                sessionStorage.setItem('token', data.token);
-                $userInfo.setUserStatus(true);
-                $state.go('landing');
-            }).
-            error(function(data, status, headers, config) {
-                $scope.error = true;
-                status == 400 ? $scope.commonError = data.message :
-                    $scope.commonError = 'Unexpected error. Please try again later.'
-            });
-    };
+        $scope.cleanError = function() {
+            this.error = false;
+        };
 
-    $scope.cleanError = function() {
-        this.error = false;
-    };
+        // *** JQUERY SECTION ***
+        // Activate checkbox
+        $('.ui.checkbox').checkbox();
+        // Registration form validation
+        (function ($) {
+            $('.ui.form')
+                .form(ValidationRules.uk);
+        })(jQuery);
 
-}]);
+
+    }]);

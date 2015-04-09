@@ -1,69 +1,46 @@
-<div class="registration">
-    <form class="form-horizontal" role="form" name="registration" novalidate>
-        <div class="form-group">
-            <div class="red-text" ng-show="registration.email.$dirty && registration.email.$invalid">
-                <small class="red-text" ng-show="registration.email.$error.required">
-                    Your email is required.
-                </small>
-                <small class="red-text" ng-show="registration.email.$error.email">
-                    That is not a valid email. Please input a valid email.
-                </small>
+<div class="ui centered grid">
+    <div class="ten wide column">
+        <form class="ui form segment" ng-class="{'loading': loading}"
+              name="registration" novalidate>
+            <div class="ui error message"></div>
+            <div class="ui red message" ng-if="error">
+                <ul class="list">
+                    <li>{{error}}</li>
+                </ul>
             </div>
-            <label for="inputEmail" class="col-sm-2 control-label">Email</label>
-            <div class="col-sm-5">
-                <input type="email" class="form-control"
-                       id="inputEmail"
-                       placeholder="Email"
+            <h4 class="center aligned column">Реєстрація</h4>
+            <div class="required field">
+                <label>Електронна адреса</label>
+                <input placeholder="Електронна адреса"
                        name="email"
+                       type="text"
                        ng-model="signUp.email"
                        required>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="red-text" ng-show="registration.password.$dirty && registration.password.$invalid">
-                <small class="red-text" ng-show="registration.password.$error.required">
-                    Your password is required.
-                </small>
-                <small class="red-text" ng-show="registration.password.$error.pattern">
-                    Your password is required to be at least 8 characters
-                </small>
-            </div>
-            <label for="inputPassword" class="col-sm-2 control-label">Password</label>
-            <div class="col-sm-5">
-                <input type="password" class="form-control"
-                       id="inputPassword"
-                       placeholder="Password"
+            <div class="required field">
+                <label>Пароль</label>
+                <input type="password"
                        name="password"
                        ng-model="signUp.password"
-                       ng-pattern="/^(.){8,}$/"
+                       ng-pattern="/^(.){6,}$/"
                        required>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="red-text">
-                <small class="red-text" ng-show="(signUp.password !== signUp.cpassword) && registration.cpassword.$dirty">
-                    Your confirmation password doesn't match to password
-                </small>
-            </div>
-            <label for="inputConfPassword" class="col-sm-2 control-label">Confirm Password</label>
-            <div class="col-sm-5">
-                <input type="password" class="form-control"
-                       id="inputConfPassword"
-                       placeholder="Confirm Password"
+            <div class="required field">
+                <label>Підтвердити пароль</label>
+                <input type="password"
                        name="cpassword"
                        ng-model="signUp.cpassword"
-                       ng-pattern="/^(.){8,}$/"
+                       ng-pattern="/^(.){6,}$/"
                        required>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="button"
-                        class="btn btn-default"
-                        ng-disabled="registration.$invalid || (signUp.password !== signUp.cpassword)"
-                        ng-click="submit(signUp)">Sign up</button>
-                <p ng-show="commonError" class="text-danger">{{ commonError }}</p>
+            <div class="inline field">
+                <div class="ui checkbox">
+                    <input type="checkbox" name="terms">
+                    <label>Я погоджуюсь з умовами корустування</label>
+                </div>
             </div>
-        </div>
-    </form>
-</div> <!-- Registration container -->
+            <button class="ui blue button"
+                    ng-click="registration.$invalid || submit(signUp)">Зареєструватись</button>
+        </form>
+    </div>
+</div>

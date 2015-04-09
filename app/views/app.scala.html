@@ -8,30 +8,8 @@
 </head>
 <body>
 <div class="wrap">
-    <div class="container">
-        <nav class="navbar navbar-default" role="navigation">
-            <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                    <a class="navbar-brand" ui-sref="landing">In Law</a>
-                </div>
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <div class="navbar-nav navbar-right" dropdown is-open="status.isopen">
-                        <span class="dropdown" dropdown on-toggle="toggled(open)">
-                            <a href class="dropdown-toggle" dropdown-toggle>DropDown</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                            </ul>
-                        </span>
-                    </div>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
-        </nav>
+    <div class="main container">
+        <div class="ui menu"></div>
         <div ui-view="mainView"></div>
     </div>
 </div>
