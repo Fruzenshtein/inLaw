@@ -88,7 +88,7 @@ App.controller('ProfileCtrl', ['$scope', '$http',
         };
 
         $scope.updateProfile = function(userProfile) {
-            var _userProfile = userProfile;
+            var _userProfile = angular.copy(userProfile);
                 _userProfile.gender = _userProfile.gender
                     ? _userProfile.gender['id']
                     : undefined;
