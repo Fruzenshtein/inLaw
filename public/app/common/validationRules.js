@@ -74,6 +74,36 @@ App.constant('ValidationRules', {
                 type: 'match[password]',
                 prompt: 'Паролі не співпадають'
             }]
+        },
+        firstName: {
+            identifier: 'firstName',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "Ім'я повино мати щонайменш 2 символи"
+                }
+            ]
+        },
+        lastName: {
+            identifier: 'lastName',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "Призвище повино мати щонайменш 2 символи"
+                }
+            ]
+        },
+        middleName: {
+            identifier: 'middleName',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "По-батькові повино мати щонайменш 2 символи"
+                }
+            ]
         }
 
     }

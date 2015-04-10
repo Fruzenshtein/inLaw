@@ -1,16 +1,31 @@
 <div class="ui centered grid">
     <div class="ten wide column">
-        <form class="ui form segment">
+        <form class="ui form segment inactive" name="profile" novalidate>
+            <div class="ui green message" ng-if="isUpdated">
+                <div class="header">
+                    Ви успішно обновили профайл!
+                </div>
+            </div>
+            <div class="ui red message" ng-if="error">
+                <ul class="list">
+                    <li>{{error}}</li>
+                </ul>
+            </div>
             <div class="ui error message"></div>
-            <h4 class="center aligned column">ПРОФАЙЛ</h4>
+            <h4 class="text-center">ПРОФАЙЛ</h4>
             <div class="two fields">
                 <div class="field">
                     <label>Ім'я</label>
-                    <input placeholder="Ім'я" name="name" type="text">
+                    <input placeholder="Ім'я"
+                           name="firstName"
+                           type="text"
+                           ng-model="userProfile.firstName"
+                           ng-minlength="2"
+                           ng-disabled="formStatus.isEditModeOpen">
                 </div>
                 <div class="field">
                     <label>Стать:</label>
-                    <ui-select ng-model="filters.gender" theme="bootstrap">
+                    <ui-select ng-model="userProfile.gender" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
                         <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
                             <span ng-bind-html="gender.name | highlight: $select.search"></span>
@@ -20,204 +35,72 @@
             </div>
             <div class="field">
                 <label>Призвище</label>
-                <input placeholder="Призвище" name="lastName" type="text">
+                <input placeholder="Призвище" name="lastName"
+                       type="text"
+                       ng-model="userProfile.lastName"
+                       ng-minlength="2"
+                       ng-disabled="formStatus.isEditModeOpen">
             </div>
             <div class="field">
                 <label>По-батькові</label>
-                <input name="middleName" placeholder="По-батькові" type="password">
+                <input name="middleName" placeholder="По-батькові"
+                       type="text"
+                       ng-model="userProfile.middleName"
+                       ng-minlength="2"
+                       ng-disabled="formStatus.isEditModeOpen">
             </div>
             <div class="ui horizontal divider">
-                День народженнч
+                День народження
             </div>
             <div class="tree fields">
                 <div class="field">
                     <label></label>
-                    <ui-select ng-model="filters.gender" theme="bootstrap">
-                        <ui-select-match placeholder="Виберить день...">{{$select.selected.name}}</ui-select-match>
-                        <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
-                            <span ng-bind-html="gender.name | highlight: $select.search"></span>
+                    <ui-select ng-model="birthDate.day" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
+                        <ui-select-match placeholder="Виберіть день...">{{$select.selected}}</ui-select-match>
+                        <ui-select-choices repeat="day in selectorDays | filter: $select.search">
+                            <span ng-bind-html="day | highlight: $select.search"></span>
                         </ui-select-choices>
                     </ui-select>
                 </div>
                 <div class="field">
-                    <div class="field">
-                        <label></label>
-                        <ui-select ng-model="filters.gender" theme="bootstrap">
-                            <ui-select-match placeholder="Виберить місяць...">{{$select.selected.name}}</ui-select-match>
-                            <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
-                                <span ng-bind-html="gender.name | highlight: $select.search"></span>
-                            </ui-select-choices>
-                        </ui-select>
-                    </div>
+                    <label></label>
+                    <ui-select ng-model="birthDate.month" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
+                        <ui-select-match placeholder="Виберіть місяць...">{{$select.selected}}</ui-select-match>
+                        <ui-select-choices repeat="month in selectorMonth | filter: $select.search">
+                            <span ng-bind-html="month | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
                 </div>
                 <div class="field">
-                    <div class="field">
-                        <label></label>
-                        <ui-select ng-model="filters.gender" theme="bootstrap">
-                            <ui-select-match placeholder="Виберить рік...">{{$select.selected.name}}</ui-select-match>
-                            <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
-                                <span ng-bind-html="gender.name | highlight: $select.search"></span>
-                            </ui-select-choices>
-                        </ui-select>
-                    </div>
+                    <label></label>
+                    <ui-select ng-model="birthDate.year" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
+                        <ui-select-match placeholder="Виберіть рік...">{{$select.selected}}</ui-select-match>
+                        <ui-select-choices repeat="year in selectorYears | filter: $select.search">
+                            <span ng-bind-html="year | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
                 </div>
-
-
             </div>
             <div class="ui horizontal divider">Мінімальний рейт</div>
             <div class="field slider-input">
-                <label>{{minRate}}</label>
+                <label>{{userProfile.minRate}}</label>
                 <input type="range"
                        name="minRate"
                        min="0"
                        max="5000"
-                       ng-model="minRate">
+                       step="10"
+                       ng-model="userProfile.minRate"
+                       ng-disabled="formStatus.isEditModeOpen">
             </div>
-            <div class="ui blue submit button">Submit</div>
-            <div class="ui reset button">Reset</div>
-            <div class="ui clear button">Clear</div>
-        </form>
-    </div>
-</div>
-
-
-
-
-
-
-<div class="container">
-    <form class="form-horizontal col-sm-8" name="profile" novalidate>
-        <fieldset ng-disabled="formStatus.isEditModeOpen">
-            <div class="form-group">
-                <label class="radio-inline">
-                    <input type="radio"
-                           name="gender"
-                           id="profMale"
-                           value="m"
-                           ng-model="userProfile.gender" required="!userProfile.gender"> Male
-                </label>
-                <label class="radio-inline">
-                    <input type="radio"
-                           name="gender"
-                           id="profFemale"
-                           value="f"
-                           ng-model="userProfile.gender" required="!userProfile.gender"> Female
-                </label>
+            <div class="ui button"
+                    ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Редагувати
             </div>
-            <div class="form-group">
-                <div class="red-text" ng-show="profile.firstName.$dirty && profile.firstName.$invalid">
-                    <small class="red-text" ng-show="profile.firstName.$error.required">
-                        Your name is required.
-                    </small>
-                    <small class="red-text" ng-show="profile.firstName.$error.minlength">
-                        Your name is required to be at least 3 characters
-                    </small>
-                </div>
-                <label for="firstName" class="col-sm-2 control-label">First name</label>
-                <div class="col-sm-10">
-                    <input type="text"
-                           name="firstName"
-                           class="form-control"
-                           id="firstName"
-                           placeholder="First name"
-                           ng-model="userProfile.firstName"
-                           ng-minlength="2" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="red-text" ng-show="profile.lastName.$dirty && profile.lastName.$invalid">
-                    <small class="red-text" ng-show="profile.lastName.$error.required">
-                        Your name is required.
-                    </small>
-                    <small class="red-text" ng-show="profile.lastName.$error.minlength">
-                        Your name is required to be at least 3 characters
-                    </small>
-                </div>
-                <label for="lastName" class="col-sm-2 control-label">Last name</label>
-                <div class="col-sm-10">
-                    <input type="text"
-                           name="lastName"
-                           class="form-control"
-                           id="lastName"
-                           placeholder="Last name"
-                           ng-model="userProfile.lastName"
-                           ng-minlength="2" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="red-text" ng-show="profile.middleName.$dirty && profile.middleName.$invalid">
-                    <small class="red-text" ng-show="profile.middleName.$error.required">
-                        Your name is required.
-                    </small>
-                    <small class="red-text" ng-show="profile.middleName.$error.minlength">
-                        Your name is required to be at least 3 characters
-                    </small>
-                </div>
-                <label for="middleName" class="col-sm-2 control-label">Middle name</label>
-                <div class="col-sm-10">
-                    <input type="text"
-                           name="middleName"
-                           class="form-control"
-                           id="middleName"
-                           placeholder="Middle name"
-                           ng-model="userProfile.middleName"
-                           ng-minlength="2" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="red-text" ng-show="profile.minRate.$dirty && profile.minRate.$invalid">
-                    <small class="red-text" ng-show="profile.minRate.$invalid">
-                        Your rate is required to be more then 0
-                    </small>
-                </div>
-                <label for="rate" class="col-sm-2 control-label">Min Rate</label>
-                <div class="col-sm-10">
-                    <input type="number"
-                           name="minRate"
-                           class="form-control"
-                           id="rate"
-                           placeholder="Min Rate"
-                           ng-model="userProfile.minRate"
-                           ng-pattern="/^[1-9][0-9]*$/" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="rate" class="col-sm-2 control-label">Birthday</label>
-                <div class="col-md-10">
-                    <p class="input-group">
-                        <input type="text" class="form-control"
-                               datepicker-popup="{{format}}"
-                               ng-model="userProfile.birthDate" is-open="opened"
-                               max-date="maxDate"
-                               show-button-bar="false"
-                               ng-required="true"
-                               close-text="Close" />
-                        <span class="input-group-btn">
-                            <button type="button"
-                                    class="btn btn-default"
-                                    ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
-                    </p>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="button"
-                            class="btn btn-default"
-                            ng-disabled="profile.$invalid"
-                            ng-click="updateProfile(userProfile)">Update</button>
-                </div>
-            </div>
-        </fieldset>
-    </form>
-    <div class="form-group">
-        <div class="col-sm-10">
-            <button type="button"
-                    class="btn btn-default"
-                    ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit Mode
+            <button class="ui blue button"
+                    ng-click="profile.$invalid || updateProfile(userProfile)">Зберегти
             </button>
-            <p ng-show="error" class="text-danger">{{ error }}</p>
-            <p ng-show="isUpdated" class="text-danger">You have successfully updated the form!</p>
-        </div>
+            <div class="ui button"
+                    ng-click="discardChanges()">Відмінити
+            </div>
+        </form>
     </div>
 </div>

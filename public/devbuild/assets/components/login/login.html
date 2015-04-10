@@ -10,22 +10,28 @@
             <h3 class="center aligned column">ЛОГІН</h3>
             <div class="required field">
                 <label>Електронна адреса</label>
-                <input placeholder="Логін"
-                       name="email"
-                       type="text"
-                       ng-model="signIn.email" required>
+                <div class="ui icon input">
+                    <input placeholder="Логін"
+                           name="email"
+                           type="text"
+                           ng-model="signIn.email" required>
+                    <i class=""></i>
+                </div>
             </div>
             <div class="required field">
                 <label>Пароль</label>
-                <input type="password"
-                       name="password"
-                       ng-model="signIn.password"
-                       ng-pattern="/^(.){6,}$/" required>
+                <div class="ui icon input">
+                    <input type="password"
+                           name="password"
+                           ng-model="signIn.password"
+                           ng-pattern="/^(.){6,}$/" required>
+                    <i class=""></i>
+                </div>
             </div>
             <button class="ui blue button"
                  ng-click="login.$invalid || submit(signIn)">Підтвердити
             </button>
-            <div class="center aligned column"><a ui-sref="login">Забули пароль?</a></div>
+            <div class="text-center"><a ui-sref="login">Забули пароль?</a></div>
         </form>
     </div>
 </div>
