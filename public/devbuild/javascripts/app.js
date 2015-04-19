@@ -165,7 +165,7 @@ App.config(function ($httpProvider) {
                 var deferred = $q.defer();
                 if (rejection.status == 401) {
                     $state.go('login');
-                 }
+                }
                 deferred.reject(rejection);
                 return deferred.promise;
             }
@@ -540,6 +540,84 @@ App.constant('ValidationRules', {
                     prompt: "По-батькові повино мати щонайменш 2 символи"
                 }
             ]
+        },
+        street: {
+            identifier: 'street',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "Адреса повина мати щонайменш 2 символи"
+                }
+            ]
+        },
+        zip: {
+            identifier: 'zip',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[5]',
+                    prompt: "Поштовий індекс повинен мати не менше 5 символів"
+                },
+                {
+                    type: 'maxLength[5]',
+                    prompt: "Поштовий індекс повинен бути не більше 5 символів"
+                }
+            ]
+        },
+        facebook: {
+            identifier: 'facebook',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Введить поссилання на Вашу Facebook сторінку"
+                }
+            ]
+        },
+        twitter: {
+            identifier: 'twitter',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Введить поссилання на Вашу Twitter сторінку"
+                }
+            ]
+        },
+        linkedin: {
+            identifier: 'linkedin',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Введить поссилання на Вашу Linkedin сторінку"
+                }
+            ]
+        },
+        website: {
+            identifier: 'website',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Введить поссилання на Вашу Web сторінку"
+                }
+            ]
+        },
+        emailOptional: {
+            identifier: 'optEmail',
+            optional: true,
+            rules:[
+                {
+                    type: 'email',
+                    prompt: 'Будь-ласка введіть коректну електнонну адресу'
+                },
+                {
+                    type: 'empty',
+                    prompt: 'Будь-ласка введіть Вашу електронну адресу'
+                }
+            ]
         }
 
     }
@@ -608,54 +686,113 @@ App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
 /* Controller */
 
 App.controller('ContactsCtrl', ['$scope', '$http',
-    '$filter', '$userInfo', function ($scope, $http, $filter, $userInfo) {
+    '$filter', '$userInfo', 'ValidationRules', function ($scope, $http, $filter, $userInfo, ValidationRules) {
 
         // Default template for phone number
-        var defaultPhoneTemplate = [{
-            id: 'phone',
-            name: 'Work',
-            number: ''
-        }];
+        var defaultPhoneTemplate = [
+            {
+                id: '',
+                name: '',
+                number: ''
+            }
+        ],
+            googleCityTemplate = {
+                "selected": {
+                    "address_components" : [
+                        {
+                            "long_name" : "",
+                            "short_name" : "",
+                            "types" : [ ]
+                        }
+                    ]
+                }
+            },
+            googleCountryTemplate = {
+                "selected": {
+                    "address_components" : [
+                        {
+                            "long_name" : "",
+                            "short_name" : "",
+                            "types" : [ ]
+                        }
+                    ]
+                }
+            };
+
         // if data saved before do not send request
         if (_.isEmpty($userInfo.contacts)) {
             var promiseGetContacts = $userInfo.getUserContacts();
             promiseGetContacts.then(function (onFulfilled) {
-                $scope.userContacts = onFulfilled || {};
-                $scope.userContacts.phones = onFulfilled ? onFulfilled : defaultPhoneTemplate;
+                // if an object contains 'message' key it means that no data exists
+                $scope.userContacts = onFulfilled.message ? {} : onFulfilled;
+                setAddresses($scope.userContacts);
+                $scope.userContacts.phones = onFulfilled.phones ? onFulfilled.phones : defaultPhoneTemplate;
             }, function (onReject) {
                 $scope.userContacts = {};
             });
         };
         $scope.userContacts = $userInfo.contacts || {};
+        $scope.country = {};
+        $scope.city = {};
         $scope.formStatus = {
             isEditModeOpen: true,
             isEditModeDisabled: false
         };
-        $scope.phoneCounter = 0;
-        $scope.userContacts.phones = $userInfo.contacts.phones || defaultPhoneTemplate;
-        $scope.addPhone = function () {
-            $scope.phoneTemplate = {
-                id: 'phone' + $scope.phoneCounter,
-                name: '',
-                number: ''
+        function setAddresses(data) {
+            switch (true) {
+                case _.isEmpty(data):
+                    break;
+                case !!data.city:
+                    googleCityTemplate.selected.address_components[0].long_name = data.city;
+                    $scope.city = googleCityTemplate;
+                case !!data.country:
+                    googleCountryTemplate.selected.address_components[0].long_name = data.country;
+                    $scope.country = googleCountryTemplate;
+                    break;
             };
-            $scope.phoneCounter += 1;
-            $scope.userContacts.phones.push($scope.phoneTemplate);
+
         };
-        $scope.removePhone = function () {
-            $scope.phoneCounter -= 1;
-            $scope.phones.length -= 1;
+        $scope.refreshCountry = function(address) {
+            var params = {address: address, sensor: false, language: 'uk'}; //TODO: Update locale on the localization phase
+            return $http.get(
+                'http://maps.googleapis.com/maps/api/geocode/json',
+                {params: params}
+            ).then(function(response) {
+                    $scope.countries = response.data.results;
+                });
+        };
+        $scope.refreshCity = function(address) {
+            var params = {address: address, sensor: false, language: 'uk'}; //TODO: Update locale on the localization phase
+            return $http.get(
+                'http://maps.googleapis.com/maps/api/geocode/json',
+                {params: params}
+            ).then(function(response) {
+                    $scope.cities = response.data.results;
+                });
+        };
+        $scope.userContacts.phones = $userInfo.contacts.phones || defaultPhoneTemplate;
+        $scope.addPhone = function (phoneNumber) {
+            var template = { id: '', name: '', number: '' },
+                isUnique = isNumberUnique(phoneNumber);
+            if (isUnique) {
+                $scope.userContacts.phones.push(template);
+            };
         };
 
-        $scope.isNumberUnique = function(value) {
+        function isNumberUnique(value) {
             if (value == '') return;
-            angular.forEach($scope.userContacts.phones, function(elem, index) {
-                if (elem['number'] == value)
-                    console.log(elem['number']);
-                    return true;
-            })
+            var array = $scope.userContacts.phones,
+                uniqArray = _.uniq(array, 'number');
+
+            return array.length == uniqArray.length;
         };
-        $scope.updateContacts = function (contacts) {
+        $scope.updateContacts = function () {
+            var contacts = angular.copy($scope.userContacts);
+            contacts.city = $scope.city.selected
+                ? $scope.city.selected.address_components[0].long_name : undefined;
+            contacts.country = $scope.country.selected
+                ? $scope.country.selected.address_components[0].long_name : undefined;
+
             $http({
                 method: 'PUT',
                 url: '/lawyers/contacts',
@@ -673,109 +810,17 @@ App.controller('ContactsCtrl', ['$scope', '$http',
                 error(function (data, status, headers, config) {
                     $scope.error = 'Unexpected error. Please try again later.';
                 });
-        }
+        };
+
+        // *** JQUERY SECTION ***
+
+        // Profile form validation
+        (function ($) {
+            $('.ui.form')
+                .form(ValidationRules.uk);
+        })(jQuery);
+
     }]);
-'use strict';
-/* Controller */
-
-App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
-
-        // if data had been saved before, do not send a request
-        if ( _.isEmpty($userInfo.experiences) ) {
-            var promiseGetExperience = $userInfo.getUserExperience();
-            promiseGetExperience.then(function (onFulfilled) {
-                // assign [{}] object if request returns an empty object.
-                // [{}] - is used to build default html template
-                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
-            }, function (onReject) {
-                $scope.experiences = [{}];
-            });
-        };
-
-        $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [{}];
-        $scope.experiencesCounter = 0;
-        $scope.addExperience = function () {
-            $scope.experiencesTemplate = {
-                id: $scope.experiencesCounter
-            };
-            $scope.experiencesCounter += 1;
-            $scope.experiences.push($scope.experiencesTemplate);
-        };
-        $scope.removeExperience = function(obj) {
-            angular.forEach($scope.experiences, function(elem, index) {
-                if ( $scope.experiences[index]['id'] == obj['id'] ) {
-                    $scope.experiences.splice(index, 1);
-                }
-                // TODO: API call
-            })
-        };
-
-        // Disable weekend selection
-        $scope.disabled = function (date, mode) {
-            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-        };
-
-        $scope.toggleMin = function () {
-            var years100ago = new Date();
-            // Time 100 years ago
-            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
-            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
-        };
-        $scope.toggleMin();
-        $scope.maxDate = new Date();
-
-        $scope.openStart = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedEnd = false;
-            this.openedStart = true;
-        };
-        $scope.openEnd = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedStart = false;
-            this.openedEnd = true;
-        };
-
-        $scope.dateOptions = {
-            formatYear: 'yyyy',
-            minMode: 'month'
-        };
-
-        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        $scope.format = $scope.formats[0];
-
-        $scope.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-
-        $scope.updateExperience = function (array) {
-            angular.forEach(array, function(elem, index) {
-                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
-                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
-                $http({
-                    method: 'POST',
-                    url: '/lawyers/experience',
-                    data: array[index],
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                    }
-                }).
-                    success(function (data, status, headers, config) {
-                        $scope.formStatus.isEditModeOpen = true;
-                        $scope.isUpdated = true;
-                        $scope.error = '';
-                    }).
-                    error(function (data, status, headers, config) {
-                        $scope.error = 'Unexpected error. Please try again later.';
-                    });
-            });
-        };
-}]);
 'use strict';
 /* Controller */
 
@@ -1049,6 +1094,107 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
             });
         };
     }]);
+'use strict';
+/* Controller */
+
+App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
+    function ($scope, $http, $userInfo) {
+
+        // if data had been saved before, do not send a request
+        if ( _.isEmpty($userInfo.experiences) ) {
+            var promiseGetExperience = $userInfo.getUserExperience();
+            promiseGetExperience.then(function (onFulfilled) {
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
+            }, function (onReject) {
+                $scope.experiences = [{}];
+            });
+        };
+
+        $scope.experience = {};
+        $scope.experiences = $userInfo.experiences || [{}];
+        $scope.experiencesCounter = 0;
+        $scope.addExperience = function () {
+            $scope.experiencesTemplate = {
+                id: $scope.experiencesCounter
+            };
+            $scope.experiencesCounter += 1;
+            $scope.experiences.push($scope.experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
+                    $scope.experiences.splice(index, 1);
+                }
+                // TODO: API call
+            })
+        };
+
+        // Disable weekend selection
+        $scope.disabled = function (date, mode) {
+            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+        };
+
+        $scope.toggleMin = function () {
+            var years100ago = new Date();
+            // Time 100 years ago
+            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
+            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
+        };
+        $scope.toggleMin();
+        $scope.maxDate = new Date();
+
+        $scope.openStart = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            this.openedEnd = false;
+            this.openedStart = true;
+        };
+        $scope.openEnd = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            this.openedStart = false;
+            this.openedEnd = true;
+        };
+
+        $scope.dateOptions = {
+            formatYear: 'yyyy',
+            minMode: 'month'
+        };
+
+        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.format = $scope.formats[0];
+
+        $scope.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+
+        $scope.updateExperience = function (array) {
+            angular.forEach(array, function(elem, index) {
+                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
+                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
+                $http({
+                    method: 'POST',
+                    url: '/lawyers/experience',
+                    data: array[index],
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                }).
+                    success(function (data, status, headers, config) {
+                        $scope.formStatus.isEditModeOpen = true;
+                        $scope.isUpdated = true;
+                        $scope.error = '';
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                    });
+            });
+        };
+}]);
 'use strict';
 /* Controller */
 

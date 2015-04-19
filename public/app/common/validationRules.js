@@ -104,6 +104,84 @@ App.constant('ValidationRules', {
                     prompt: "По-батькові повино мати щонайменш 2 символи"
                 }
             ]
+        },
+        street: {
+            identifier: 'street',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "Адреса повина мати щонайменш 2 символи"
+                }
+            ]
+        },
+        zip: {
+            identifier: 'zip',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[5]',
+                    prompt: "Поштовий індекс повинен мати не менше 5 символів"
+                },
+                {
+                    type: 'maxLength[5]',
+                    prompt: "Поштовий індекс повинен бути не більше 5 символів"
+                }
+            ]
+        },
+        facebook: {
+            identifier: 'facebook',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Введить поссилання на Вашу Facebook сторінку"
+                }
+            ]
+        },
+        twitter: {
+            identifier: 'twitter',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Введить поссилання на Вашу Twitter сторінку"
+                }
+            ]
+        },
+        linkedin: {
+            identifier: 'linkedin',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Введить поссилання на Вашу Linkedin сторінку"
+                }
+            ]
+        },
+        website: {
+            identifier: 'website',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Введить поссилання на Вашу Web сторінку"
+                }
+            ]
+        },
+        emailOptional: {
+            identifier: 'optEmail',
+            optional: true,
+            rules:[
+                {
+                    type: 'email',
+                    prompt: 'Будь-ласка введіть коректну електнонну адресу'
+                },
+                {
+                    type: 'empty',
+                    prompt: 'Будь-ласка введіть Вашу електронну адресу'
+                }
+            ]
         }
 
     }

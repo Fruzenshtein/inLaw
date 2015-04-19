@@ -31,8 +31,10 @@ var paths = {
         'app/**/*.js'
     ],
     "fonts": [
-        'fonts/*.*',
-        'bower_components/semantic-ui/dist/themes/default/assets/fonts/*.*'
+        'fonts/*.*'
+    ],
+    "themes": [
+        'bower_components/semantic-ui/dist/themes/*.*'
     ],
     "templates": ['app/**/*.html'],
     "images": ['images/*.*'],
@@ -90,6 +92,11 @@ gulp.task("fonts", function () {
         pipe(gulp.dest(paths.dist + "fonts/"))
 });
 
+gulp.task("themes", function () {
+    gulp.src(paths.fonts).
+        pipe(gulp.dest(paths.dist + "stylesheets/themes"))
+});
+
 gulp.task("images", function () {
     gulp.src(paths.images).
         pipe(gulp.dest(paths.dist + "images/"))
@@ -103,7 +110,7 @@ gulp.task("templates", function () {
 
 // Run the dev build
 gulp.task("build", function () {
-    gulp.start("scripts", "vendorScripts", "styles", "vendorStyles", "fonts", "templates", "images");
+    gulp.start("scripts", "vendorScripts", "styles", "vendorStyles", "fonts", "themes", "templates", "images");
 });
 
 // *************** Production build ***************

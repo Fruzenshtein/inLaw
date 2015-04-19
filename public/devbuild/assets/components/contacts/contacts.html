@@ -1,3 +1,175 @@
+<div class="ui centered grid">
+    <div class="ten wide column">
+        <form class="ui form segment inactive" name="contacts" novalidate>
+            <div class="ui green message" ng-if="isUpdated">
+                <div class="header">
+                    Ви успішно обновили профайл!
+                </div>
+            </div>
+            <div class="ui red message" ng-if="error">
+                <ul class="list">
+                    <li>{{error}}</li>
+                </ul>
+            </div>
+            <div class="ui error message"></div>
+            <h4 class="text-center">КОНТАКТИ</h4>
+            <div class="field">
+                <label>Країна:</label>
+                <ui-select ng-model="country.selected"
+                           theme="bootstrap"
+                           name="country"
+                           ng-disabled="formStatus.isEditModeOpen"
+                           reset-search-input="false">
+                    <ui-select-match placeholder="Введіть країну...">{{$select.selected.address_components[0].long_name}}</ui-select-match>
+                    <ui-select-choices repeat="country in countries track by $index"
+                                       refresh="refreshCountry($select.search)"
+                                       refresh-delay="0">
+                        <div ng-bind-html="country.address_components[0].long_name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="field">
+                <label>Місто:</label>
+                <ui-select ng-model="city.selected"
+                           theme="bootstrap"
+                           ng-disabled="formStatus.isEditModeOpen"
+                           reset-search-input="false">
+                    <ui-select-match placeholder="Введіть місто...">{{$select.selected.address_components[0].long_name}}</ui-select-match>
+                    <ui-select-choices repeat="city in cities track by $index"
+                                       refresh="refreshCity($select.search)"
+                                       refresh-delay="0">
+                        <div ng-bind-html="city.address_components[0].long_name | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="field">
+                <label>Адресса</label>
+                <input type="text"
+                       name="street"
+                       id="street"
+                       placeholder="Вулиця..."
+                       ng-model="userContacts.street"
+                       ng-minlength="2"
+                       ng-disabled="formStatus.isEditModeOpen">
+            </div>
+            <div class="field">
+                <label>Поштовий індекс</label>
+                <input type="text"
+                       name="zip"
+                       id="zip"
+                       placeholder="індекс"
+                       ng-model="userContacts.zip"
+                       ng-disabled="formStatus.isEditModeOpen"
+                       ng-minlength="5">
+            </div>
+            <div class="ui horizontal divider">
+                Телефони
+            </div>
+            <div class="tree fields" ng-repeat="phone in userContacts.phones track by phone['number']">
+                <div class="field">
+                    <label></label>
+                        <input type="text"
+                               name="phoneName"
+                               placeholder="Назва"
+                               ng-model="phone.name"
+                               ng-disabled="formStatus.isEditModeOpen">
+                </div>
+                <div class="field">
+                    <label></label>
+                    <input type="text"
+                           name="phoneNumber"
+                           placeholder="XXX-XXX-XX-XX"
+                           ng-model="phone.number"
+                           ng-minlength="5"
+                           ng-disabled="formStatus.isEditModeOpen">
+                </div>
+                <!-- TODO: Redesign this block -->
+                <div class="middle aligned column">
+                    <div class="column">
+                        <i class="add circle icon"
+                           ng-click="addPhone(phone.number)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="ui horizontal divider">Інтернет</div>
+            <div class="field">
+                <div class="ui left action input">
+                    <button class="ui facebook  button">
+                        <i class="facebook icon"></i>
+                    </button>
+                    <input type="url"
+                           name="facebook"
+                           placeholder="Facebook"
+                           ng-model="userContacts.facebook"
+                           ng-disabled="formStatus.isEditModeOpen">
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui left action input">
+                    <button class="ui twitter  button">
+                        <i class="twitter icon"></i>
+                    </button>
+                    <input type="url"
+                           name="twitter"
+                           placeholder="Twitter"
+                           ng-model="userContacts.twitter"
+                           ng-disabled="formStatus.isEditModeOpen">
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui left action input">
+                    <button class="ui linkedin  button">
+                        <i class="linkedin icon"></i>
+                    </button>
+                    <input type="url"
+                           name="linkedin"
+                           placeholder="Linkedin"
+                           ng-model="userContacts.linkedIn"
+                           ng-disabled="formStatus.isEditModeOpen">
+                </div>
+            </div>
+            <div class="ui horizontal divider"> </div>
+            <div class="field">
+                <div class="ui labeled input">
+                    <div class="ui label">
+                        http://
+                    </div>
+                    <input type="url"
+                           name="website"
+                           placeholder="mysite.com"
+                           ng-model="userContacts.website"
+                           ng-disabled="formStatus.isEditModeOpen">
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui labeled input">
+                    <div class="ui label">
+                        Email
+                    </div>
+                    <input type="email"
+                           name="optEmail"
+                           placeholder="example@example.com"
+                           ng-model="userContacts.email"
+                           ng-disabled="formStatus.isEditModeOpen">
+                </div>
+            </div>
+            <div class="ui button"
+                 ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Редагувати
+            </div>
+            <button class="ui blue button"
+                    ng-click="contacts.$invalid || contacts.$pristine || updateContacts()">Зберегти
+            </button>
+            <div class="ui button"
+                 ng-click="discardChanges()">Відмінити
+            </div>{{contacts.$pristine}} {{contacts.$invalid}}
+        </form>
+    </div>
+</div>
+
+
+
+
+<!-- ******************** OLD VERSION ******************
 <div class="container">
     <form class="form-horizontal col-sm-8" name="contacts" novalidate>
         <fieldset ng-disabled="formStatus.isEditModeOpen">
@@ -227,3 +399,4 @@
         </div>
     </div>
 </div>
+-->
