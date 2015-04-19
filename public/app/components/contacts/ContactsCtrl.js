@@ -4,7 +4,7 @@
 App.controller('ContactsCtrl', ['$scope', '$http',
     '$filter', '$userInfo', 'ValidationRules', function ($scope, $http, $filter, $userInfo, ValidationRules) {
 
-        // Default template for phone number
+        // Default template for phone number and addresses
         var defaultPhoneTemplate = [
             {
                 id: '',
