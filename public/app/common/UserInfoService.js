@@ -104,11 +104,27 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         info.isLoggedIn = isLoggedIn;
     };
 
+    function validateData(response) {
+        var response = response; // default object to generate default user's form
+        // if no data exists for a user
+        if (response.data.message) {
+            response.data = [{}];
+            return response;
+        }
+        // if user has deleted all data
+        if (_.isEmpty(response.data)) {
+            response.data = [{}];
+            return response;
+        } else {
+            return response;
+        }
+    }
+
     function onSuccess(data) {
         try {
             var deferred = $q.defer(),
-                container,
-                _jsonData = angular.fromJson(data);
+                _jsonData = validateData( angular.fromJson(data) ),
+                copyOfData = angular.copy(_jsonData.data);
             if ( !isAuthenticated(_jsonData) ) return;
             info.allowed = true;
             switch (data.config.url) {
@@ -121,8 +137,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     deferred.resolve(_jsonData['data']);
                     return deferred.promise;
                 case urlConfig.university:
-                    info['universities'] = _jsonData['data'];
-                    deferred.resolve(_jsonData['data']);
+                    info['universities'] = _jsonData.data;
+                    deferred.resolve(copyOfData);
                     return deferred.promise;
                 case urlConfig.certificates:
                     info['certificates'] = _jsonData['data'];

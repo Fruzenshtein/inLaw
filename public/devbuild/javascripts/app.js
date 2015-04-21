@@ -165,7 +165,7 @@ App.config(function ($httpProvider) {
                 var deferred = $q.defer();
                 if (rejection.status == 401) {
                     $state.go('login');
-                }
+                };
                 deferred.reject(rejection);
                 return deferred.promise;
             }
@@ -340,11 +340,27 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         info.isLoggedIn = isLoggedIn;
     };
 
+    function validateData(response) {
+        var response = response; // default object to generate default user's form
+        // if no data exists for a user
+        if (response.data.message) {
+            response.data = [{}];
+            return response;
+        }
+        // if user has deleted all data
+        if (_.isEmpty(response.data)) {
+            response.data = [{}];
+            return response;
+        } else {
+            return response;
+        }
+    }
+
     function onSuccess(data) {
         try {
             var deferred = $q.defer(),
-                container,
-                _jsonData = angular.fromJson(data);
+                _jsonData = validateData( angular.fromJson(data) ),
+                copyOfData = angular.copy(_jsonData.data);
             if ( !isAuthenticated(_jsonData) ) return;
             info.allowed = true;
             switch (data.config.url) {
@@ -357,8 +373,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     deferred.resolve(_jsonData['data']);
                     return deferred.promise;
                 case urlConfig.university:
-                    info['universities'] = _jsonData['data'];
-                    deferred.resolve(_jsonData['data']);
+                    info['universities'] = _jsonData.data;
+                    deferred.resolve(copyOfData);
                     return deferred.promise;
                 case urlConfig.certificates:
                     info['certificates'] = _jsonData['data'];
@@ -434,6 +450,51 @@ App.constant('LanguagesList', {
      */
     ]
 });
+"use strict";
+/* Factory */
+
+App.factory('UtilsService', function() {
+
+    /**
+     * The function returns array of years from today to 80 year back
+     * @param min
+     * @param max
+     * @returns {Array}
+     */
+    function generateYears(min, max) {
+        var min = min || new Date().getFullYear() - 80,
+            max = max || new Date().getFullYear(),
+            arrayOfYears = [];
+
+        for (var i = min; i <= max; i++) {
+            arrayOfYears.push(i+''); // convert years (int) to string
+        };
+        return arrayOfYears;
+    };
+
+    function convertDate(arrayOfObjects, format) {
+        var format = format || 'YYYY';
+
+        angular.forEach(arrayOfObjects, function(elem, index) {
+            // Server receives only 'DD/MM/YYYY' format
+            if ( _.isObject(elem) && _.isEmpty(elem) ) return;
+            arrayOfObjects[index].startDate = moment(arrayOfObjects[index].startDate).format(format);
+            arrayOfObjects[index].endDate = moment(arrayOfObjects[index].endDate).format(format);
+        });
+        return arrayOfObjects;
+    }
+
+    function validateInputPair(_min, _max) {
+
+    };
+
+    return {
+        generateYears: generateYears,
+        convertDate: convertDate
+
+    }
+});
+
 'use strict';
 /* Constants */
 
@@ -982,27 +1043,40 @@ App.controller('LanguagesCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList'
 'use strict';
 /* Controller */
 
-App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
+App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
+    function ($scope, $http, $userInfo, UtilsService) {
+
+        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+            format = formats[0],
+            universityCounter = 0;
+
+        this.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
 
         // if data had saved before, do not send a request
         if ( _.isEmpty($userInfo.universities) ) {
             var promiseGetUniversity = $userInfo.getUserUniversity();
             promiseGetUniversity.then(function (onFulfilled) {
-                $scope.universities = onFulfilled || [{}];
+                $scope.universities = UtilsService.convertDate(onFulfilled) || [{}];
             }, function (onReject) {
                 $scope.universities = [{}];
             });
         };
         $scope.university = {};
         $scope.universities = $userInfo.universities || [{}];
-        $scope.universityCounter = 0;
+        $scope.degrees = [
+          "master"
+        ];
+        $scope.selectorYears = UtilsService.generateYears();
+
         $scope.addUniversity = function () {
-            $scope.universityTemplate = {
-                id: $scope.universityCounter
+            var universityTemplate = {
+                id: universityCounter
             };
-            $scope.universityCounter += 1;
-            $scope.universities.push($scope.universityTemplate);
+            universityCounter += 1;
+            $scope.universities.push(universityTemplate);
         };
         $scope.removeUniversity = function(obj) {
             angular.forEach($scope.universities, function(elem, index) {
@@ -1031,6 +1105,68 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
             })
         };
 
+        $scope.updateEducation = function (array) {
+            var copyObject = angular.copy(array);
+            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
+            angular.forEach(copyObject, function(elem, index) {
+                // Send one object per time. TBD... improvement is added to API side with ability to send an array
+                $http({
+                    method: 'POST',
+                    url: '/lawyers/universities',
+                    data: copyObject[index],
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                }).
+                    success(function (data, status, headers, config) {
+                        $scope.isUpdated = true;
+                        $scope.error = false;
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                        $scope.isUpdated = false;
+                    });
+            });
+        };
+    }]);
+'use strict';
+/* Controller */
+
+App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
+    function ($scope, $http, $userInfo) {
+
+        // if data had been saved before, do not send a request
+        if ( _.isEmpty($userInfo.experiences) ) {
+            var promiseGetExperience = $userInfo.getUserExperience();
+            promiseGetExperience.then(function (onFulfilled) {
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
+            }, function (onReject) {
+                $scope.experiences = [{}];
+            });
+        };
+
+        $scope.experience = {};
+        $scope.experiences = $userInfo.experiences || [{}];
+        $scope.experiencesCounter = 0;
+        $scope.addExperience = function () {
+            $scope.experiencesTemplate = {
+                id: $scope.experiencesCounter
+            };
+            $scope.experiencesCounter += 1;
+            $scope.experiences.push($scope.experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
+                    $scope.experiences.splice(index, 1);
+                }
+                // TODO: API call
+            })
+        };
+
         // Disable weekend selection
         $scope.disabled = function (date, mode) {
             return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
@@ -1044,6 +1180,7 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
         };
         $scope.toggleMin();
         $scope.maxDate = new Date();
+
         $scope.openStart = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
@@ -1059,7 +1196,7 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
 
         $scope.dateOptions = {
             formatYear: 'yyyy',
-            minMode: 'year'
+            minMode: 'month'
         };
 
         $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
@@ -1070,14 +1207,13 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
             isEditModeDisabled: false
         };
 
-        $scope.updateEducation = function (array) {
+        $scope.updateExperience = function (array) {
             angular.forEach(array, function(elem, index) {
                 array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
                 array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
-                // Send one object per time. TBD... improvement is added to API side with ability to send an array
                 $http({
                     method: 'POST',
-                    url: '/lawyers/universities',
+                    url: '/lawyers/experience',
                     data: array[index],
                     headers: {
                         'Content-Type': 'application/json',
@@ -1087,13 +1223,14 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
                     success(function (data, status, headers, config) {
                         $scope.formStatus.isEditModeOpen = true;
                         $scope.isUpdated = true;
+                        $scope.error = '';
                     }).
                     error(function (data, status, headers, config) {
                         $scope.error = 'Unexpected error. Please try again later.';
                     });
             });
         };
-    }]);
+}]);
 'use strict';
 /* Controller */
 
@@ -1217,107 +1354,6 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
 'use strict';
 /* Controller */
 
-App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
-
-        // if data had been saved before, do not send a request
-        if ( _.isEmpty($userInfo.experiences) ) {
-            var promiseGetExperience = $userInfo.getUserExperience();
-            promiseGetExperience.then(function (onFulfilled) {
-                // assign [{}] object if request returns an empty object.
-                // [{}] - is used to build default html template
-                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
-            }, function (onReject) {
-                $scope.experiences = [{}];
-            });
-        };
-
-        $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [{}];
-        $scope.experiencesCounter = 0;
-        $scope.addExperience = function () {
-            $scope.experiencesTemplate = {
-                id: $scope.experiencesCounter
-            };
-            $scope.experiencesCounter += 1;
-            $scope.experiences.push($scope.experiencesTemplate);
-        };
-        $scope.removeExperience = function(obj) {
-            angular.forEach($scope.experiences, function(elem, index) {
-                if ( $scope.experiences[index]['id'] == obj['id'] ) {
-                    $scope.experiences.splice(index, 1);
-                }
-                // TODO: API call
-            })
-        };
-
-        // Disable weekend selection
-        $scope.disabled = function (date, mode) {
-            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-        };
-
-        $scope.toggleMin = function () {
-            var years100ago = new Date();
-            // Time 100 years ago
-            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
-            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
-        };
-        $scope.toggleMin();
-        $scope.maxDate = new Date();
-
-        $scope.openStart = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedEnd = false;
-            this.openedStart = true;
-        };
-        $scope.openEnd = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedStart = false;
-            this.openedEnd = true;
-        };
-
-        $scope.dateOptions = {
-            formatYear: 'yyyy',
-            minMode: 'month'
-        };
-
-        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        $scope.format = $scope.formats[0];
-
-        $scope.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-
-        $scope.updateExperience = function (array) {
-            angular.forEach(array, function(elem, index) {
-                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
-                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
-                $http({
-                    method: 'POST',
-                    url: '/lawyers/experience',
-                    data: array[index],
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                    }
-                }).
-                    success(function (data, status, headers, config) {
-                        $scope.formStatus.isEditModeOpen = true;
-                        $scope.isUpdated = true;
-                        $scope.error = '';
-                    }).
-                    error(function (data, status, headers, config) {
-                        $scope.error = 'Unexpected error. Please try again later.';
-                    });
-            });
-        };
-}]);
-'use strict';
-/* Controller */
-
 App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$userInfo',
     function ($scope, $http, $userInfo, $rootScope) {
 
@@ -1384,7 +1420,8 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
 /* Controller */
 
 App.controller('ProfileCtrl', ['$scope', '$http',
-    '$filter', '$userInfo', 'ValidationRules', function($scope, $http, $filter, $userInfo, ValidationRules) {
+    '$filter', '$userInfo', 'ValidationRules', 'UtilsService',
+    function($scope, $http, $filter, $userInfo, ValidationRules, UtilsService) {
         var localCopyOfProfile;
         // if data saved before do not send request
         if ( _.isEmpty($userInfo.profile) ) {
@@ -1433,18 +1470,7 @@ App.controller('ProfileCtrl', ['$scope', '$http',
             'January', 'February', 'March', 'April', 'May', 'June', 'July',
             'August', 'September', 'October', 'November', 'December'
         ];
-        $scope.selectorYears = generateYears();
-
-        function generateYears(min, max) {
-            var min = min || new Date().getFullYear() - 80,
-                max = max || new Date().getFullYear(),
-                arrayOfYears = [];
-
-            for (var i = min; i <= max; i++) {
-                arrayOfYears.push(i);
-            };
-            return arrayOfYears;
-        };
+        $scope.selectorYears = UtilsService.generateYears();
 
         function getGenderObject(response) {
             angular.forEach($scope.genderTypes, function(elem, index) {

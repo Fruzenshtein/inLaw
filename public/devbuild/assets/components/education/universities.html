@@ -1,3 +1,101 @@
+<div class="ui centered grid">
+    <div class="ten wide column">
+        <form class="ui form segment inactive" name="universityForm" novalidate>
+            <div class="ui green message" ng-if="isUpdated">
+                <div class="header">
+                    Ви успішно обновили профайл!
+                </div>
+            </div>
+            <div class="ui red message" ng-if="error">
+                <ul class="list">
+                    <li>{{error}}</li>
+                </ul>
+            </div>
+            <div class="ui error message"></div>
+            <h4 class="text-center">Університети</h4>
+            <div ng-repeat="university in universities track by $index">
+                <div class="required field">
+                    <label>Университет</label>
+                    <input type="text"
+                           ng-model="university.name"
+                           ng-disabled="!formStatus.isEditModeOpen"
+                           id="school"
+                           placeholder="Назва університета"
+                           required>
+                </div>
+                <div class="required field">
+                    <label>Факультет</label>
+                    <input type="text"
+                           ng-model="university.faculty"
+                           ng-disabled="!formStatus.isEditModeOpen"
+                           id="faculty"
+                           placeholder="Назва факультету"
+                           required>
+                </div>
+                <div class="required field">
+                    <label>Ступінь</label>
+                    <ui-select ng-model="university.degree" required theme="bootstrap" ng-disabled="!formStatus.isEditModeOpen">
+                        <ui-select-match placeholder="Виберіть ступінь...">{{$select.selected}}</ui-select-match>
+                        <ui-select-choices repeat="degree in degrees | filter: $select.search">
+                            <span ng-bind-html="degree | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="ui horizontal divider">
+                    Період навчання
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label></label>
+                        <ui-select ng-model="university.startDate" required theme="bootstrap" ng-disabled="!formStatus.isEditModeOpen">
+                            <ui-select-match placeholder="Рік початку...">{{$select.selected}}</ui-select-match>
+                            <ui-select-choices repeat="year in selectorYears | filter: $select.search">
+                                <span ng-bind-html="year | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="field">
+                        <label></label>
+                        <ui-select ng-model="university.endDate" required theme="bootstrap" ng-disabled="!formStatus.isEditModeOpen">
+                            <ui-select-match placeholder="Рік закінчення...">{{$select.selected}}</ui-select-match>
+                            <ui-select-choices repeat="year in selectorYears | filter: $select.search">
+                                <span ng-bind-html="year | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+                <div class="ui labeled icon button"
+                     ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">
+                    <i class="edit icon"></i>
+                    Редагувати
+                </div>
+                <button class="ui labeled icon blue button"
+                        ng-click="updateEducation(universities); formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">
+                    <i class="save icon"></i>
+                    Зберегти
+                </button>
+                <div class="ui labeled icon red button" ng-click="removeUniversity(university)">
+                    <i class="remove icon"></i>
+                    Видалити
+                </div>
+                <div class="ui divider"></div>
+            </div>
+            <div class="ui horizontal divider">Додати університет</div>
+            <div class="left aligned column">
+                <div class="ui labeled icon button" ng-click="addUniversity()">
+                    <i class="plus icon"></i>
+                    Додади
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<!--
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="panel-title">
@@ -43,6 +141,9 @@
                            placeholder="Degree" required>
                 </div>
                 <div class=""> <!-- /. start year picker -->
+
+
+<!--
                     <div class="col-md-3">
                         <p class="input-group">
                             <input type="text"
@@ -66,7 +167,12 @@
                         </p>
                     </div>
                 </div> <!-- /. close Start year picker  -->
+
+
+<!--
                 <div class=""> <!-- /. start End year picker -->
+
+<!--
                     <div class="col-md-3">
                         <p class="input-group">
                             <input type="text"
@@ -90,6 +196,8 @@
                         </p>
                     </div>
                 </div> <!-- /. close End year picker  -->
+
+<!--
                 <div class="clearfix"></div>{{universities}}
             </form>
         </fieldset>
@@ -108,3 +216,5 @@
         <p ng-show="isUpdated" class="text-danger">You have successfully updated the form!</p>
     </div>
 </div>
+
+-->

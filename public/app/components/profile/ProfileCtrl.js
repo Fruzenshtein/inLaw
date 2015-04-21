@@ -2,7 +2,8 @@
 /* Controller */
 
 App.controller('ProfileCtrl', ['$scope', '$http',
-    '$filter', '$userInfo', 'ValidationRules', function($scope, $http, $filter, $userInfo, ValidationRules) {
+    '$filter', '$userInfo', 'ValidationRules', 'UtilsService',
+    function($scope, $http, $filter, $userInfo, ValidationRules, UtilsService) {
         var localCopyOfProfile;
         // if data saved before do not send request
         if ( _.isEmpty($userInfo.profile) ) {
@@ -51,18 +52,7 @@ App.controller('ProfileCtrl', ['$scope', '$http',
             'January', 'February', 'March', 'April', 'May', 'June', 'July',
             'August', 'September', 'October', 'November', 'December'
         ];
-        $scope.selectorYears = generateYears();
-
-        function generateYears(min, max) {
-            var min = min || new Date().getFullYear() - 80,
-                max = max || new Date().getFullYear(),
-                arrayOfYears = [];
-
-            for (var i = min; i <= max; i++) {
-                arrayOfYears.push(i);
-            };
-            return arrayOfYears;
-        };
+        $scope.selectorYears = UtilsService.generateYears();
 
         function getGenderObject(response) {
             angular.forEach($scope.genderTypes, function(elem, index) {

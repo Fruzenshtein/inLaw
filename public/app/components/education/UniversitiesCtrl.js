@@ -1,27 +1,40 @@
 'use strict';
 /* Controller */
 
-App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
+App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
+    function ($scope, $http, $userInfo, UtilsService) {
+
+        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+            format = formats[0],
+            universityCounter = 0;
+
+        this.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
 
         // if data had saved before, do not send a request
         if ( _.isEmpty($userInfo.universities) ) {
             var promiseGetUniversity = $userInfo.getUserUniversity();
             promiseGetUniversity.then(function (onFulfilled) {
-                $scope.universities = onFulfilled || [{}];
+                $scope.universities = UtilsService.convertDate(onFulfilled) || [{}];
             }, function (onReject) {
                 $scope.universities = [{}];
             });
         };
         $scope.university = {};
         $scope.universities = $userInfo.universities || [{}];
-        $scope.universityCounter = 0;
+        $scope.degrees = [
+          "master"
+        ];
+        $scope.selectorYears = UtilsService.generateYears();
+
         $scope.addUniversity = function () {
-            $scope.universityTemplate = {
-                id: $scope.universityCounter
+            var universityTemplate = {
+                id: universityCounter
             };
-            $scope.universityCounter += 1;
-            $scope.universities.push($scope.universityTemplate);
+            universityCounter += 1;
+            $scope.universities.push(universityTemplate);
         };
         $scope.removeUniversity = function(obj) {
             angular.forEach($scope.universities, function(elem, index) {
@@ -50,65 +63,27 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo',
             })
         };
 
-        // Disable weekend selection
-        $scope.disabled = function (date, mode) {
-            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-        };
-
-        $scope.toggleMin = function () {
-            var years100ago = new Date();
-            // Time 100 years ago
-            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
-            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
-        };
-        $scope.toggleMin();
-        $scope.maxDate = new Date();
-        $scope.openStart = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedEnd = false;
-            this.openedStart = true;
-        };
-        $scope.openEnd = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedStart = false;
-            this.openedEnd = true;
-        };
-
-        $scope.dateOptions = {
-            formatYear: 'yyyy',
-            minMode: 'year'
-        };
-
-        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        $scope.format = $scope.formats[0];
-
-        $scope.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-
         $scope.updateEducation = function (array) {
-            angular.forEach(array, function(elem, index) {
-                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
-                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
+            var copyObject = angular.copy(array);
+            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
+            angular.forEach(copyObject, function(elem, index) {
                 // Send one object per time. TBD... improvement is added to API side with ability to send an array
                 $http({
                     method: 'POST',
                     url: '/lawyers/universities',
-                    data: array[index],
+                    data: copyObject[index],
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
                     }
                 }).
                     success(function (data, status, headers, config) {
-                        $scope.formStatus.isEditModeOpen = true;
                         $scope.isUpdated = true;
+                        $scope.error = false;
                     }).
                     error(function (data, status, headers, config) {
                         $scope.error = 'Unexpected error. Please try again later.';
+                        $scope.isUpdated = false;
                     });
             });
         };

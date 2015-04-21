@@ -31,7 +31,7 @@ App.config(function ($httpProvider) {
                 var deferred = $q.defer();
                 if (rejection.status == 401) {
                     $state.go('login');
-                }
+                };
                 deferred.reject(rejection);
                 return deferred.promise;
             }
