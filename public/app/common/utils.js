@@ -20,16 +20,23 @@ App.factory('UtilsService', function() {
         return arrayOfYears;
     };
 
-    function convertDate(arrayOfObjects, format) {
+    function convertDate(object, format) {
         var format = format || 'YYYY';
 
-        angular.forEach(arrayOfObjects, function(elem, index) {
-            // Server receives only 'DD/MM/YYYY' format
-            if ( _.isObject(elem) && _.isEmpty(elem) ) return;
-            arrayOfObjects[index].startDate = moment(arrayOfObjects[index].startDate).format(format);
-            arrayOfObjects[index].endDate = moment(arrayOfObjects[index].endDate).format(format);
-        });
-        return arrayOfObjects;
+        if ( _.isArray(object) ) {
+            angular.forEach(object, function(elem, index) {
+                // Server receives only 'DD/MM/YYYY' format
+                if ( _.isObject(elem) && _.isEmpty(elem) ) return;
+                object[index].startDate = moment(object[index].startDate).format(format);
+                object[index].endDate = moment(object[index].endDate).format(format);
+            });
+        }
+        if (object.constructor == Object && object != null && !_.isEmpty(object)) {
+            object.startDate = moment(object.startDate).format(format);
+            object.endDate = moment(object.endDate).format(format);
+        }
+
+        return object;
     }
 
     function validateInputPair(_min, _max) {

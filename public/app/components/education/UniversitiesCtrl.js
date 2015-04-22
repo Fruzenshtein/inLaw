@@ -63,15 +63,17 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
             })
         };
 
-        $scope.updateEducation = function (array) {
-            var copyObject = angular.copy(array);
+        $scope.updateEducation = function (object) {
+            var copyObject = angular.copy(object);
             copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
-            angular.forEach(copyObject, function(elem, index) {
-                // Send one object per time. TBD... improvement is added to API side with ability to send an array
+                // The server generates hash ID for saved forms,
+                // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
+                var method = isFinite(object.id) ? 'POST' : 'PUT',
+                    url = method == 'POST' ? '/lawyers/universities' : '/lawyers/universities/' + object.id;
                 $http({
-                    method: 'POST',
-                    url: '/lawyers/universities',
-                    data: copyObject[index],
+                    method: method,
+                    url: url,
+                    data: copyObject,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
@@ -85,6 +87,6 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
                         $scope.error = 'Unexpected error. Please try again later.';
                         $scope.isUpdated = false;
                     });
-            });
+
         };
     }]);

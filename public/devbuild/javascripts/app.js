@@ -472,16 +472,23 @@ App.factory('UtilsService', function() {
         return arrayOfYears;
     };
 
-    function convertDate(arrayOfObjects, format) {
+    function convertDate(object, format) {
         var format = format || 'YYYY';
 
-        angular.forEach(arrayOfObjects, function(elem, index) {
-            // Server receives only 'DD/MM/YYYY' format
-            if ( _.isObject(elem) && _.isEmpty(elem) ) return;
-            arrayOfObjects[index].startDate = moment(arrayOfObjects[index].startDate).format(format);
-            arrayOfObjects[index].endDate = moment(arrayOfObjects[index].endDate).format(format);
-        });
-        return arrayOfObjects;
+        if ( _.isArray(object) ) {
+            angular.forEach(object, function(elem, index) {
+                // Server receives only 'DD/MM/YYYY' format
+                if ( _.isObject(elem) && _.isEmpty(elem) ) return;
+                object[index].startDate = moment(object[index].startDate).format(format);
+                object[index].endDate = moment(object[index].endDate).format(format);
+            });
+        }
+        if (object.constructor == Object && object != null && !_.isEmpty(object)) {
+            object.startDate = moment(object.startDate).format(format);
+            object.endDate = moment(object.endDate).format(format);
+        }
+
+        return object;
     }
 
     function validateInputPair(_min, _max) {
@@ -1105,15 +1112,17 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
             })
         };
 
-        $scope.updateEducation = function (array) {
-            var copyObject = angular.copy(array);
+        $scope.updateEducation = function (object) {
+            var copyObject = angular.copy(object);
             copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
-            angular.forEach(copyObject, function(elem, index) {
-                // Send one object per time. TBD... improvement is added to API side with ability to send an array
+                // The server generates hash ID for saved forms,
+                // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
+                var method = isFinite(object.id) ? 'POST' : 'PUT',
+                    url = method == 'POST' ? '/lawyers/universities' : '/lawyers/universities/' + object.id;
                 $http({
-                    method: 'POST',
-                    url: '/lawyers/universities',
-                    data: copyObject[index],
+                    method: method,
+                    url: url,
+                    data: copyObject,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
@@ -1127,7 +1136,7 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
                         $scope.error = 'Unexpected error. Please try again later.';
                         $scope.isUpdated = false;
                     });
-            });
+
         };
     }]);
 'use strict';
@@ -1231,6 +1240,17 @@ App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
             });
         };
 }]);
+'use strict';
+/* Controller */
+
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$userInfo',
+    function ($scope, $http, $userInfo, $rootScope) {
+
+        //For the test needs
+    $scope.currentUser = $rootScope.currentUser || $userInfo.isLoggedIn || sessionStorage.getItem('token');
+
+
+    }]);
 'use strict';
 /* Controller */
 
@@ -1351,17 +1371,6 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
 
     }]);
 
-'use strict';
-/* Controller */
-
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$userInfo',
-    function ($scope, $http, $userInfo, $rootScope) {
-
-        //For the test needs
-    $scope.currentUser = $rootScope.currentUser || $userInfo.isLoggedIn || sessionStorage.getItem('token');
-
-
-    }]);
 'use strict';
 
 App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthService', '$rootScope', 'ValidationRules',
