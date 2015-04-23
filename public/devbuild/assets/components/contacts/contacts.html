@@ -65,7 +65,7 @@
             <div class="ui horizontal divider">
                 Телефони
             </div>
-            <div class="tree fields" ng-repeat="phone in userContacts.phones track by phone['number']">
+            <div class="tree fields" ng-repeat="phone in userContacts.phones track by $index">
                 <div class="field">
                     <label></label>
                         <input type="text"

@@ -68,7 +68,7 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
             copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
                 // The server generates hash ID for saved forms,
                 // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
-                var method = isFinite(object.id) ? 'POST' : 'PUT',
+                var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
                     url = method == 'POST' ? '/lawyers/universities' : '/lawyers/universities/' + object.id;
                 $http({
                     method: method,

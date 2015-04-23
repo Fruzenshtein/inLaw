@@ -141,8 +141,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     deferred.resolve(copyOfData);
                     return deferred.promise;
                 case urlConfig.certificates:
-                    info['certificates'] = _jsonData['data'];
-                    deferred.resolve(_jsonData['data']);
+                    info['certificates'] = _jsonData.data;
+                    deferred.resolve(copyOfData);
                     return deferred.promise;
                 case urlConfig.experiences:
                     // For experiences the server returns {'workPlaces': [...]} object if data exists

@@ -27,13 +27,30 @@ App.factory('UtilsService', function() {
             angular.forEach(object, function(elem, index) {
                 // Server receives only 'DD/MM/YYYY' format
                 if ( _.isObject(elem) && _.isEmpty(elem) ) return;
-                object[index].startDate = moment(object[index].startDate).format(format);
-                object[index].endDate = moment(object[index].endDate).format(format);
+                switch (true) {
+                    case elem.hasOwnProperty('startDate'):
+                        elem.startDate = moment(elem.startDate).format(format);
+                    case elem.hasOwnProperty('endDate'):
+                        elem.endDate = moment(elem.endDate).format(format);
+                    case elem.hasOwnProperty('date'):
+                        elem.date = moment(elem.date).format(format);
+                        break;
+                    default: break;
+                }
             });
         }
         if (object.constructor == Object && object != null && !_.isEmpty(object)) {
-            object.startDate = moment(object.startDate).format(format);
-            object.endDate = moment(object.endDate).format(format);
+            switch (true) {
+                case object.hasOwnProperty('startDate'):
+                    object.startDate = moment(object.startDate).format(format);
+                case object.hasOwnProperty('endDate'):
+                    object.endDate = moment(object.endDate).format(format);
+                case object.hasOwnProperty('date'):
+                    object.date = moment(object.date).format(format);
+                    break;
+                default:
+                    break;
+            }
         }
 
         return object;

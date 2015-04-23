@@ -1,3 +1,13 @@
-<div class="form-group" ui-view="universities"></div>
-<div class="form-group" ui-view="certificates"></div>
-<div class="form-group" ui-view="languages"></div>
+<div class="">
+    <tabset justified="true" class="">
+        <tab heading="Університети" class="tab segment">
+            <div class="" ui-view="universities"></div>
+        </tab>
+        <tab heading="Сертифікати" class="tab segment">
+            <div class="" ui-view="certificates"></div>
+        </tab>
+        <tab heading="Мови" class="tab segment">
+            <div class="" ui-view="languages"></div>
+        </tab>
+    </tabset>
+</div>

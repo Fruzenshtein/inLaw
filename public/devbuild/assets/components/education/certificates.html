@@ -1,3 +1,96 @@
+<div class="">
+    <div class="">
+        <form class="ui form segment inactive" name="certificateForm" novalidate>
+            <div class="ui green message" ng-if="isUpdated">
+                <div class="header">
+                    Ви успішно обновили профайл!
+                </div>
+            </div>
+            <div class="ui red message" ng-if="error">
+                <ul class="list">
+                    <li>{{error}}</li>
+                </ul>
+            </div>
+            <div class="ui error message"></div>
+            <h4 class="text-center">Сертіфикати</h4>
+            <div ng-repeat="certificate in certificates track by $index">
+                <div class="required field">
+                    <label>Сертифікат</label>
+                    <input type="text"
+                           ng-model="certificate.name"
+                           ng-disabled="!formStatus.isEditModeOpen"
+                           id="certificate"
+                           placeholder="Назва сертифікату"
+                           required>
+                </div>
+                <div class="required field">
+                    <label>Номер</label>
+                    <input type="text"
+                           ng-model="certificate.licenseCode"
+                           id="license"
+                           ng-disabled="!formStatus.isEditModeOpen"
+                           placeholder="Номер ліцензії"
+                           required>
+                </div>
+                <div class="field">
+                    <label>Посиллання</label>
+                    <div class="ui labeled input">
+                        <div class="ui label">
+                            http://
+                        </div>
+                        <input type="url"
+                               ng-model="certificate.link"
+                               id="link"
+                               ng-disabled="!formStatus.isEditModeOpen"
+                               placeholder="Будь-яка інформація про сертифікат">
+                    </div>
+                </div>
+                <div class="ui horizontal divider">
+                    Дата одержання сертифіката
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label></label>
+                        <ui-select ng-model="certificate.date" required theme="bootstrap" ng-disabled="!formStatus.isEditModeOpen">
+                            <ui-select-match placeholder="Рік початку...">{{$select.selected}}</ui-select-match>
+                            <ui-select-choices repeat="year in selectorYears | filter: $select.search">
+                                <span ng-bind-html="year | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+                <div class="ui labeled icon button"
+                     ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">
+                    <i class="edit icon"></i>
+                    Редагувати
+                </div>
+                <button class="ui labeled icon blue button"
+                        ng-click="updateCertificates(certificate); formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">
+                    <i class="save icon"></i>
+                    Зберегти
+                </button>
+                <div class="ui labeled icon red button" ng-click="removeCertificate(certificate)">
+                    <i class="remove icon"></i>
+                    Видалити
+                </div>
+                <div class="ui divider"></div>
+            </div>
+            <div class="ui horizontal divider">Додати сертифікат</div>
+            <div class="left aligned column">
+                <div class="ui labeled icon button" ng-click="addCertificate()">
+                    <i class="plus icon"></i>
+                    Додади
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+<!--
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="panel-title">
@@ -42,6 +135,8 @@
                            placeholder="Link" required>
                 </div>
                 <div class=""> <!-- /. start year picker -->
+
+<!--
                     <div class="col-md-3">
                         <p class="input-group">
                             <input type="text"
@@ -65,6 +160,8 @@
                         </p>
                     </div>
                 </div> <!-- /. close Start year picker  -->
+
+<!--
                 <div class="clearfix"></div>
             </form>
         </fieldset>
@@ -82,3 +179,5 @@
         <p ng-show="isUpdated" class="text-danger">You have successfully updated the form!</p>
     </div>
 </div>
+
+-->
