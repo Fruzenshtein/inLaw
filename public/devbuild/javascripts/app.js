@@ -710,66 +710,6 @@ App.constant('ValidationRules', {
 'use strict';
 /* Controller */
 
-App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
-    function ($scope, $http, $userInfo, $timeout) {
-
-        // if data had saved before, do not send a request
-        if ( _.isEmpty($userInfo.competences) ) {
-            var promiseGetCompetences = $userInfo.getUserCompetences();
-            promiseGetCompetences.then(function (onFulfilled) {
-                $scope.myCompetences.competences = onFulfilled || [];
-            }, function (onReject) {
-                $scope.myCompetences.competences = [];
-            });
-        };
-        $scope.myCompetences = {};
-        $scope.myCompetences.competences = $userInfo.competences || [];
-        $scope.competences = [];
-        $scope.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-        $scope.refreshCompetences = function(search) {
-            var params = {competence: search};
-            return $http.get(
-                '/competences', {params: params}
-            ).then(function(response) {
-                    $scope.competences = response.data;
-                });
-        };
-        $scope.tagTransform = function (newTag) {
-            var item = {
-                name: newTag
-            };
-            return item;
-        };
-        $scope.setCompetence = function(competence, event) {
-            var competence = {competence: competence},
-                method = event == 'select' ? 'POST' : 'DELETE',
-                url = method == 'DELETE'
-                    ? '/lawyers/competences?competence='+ competence.competence
-                    : '/lawyers/competences';
-            $http({
-                method: method,
-                url: url,
-                data: competence,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                }
-            }).
-                success(function (data, status, headers, config) {
-
-                }).
-                error(function (data, status, headers, config) {
-                    $scope.error = 'Unexpected error. Please try again later.';
-                });
-        }
-
-    }]);
-'use strict';
-/* Controller */
-
 App.controller('ContactsCtrl', ['$scope', '$http',
     '$filter', '$userInfo', 'ValidationRules', function ($scope, $http, $filter, $userInfo, ValidationRules) {
 
@@ -906,6 +846,107 @@ App.controller('ContactsCtrl', ['$scope', '$http',
         })(jQuery);
 
     }]);
+'use strict';
+/* Controller */
+
+App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
+    function ($scope, $http, $userInfo) {
+
+        // if data had been saved before, do not send a request
+        if ( _.isEmpty($userInfo.experiences) ) {
+            var promiseGetExperience = $userInfo.getUserExperience();
+            promiseGetExperience.then(function (onFulfilled) {
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
+            }, function (onReject) {
+                $scope.experiences = [{}];
+            });
+        };
+
+        $scope.experience = {};
+        $scope.experiences = $userInfo.experiences || [{}];
+        $scope.experiencesCounter = 0;
+        $scope.addExperience = function () {
+            $scope.experiencesTemplate = {
+                id: $scope.experiencesCounter
+            };
+            $scope.experiencesCounter += 1;
+            $scope.experiences.push($scope.experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
+                    $scope.experiences.splice(index, 1);
+                }
+                // TODO: API call
+            })
+        };
+
+        // Disable weekend selection
+        $scope.disabled = function (date, mode) {
+            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+        };
+
+        $scope.toggleMin = function () {
+            var years100ago = new Date();
+            // Time 100 years ago
+            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
+            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
+        };
+        $scope.toggleMin();
+        $scope.maxDate = new Date();
+
+        $scope.openStart = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            this.openedEnd = false;
+            this.openedStart = true;
+        };
+        $scope.openEnd = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            this.openedStart = false;
+            this.openedEnd = true;
+        };
+
+        $scope.dateOptions = {
+            formatYear: 'yyyy',
+            minMode: 'month'
+        };
+
+        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.format = $scope.formats[0];
+
+        $scope.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+
+        $scope.updateExperience = function (array) {
+            angular.forEach(array, function(elem, index) {
+                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
+                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
+                $http({
+                    method: 'POST',
+                    url: '/lawyers/experience',
+                    data: array[index],
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                }).
+                    success(function (data, status, headers, config) {
+                        $scope.formStatus.isEditModeOpen = true;
+                        $scope.isUpdated = true;
+                        $scope.error = '';
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                    });
+            });
+        };
+}]);
 'use strict';
 /* Controller */
 
@@ -1142,104 +1183,63 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
 'use strict';
 /* Controller */
 
-App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo',
-    function ($scope, $http, $userInfo) {
+App.controller('CompetenceCtrl', ['$scope', '$http', '$userInfo', '$timeout',
+    function ($scope, $http, $userInfo, $timeout) {
 
-        // if data had been saved before, do not send a request
-        if ( _.isEmpty($userInfo.experiences) ) {
-            var promiseGetExperience = $userInfo.getUserExperience();
-            promiseGetExperience.then(function (onFulfilled) {
-                // assign [{}] object if request returns an empty object.
-                // [{}] - is used to build default html template
-                $scope.experiences = _.isEmpty(onFulfilled) ? [{}] : onFulfilled;
+        // if data had saved before, do not send a request
+        if ( _.isEmpty($userInfo.competences) ) {
+            var promiseGetCompetences = $userInfo.getUserCompetences();
+            promiseGetCompetences.then(function (onFulfilled) {
+                $scope.myCompetences.competences = onFulfilled || [];
             }, function (onReject) {
-                $scope.experiences = [{}];
+                $scope.myCompetences.competences = [];
             });
         };
-
-        $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [{}];
-        $scope.experiencesCounter = 0;
-        $scope.addExperience = function () {
-            $scope.experiencesTemplate = {
-                id: $scope.experiencesCounter
-            };
-            $scope.experiencesCounter += 1;
-            $scope.experiences.push($scope.experiencesTemplate);
-        };
-        $scope.removeExperience = function(obj) {
-            angular.forEach($scope.experiences, function(elem, index) {
-                if ( $scope.experiences[index]['id'] == obj['id'] ) {
-                    $scope.experiences.splice(index, 1);
-                }
-                // TODO: API call
-            })
-        };
-
-        // Disable weekend selection
-        $scope.disabled = function (date, mode) {
-            return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-        };
-
-        $scope.toggleMin = function () {
-            var years100ago = new Date();
-            // Time 100 years ago
-            years100ago.setTime(years100ago.valueOf() - 100 * 365 * 24 * 60 * 60 * 1000);
-            $scope.minDate = $scope.minDate ? null : new Date(years100ago);
-        };
-        $scope.toggleMin();
-        $scope.maxDate = new Date();
-
-        $scope.openStart = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedEnd = false;
-            this.openedStart = true;
-        };
-        $scope.openEnd = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            this.openedStart = false;
-            this.openedEnd = true;
-        };
-
-        $scope.dateOptions = {
-            formatYear: 'yyyy',
-            minMode: 'month'
-        };
-
-        $scope.formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        $scope.format = $scope.formats[0];
-
+        $scope.myCompetences = {};
+        $scope.myCompetences.competences = $userInfo.competences || [];
+        $scope.competences = [];
         $scope.formStatus = {
             isEditModeOpen: true,
             isEditModeDisabled: false
         };
-
-        $scope.updateExperience = function (array) {
-            angular.forEach(array, function(elem, index) {
-                array[index].startDate = moment(array[index].startDate).format($scope.formats[1]);
-                array[index].endDate = moment(array[index].endDate).format($scope.formats[1]);
-                $http({
-                    method: 'POST',
-                    url: '/lawyers/experience',
-                    data: array[index],
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                    }
-                }).
-                    success(function (data, status, headers, config) {
-                        $scope.formStatus.isEditModeOpen = true;
-                        $scope.isUpdated = true;
-                        $scope.error = '';
-                    }).
-                    error(function (data, status, headers, config) {
-                        $scope.error = 'Unexpected error. Please try again later.';
-                    });
-            });
+        $scope.refreshCompetences = function(search) {
+            var params = {competence: search};
+            return $http.get(
+                '/competences', {params: params}
+            ).then(function(response) {
+                    $scope.competences = response.data;
+                });
         };
-}]);
+        $scope.tagTransform = function (newTag) {
+            var item = {
+                name: newTag
+            };
+            return item;
+        };
+        $scope.setCompetence = function(competence, event) {
+            var competence = {competence: competence},
+                method = event == 'select' ? 'POST' : 'DELETE',
+                url = method == 'DELETE'
+                    ? '/lawyers/competences?competence='+ competence.competence
+                    : '/lawyers/competences';
+            $http({
+                method: method,
+                url: url,
+                data: competence,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                }
+            }).
+                success(function (data, status, headers, config) {
+
+                }).
+                error(function (data, status, headers, config) {
+                    $scope.error = 'Unexpected error. Please try again later.';
+                });
+        }
+
+    }]);
 'use strict';
 /* Controller */
 
@@ -1428,6 +1428,46 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
 'use strict';
 /* Controller */
 
+App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$location',
+    function ($scope, $http, $filterService, $location) {
+
+        var userProfileObj = $filterService.getSelectedLawyerObj();
+        // if data had saved before, do not send a request
+        if ( _.isEmpty(userProfileObj) ) {
+            var promiseGetPublicProfile = getPublicProfile();
+            promiseGetPublicProfile.then(function (onFulfilled) {
+
+            }, function (onReject) {
+
+            });
+        };
+
+        function getPublicProfile() {
+            // get a profile ID from the URL, starting from 'public/' url
+            // if user uses a direct url to load the profile
+            var profileUrlId = $location.url().slice(8);
+            return $http({
+                        method: 'GET',
+                        url: '/lawyers/public/' + profileUrlId,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                   });
+        };
+
+
+        $scope.profile = userProfileObj.profile;
+        $scope.competences = userProfileObj.competences;
+        $scope.education = userProfileObj.education;
+        $scope.experiences = userProfileObj.experience.total == 0
+            ? []
+            : userProfileObj.experience.workPlaces;
+
+
+    }]);
+'use strict';
+/* Controller */
+
 App.controller('ProfileCtrl', ['$scope', '$http',
     '$filter', '$userInfo', 'ValidationRules', 'UtilsService',
     function($scope, $http, $filter, $userInfo, ValidationRules, UtilsService) {
@@ -1538,46 +1578,6 @@ App.controller('ProfileCtrl', ['$scope', '$http',
 
 }]);
 
-'use strict';
-/* Controller */
-
-App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$location',
-    function ($scope, $http, $filterService, $location) {
-
-        var userProfileObj = $filterService.getSelectedLawyerObj();
-        // if data had saved before, do not send a request
-        if ( _.isEmpty(userProfileObj) ) {
-            var promiseGetPublicProfile = getPublicProfile();
-            promiseGetPublicProfile.then(function (onFulfilled) {
-
-            }, function (onReject) {
-
-            });
-        };
-
-        function getPublicProfile() {
-            // get a profile ID from the URL, starting from 'public/' url
-            // if user uses a direct url to load the profile
-            var profileUrlId = $location.url().slice(8);
-            return $http({
-                        method: 'GET',
-                        url: '/lawyers/public/' + profileUrlId,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                   });
-        };
-
-
-        $scope.profile = userProfileObj.profile;
-        $scope.competences = userProfileObj.competences;
-        $scope.education = userProfileObj.education;
-        $scope.experiences = userProfileObj.experience.total == 0
-            ? []
-            : userProfileObj.experience.workPlaces;
-
-
-    }]);
 'use strict';
 
 App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'ValidationRules',

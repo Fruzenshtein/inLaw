@@ -1,3 +1,58 @@
+<div class="">
+    <div>
+        <form class="ui form segment inactive tab-content" name="certificateForm" novalidate>
+            <div class="ui green message" ng-if="isUpdated">
+                <div class="header">
+                    Ви успішно обновили профайл!
+                </div>
+            </div>
+            <div class="ui red message" ng-if="error">
+                <ul class="list">
+                    <li>{{error}}</li>
+                </ul>
+            </div>
+            <div class="ui error message"></div>
+            <h4 class="text-center">Мови</h4>
+            <div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Оберіть мову/мови:</label>
+                        <ui-select multiple
+                                   tagging
+                                   tagging-label="false"
+                                   ng-model="languages"
+                                   on-select="setLanguages($item, 'select')"
+                                   on-remove="setLanguages($item, 'remove')"
+                                   theme="bootstrap"
+                                   ng-disabled="formStatus.isEditModeOpen"
+                                   title="Choose a language"
+                                   class="ui-select-tagging">
+                            <ui-select-match placeholder="Select a language...">{{$item}}</ui-select-match>
+                            <ui-select-choices repeat="language in listOfLanguages">
+                                <small>
+                                    {{language}}
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+                <div class="ui labeled icon button"
+                     ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">
+                    <i class="edit icon"></i>
+                    Редагувати
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+<!--
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="panel-title">
@@ -34,3 +89,6 @@
         <p ng-show="error" class="text-danger">{{ error }}</p>
     </div>
 </div>
+
+
+-->

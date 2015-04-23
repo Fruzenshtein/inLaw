@@ -1,0 +1,4 @@
+/* Overwriting of Semantic stales */
+.ui-select-tagging  input {
+    border: none !important;
+}
