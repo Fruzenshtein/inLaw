@@ -100,4 +100,10 @@ trait UserAccountForms extends LawyerValidators {
     )(WorkPlace.apply)(WorkPlace.unapply)
   )
 
+  val recoverPasswordForm = Form(
+    mapping(
+      "email" -> email
+    )(Email.apply)(Email.unapply)
+  )
+
 }

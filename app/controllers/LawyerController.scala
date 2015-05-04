@@ -13,9 +13,11 @@ import play.api.mvc._
 import play.api.Logger
 import scala.concurrent.Future
 import play.api.libs.json.{JsObject, Json}
-import services.{EmailService, LawyerService}
+import services.{PasswordService, EmailService, LawyerService}
 import models.{BearerToken, Lawyer}
 import com.wordnik.swagger.annotations._
+
+import scala.util.Random
 
 /**
  * Created by Alex on 11/23/14.
@@ -280,6 +282,31 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
         }
       )
     }
+  }
+
+  def recoverPassword = Action.async { implicit request =>
+    recoverPasswordForm.bindFromRequest fold(
+      formWithErrors => {
+        Logger.info("Password validation failed")
+        Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+      },
+      emailData => {
+        LawyerService.findByEmail(emailData.email) map {
+          case Some(lawyer) => {
+            Logger.info("Recover password link creation...")
+            LawyerService.updatePassword(emailData.email, Random.alphanumeric.take(16).mkString)
+            PasswordService.createRecoverLink(lawyer._id.get)
+            //TODO: Send email with link
+            Ok(Json.obj("message" -> "Recover link was created"))
+          }
+          case None => {
+            Logger.info("User with such email not found")
+            NotFound(Json.obj("message" -> "User with such email not found"))
+          }
+        }
+
+      }
+    )
   }
 
 }
