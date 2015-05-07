@@ -296,7 +296,10 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
             Logger.info("Recover password link creation...")
             LawyerService.updatePassword(emailData.email, Random.alphanumeric.take(16).mkString)
             PasswordService.createRecoverLink(lawyer.email)
-            //TODO: Send email with link
+            PasswordService.findByEmail(lawyer.email) map {
+              case Some(recoverLink) => EmailService.sendRecoverPasswordLinkEmail(emailData.email, recoverLink._id.get.stringify)
+              case None =>
+            }
             Ok(Json.obj("message" -> "Recover link was created"))
           }
           case None => {

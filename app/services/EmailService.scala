@@ -24,4 +24,19 @@ object EmailService {
     MailerPlugin.send(email)
   }
 
+  def sendRecoverPasswordLinkEmail(emailTo: String, linkId: String) = {
+    val email = Email(
+      "Password recover link",
+      "inLaw <alex.fruzenshtein@gmail.com>",
+      Seq("checkpoint.10per@gmail.com"),
+      bodyHtml = Some("<html>" +
+        "<body>" +
+        "<p>Dear user,</p>" +
+        s"<p>You have initiated a process of a password recovery. In order to set a new password use id: $linkId</p>" +
+        "</body>" +
+        "</html>")
+    )
+    MailerPlugin.send(email)
+  }
+
 }

@@ -21,6 +21,12 @@ object PasswordService {
     collection.save(RecoverLink(_id = None, userEmail = email, DateTime.now))
   }
 
+  def findByEmail(email: String): Future[Option[RecoverLink]] = {
+    val query = Json.obj("userEmail" -> email)
+    val recoverLink = collection.find(query).one[RecoverLink]
+    recoverLink
+  }
+
   def findById(id: String): Future[Option[RecoverLink]] = {
     val query = Json.obj("_id" -> Json.obj("$oid" -> id))
     val recoverLink = collection.find(query).one[RecoverLink]
