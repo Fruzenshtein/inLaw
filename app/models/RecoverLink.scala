@@ -10,20 +10,20 @@ import reactivemongo.bson.BSONObjectID
  * Created by Alex on 5/4/15.
  */
 case class RecoverLink(_id: Option[BSONObjectID],
-                       userId: BSONObjectID,
+                       userEmail: String,
                        createdAt: DateTime)
 
 object RecoverLink {
 
   implicit val recoverLinkWrites: Writes[RecoverLink] = (
     (JsPath \ "_id").writeNullable[BSONObjectID] and
-    (JsPath \ "userId").write[BSONObjectID] and
+    (JsPath \ "userEmail").write[String] and
     (JsPath \ "createdAt").write[DateTime]
   )(unlift(RecoverLink.unapply))
 
   implicit val recoverLinkReads: Reads[RecoverLink] = (
     (JsPath \ "_id").readNullable[BSONObjectID].map(_.getOrElse(BSONObjectID.generate)).map(Some(_)) and
-    (JsPath \ "userId").read[BSONObjectID] and
+    (JsPath \ "userEmail").read[String] and
     (JsPath \ "createdAt").read[DateTime]
   )(RecoverLink.apply _)
 

@@ -284,10 +284,10 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
     }
   }
 
-  def recoverPassword = Action.async { implicit request =>
-    recoverPasswordForm.bindFromRequest fold(
+  def resetPassword = Action.async { implicit request =>
+    resetPasswordForm.bindFromRequest fold(
       formWithErrors => {
-        Logger.info("Password validation failed")
+        Logger.info("Email validation failed")
         Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
       },
       emailData => {
@@ -295,7 +295,7 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
           case Some(lawyer) => {
             Logger.info("Recover password link creation...")
             LawyerService.updatePassword(emailData.email, Random.alphanumeric.take(16).mkString)
-            PasswordService.createRecoverLink(lawyer._id.get)
+            PasswordService.createRecoverLink(lawyer.email)
             //TODO: Send email with link
             Ok(Json.obj("message" -> "Recover link was created"))
           }
@@ -305,6 +305,36 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
           }
         }
 
+      }
+    )
+  }
+
+  def recoverPassword(recoverLinkID: String) = Action.async { implicit request =>
+    recoverPasswordForm.bindFromRequest fold(
+      formWithErrors => {
+        Logger.info("Password validation failed")
+        Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+      },
+      recoverPassData => {
+        Logger.info("Recover password process...")
+        if (recoverPassData.password == recoverPassData.repeatPassword) {
+          PasswordService.findById(recoverLinkID) map {
+            case Some(recoverLink) => {
+              Logger.info("Password was successfully recovered")
+              //TODO: Check if link is not expired
+              LawyerService.updatePassword(recoverLink.userEmail, CryptUtils.encryptPassword(recoverPassData.password))
+              PasswordService.remove(recoverLinkID)
+              Ok(Json.obj("message" -> "Password was successfully recovered"))
+            }
+            case None => {
+              Logger.info("Recover link does not exist")
+              NotFound(Json.obj("message" -> "Recover link does not exist"))
+            }
+          }
+        } else {
+          Logger.info("Passwords do not match")
+          Future.successful(BadRequest(Json.obj("message" -> "Passwords do not match")))
+        }
       }
     )
   }
