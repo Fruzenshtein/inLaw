@@ -1,6 +1,6 @@
 package controllers
 
-import javax.ws.rs.QueryParam
+import javax.ws.rs.{PathParam, QueryParam}
 
 import controllers.LawyerContactsController._
 import utils.CryptUtils
@@ -284,6 +284,19 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
     }
   }
 
+  @ApiOperation(
+    nickname = "resetPassword",
+    value = "Reset password",
+    notes = "Initialize process of reset password. Send email with recover link id.",
+    httpMethod = "POST",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Recover link was created"),
+    new ApiResponse(code = 400, message = ""),
+    new ApiResponse(code = 404, message = "User with such email not found")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Object contains email of user who needs password reset", dataType = "forms.Email", paramType = "body", required = true)
+  ))
   def resetPassword = Action.async { implicit request =>
     resetPasswordForm.bindFromRequest fold(
       formWithErrors => {
@@ -312,7 +325,21 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
     )
   }
 
-  def recoverPassword(recoverLinkID: String) = Action.async { implicit request =>
+  @ApiOperation(
+    nickname = "recoverPassword",
+    value = "Recover password",
+    notes = "Recovers password for user",
+    httpMethod = "POST",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 404, message = "Recover link does not exist"),
+    new ApiResponse(code = 200, message = "Password was successfully recovered"),
+    new ApiResponse(code = 400, message = "Passwords do not match")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Object contains new password", dataType = "forms.RecoverPassword", paramType = "body", required = true)
+  ))
+  def recoverPassword(@ApiParam(value = "Password recover link ID", required = true)@PathParam("id") recoverLinkID: String) = Action.async { implicit request =>
     recoverPasswordForm.bindFromRequest fold(
       formWithErrors => {
         Logger.info("Password validation failed")

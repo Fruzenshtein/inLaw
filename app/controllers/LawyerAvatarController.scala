@@ -48,7 +48,7 @@ object LawyerAvatarController extends Controller with Security {
   @ApiOperation(
     nickname = "getAvatar",
     value = "getAvatar",
-    notes = "Get lawyer awatar",
+    notes = "Get lawyer avatar",
     httpMethod = "GET",
     produces = "image")
   @ApiResponses(Array(
