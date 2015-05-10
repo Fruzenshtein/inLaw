@@ -37,6 +37,114 @@ App.constant('ValidationRules', {
                 type: 'match[password]',
                 prompt: 'Password don\'t match'
             }]
+        },
+        firstName: {
+            identifier: 'firstName',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "Your name must be at least 2 characters"
+                }
+            ]
+        },
+        lastName: {
+            identifier: 'lastName',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "Your last name must be at least 2 characters"
+                }
+            ]
+        },
+        middleName: {
+            identifier: 'middleName',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "Your middle name must be at least 2 characters"
+                }
+            ]
+        },
+        street: {
+            identifier: 'street',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[2]',
+                    prompt: "Your street address must be at least 2 characters"
+                }
+            ]
+        },
+        zip: {
+            identifier: 'zip',
+            optional: true,
+            rules: [
+                {
+                    type: 'length[5]',
+                    prompt: "Your zip code must be at least 5 characters"
+                },
+                {
+                    type: 'maxLength[5]',
+                    prompt: "Your zip code must be less than 6 characters"
+                }
+            ]
+        },
+        facebook: {
+            identifier: 'facebook',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Provide a valid URL link to your Facebook account"
+                }
+            ]
+        },
+        twitter: {
+            identifier: 'twitter',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Provide a valid URL link to your Twitter account"
+                }
+            ]
+        },
+        linkedin: {
+            identifier: 'linkedin',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Provide a valid URL link to your Linkedin account"
+                }
+            ]
+        },
+        website: {
+            identifier: 'website',
+            optional: true,
+            rules: [
+                {
+                    type: 'url',
+                    prompt: "Provide a valid URL link to your Web page"
+                }
+            ]
+        },
+        emailOptional: {
+            identifier: 'optEmail',
+            optional: true,
+            rules:[
+                {
+                    type: 'email',
+                    prompt: 'Provide a valid email address'
+                },
+                {
+                    type: 'empty',
+                    prompt: 'Please, enter your email address'
+                }
+            ]
         }
     },
     uk: {

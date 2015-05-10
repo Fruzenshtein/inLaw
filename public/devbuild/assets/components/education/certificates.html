@@ -3,7 +3,7 @@
         <form class="ui form segment inactive tab-content" name="certificateForm" novalidate>
             <div class="ui green message" ng-if="isUpdated">
                 <div class="header">
-                    Ви успішно обновили профайл!
+                    You have successfully updated profile!
                 </div>
             </div>
             <div class="ui red message" ng-if="error">
@@ -12,28 +12,28 @@
                 </ul>
             </div>
             <div class="ui error message"></div>
-            <h4 class="text-center">Сертіфикати</h4>
+            <h4 class="text-center">Certificates</h4>
             <div ng-repeat="certificate in certificates track by $index">
                 <div class="required field">
-                    <label>Сертифікат</label>
+                    <label>Certificate</label>
                     <input type="text"
                            ng-model="certificate.name"
                            ng-disabled="!formStatus.isEditModeOpen"
                            id="certificate"
-                           placeholder="Назва сертифікату"
+                           placeholder="Name of a certificate"
                            required>
                 </div>
                 <div class="required field">
-                    <label>Номер</label>
+                    <label>Licence code</label>
                     <input type="text"
                            ng-model="certificate.licenseCode"
                            id="license"
                            ng-disabled="!formStatus.isEditModeOpen"
-                           placeholder="Номер ліцензії"
+                           placeholder="Number of a licence"
                            required>
                 </div>
                 <div class="field">
-                    <label>Посиллання</label>
+                    <label>Link</label>
                     <div class="ui labeled input">
                         <div class="ui label">
                             http://
@@ -42,17 +42,17 @@
                                ng-model="certificate.link"
                                id="link"
                                ng-disabled="!formStatus.isEditModeOpen"
-                               placeholder="Будь-яка інформація про сертифікат">
+                               placeholder="Information about certificate">
                     </div>
                 </div>
                 <div class="ui horizontal divider">
-                    Дата одержання сертифіката
+                    When the certificate has been issued
                 </div>
                 <div class="two fields">
                     <div class="field">
                         <label></label>
                         <ui-select ng-model="certificate.date" required theme="bootstrap" ng-disabled="!formStatus.isEditModeOpen">
-                            <ui-select-match placeholder="Рік початку...">{{$select.selected}}</ui-select-match>
+                            <ui-select-match placeholder="Start year...">{{$select.selected}}</ui-select-match>
                             <ui-select-choices repeat="year in selectorYears | filter: $select.search">
                                 <span ng-bind-html="year | highlight: $select.search"></span>
                             </ui-select-choices>
@@ -63,24 +63,24 @@
                 <div class="ui labeled icon button"
                      ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">
                     <i class="edit icon"></i>
-                    Редагувати
+                    Edit
                 </div>
                 <button class="ui labeled icon blue button"
                         ng-click="updateCertificates(certificate); formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">
                     <i class="save icon"></i>
-                    Зберегти
+                    Save
                 </button>
                 <div class="ui labeled icon red button" ng-click="removeCertificate(certificate)">
                     <i class="remove icon"></i>
-                    Видалити
+                    Remove
                 </div>
                 <div class="ui divider"></div>
             </div>
-            <div class="ui horizontal divider">Додати сертифікат</div>
+            <div class="ui horizontal divider">Add certificate</div>
             <div class="left aligned column">
                 <div class="ui labeled icon button" ng-click="addCertificate()">
                     <i class="plus icon"></i>
-                    Додади
+                    Add
                 </div>
             </div>
         </form>

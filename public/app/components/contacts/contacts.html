@@ -3,7 +3,7 @@
         <form class="ui form segment inactive" name="contacts" novalidate>
             <div class="ui green message" ng-if="isUpdated">
                 <div class="header">
-                    Ви успішно обновили профайл!
+                    You have successfully updated profile!
                 </div>
             </div>
             <div class="ui red message" ng-if="error">
@@ -12,15 +12,15 @@
                 </ul>
             </div>
             <div class="ui error message"></div>
-            <h4 class="text-center">КОНТАКТИ</h4>
+            <h4 class="text-center">CONTACTS</h4>
             <div class="field">
-                <label>Країна:</label>
+                <label>Country:</label>
                 <ui-select ng-model="country.selected"
                            theme="bootstrap"
                            name="country"
                            ng-disabled="formStatus.isEditModeOpen"
                            reset-search-input="false">
-                    <ui-select-match placeholder="Введіть країну...">{{$select.selected.address_components[0].long_name}}</ui-select-match>
+                    <ui-select-match placeholder="Select a country...">{{$select.selected.address_components[0].long_name}}</ui-select-match>
                     <ui-select-choices repeat="country in countries track by $index"
                                        refresh="refreshCountry($select.search)"
                                        refresh-delay="0">
@@ -29,12 +29,12 @@
                 </ui-select>
             </div>
             <div class="field">
-                <label>Місто:</label>
+                <label>City:</label>
                 <ui-select ng-model="city.selected"
                            theme="bootstrap"
                            ng-disabled="formStatus.isEditModeOpen"
                            reset-search-input="false">
-                    <ui-select-match placeholder="Введіть місто...">{{$select.selected.address_components[0].long_name}}</ui-select-match>
+                    <ui-select-match placeholder="Select a city...">{{$select.selected.address_components[0].long_name}}</ui-select-match>
                     <ui-select-choices repeat="city in cities track by $index"
                                        refresh="refreshCity($select.search)"
                                        refresh-delay="0">
@@ -43,34 +43,34 @@
                 </ui-select>
             </div>
             <div class="field">
-                <label>Адресса</label>
+                <label>Street address</label>
                 <input type="text"
                        name="street"
                        id="street"
-                       placeholder="Вулиця..."
+                       placeholder="street..."
                        ng-model="userContacts.street"
                        ng-minlength="2"
                        ng-disabled="formStatus.isEditModeOpen">
             </div>
             <div class="field">
-                <label>Поштовий індекс</label>
+                <label>ZIP</label>
                 <input type="text"
                        name="zip"
                        id="zip"
-                       placeholder="індекс"
+                       placeholder="zip code"
                        ng-model="userContacts.zip"
                        ng-disabled="formStatus.isEditModeOpen"
                        ng-minlength="5">
             </div>
             <div class="ui horizontal divider">
-                Телефони
+                Phones
             </div>
             <div class="tree fields" ng-repeat="phone in userContacts.phones track by $index">
                 <div class="field">
                     <label></label>
                         <input type="text"
                                name="phoneName"
-                               placeholder="Назва"
+                               placeholder="Name"
                                ng-model="phone.name"
                                ng-disabled="formStatus.isEditModeOpen">
                 </div>
@@ -91,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <div class="ui horizontal divider">Інтернет</div>
+            <div class="ui horizontal divider">Web</div>
             <div class="field">
                 <div class="ui left action input">
                     <button class="ui facebook  button">
@@ -154,13 +154,13 @@
                 </div>
             </div>
             <div class="ui button"
-                 ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Редагувати
+                 ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit
             </div>
             <button class="ui blue button"
-                    ng-click="contacts.$invalid || contacts.$pristine || updateContacts()">Зберегти
+                    ng-click="contacts.$invalid || contacts.$pristine || updateContacts()">Save
             </button>
             <div class="ui button"
-                 ng-click="discardChanges()">Відмінити
+                 ng-click="discardChanges()">Cancel
             </div>
         </form>
     </div>

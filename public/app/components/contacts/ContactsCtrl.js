@@ -69,7 +69,7 @@ App.controller('ContactsCtrl', ['$scope', '$http',
 
         };
         $scope.refreshCountry = function(address) {
-            var params = {address: address, sensor: false, language: 'uk'}; //TODO: Update locale on the localization phase
+            var params = {address: address, sensor: false, language: 'en'}; //TODO: Update locale on the localization phase
             return $http.get(
                 'http://maps.googleapis.com/maps/api/geocode/json',
                 {params: params}
@@ -78,7 +78,7 @@ App.controller('ContactsCtrl', ['$scope', '$http',
                 });
         };
         $scope.refreshCity = function(address) {
-            var params = {address: address, sensor: false, language: 'uk'}; //TODO: Update locale on the localization phase
+            var params = {address: address, sensor: false, language: 'en'}; //TODO: Update locale on the localization phase
             return $http.get(
                 'http://maps.googleapis.com/maps/api/geocode/json',
                 {params: params}
@@ -133,7 +133,7 @@ App.controller('ContactsCtrl', ['$scope', '$http',
         // Profile form validation
         (function ($) {
             $('.ui.form')
-                .form(ValidationRules.uk);
+                .form(ValidationRules.en);
         })(jQuery);
 
     }]);

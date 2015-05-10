@@ -7,11 +7,11 @@
                     <li>{{error}}</li>
                 </ul>
             </div>
-            <h3 class="center aligned column">ЛОГІН</h3>
+            <h3 class="center aligned column">Login</h3>
             <div class="required field">
-                <label>Електронна адреса</label>
+                <label>Email address</label>
                 <div class="ui icon input">
-                    <input placeholder="Логін"
+                    <input placeholder="example@example.com"
                            name="email"
                            type="text"
                            ng-model="signIn.email" required>
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="required field">
-                <label>Пароль</label>
+                <label>Password</label>
                 <div class="ui icon input">
                     <input type="password"
                            name="password"
@@ -29,9 +29,9 @@
                 </div>
             </div>
             <button class="ui blue button"
-                 ng-click="login.$invalid || submit(signIn)">Підтвердити
+                 ng-click="login.$invalid || submit(signIn)">Sign In
             </button>
-            <div class="text-center"><a ui-sref="login">Забули пароль?</a></div>
+            <div class="text-center"><a ui-sref="login">Forgot your password?</a></div>
         </form>
     </div>
 </div>

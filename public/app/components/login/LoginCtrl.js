@@ -22,7 +22,7 @@ App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthServ
         // Login form validation
         (function ($) {
             $('.ui.form')
-                .form(ValidationRules.uk);
+                .form(ValidationRules.en);
         })(jQuery);
 
 

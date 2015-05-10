@@ -8,17 +8,17 @@
                     <li>{{error}}</li>
                 </ul>
             </div>
-            <h4 class="text-center">Реєстрація</h4>
+            <h4 class="text-center">Registration</h4>
             <div class="required field">
-                <label>Електронна адреса</label>
-                <input placeholder="Електронна адреса"
+                <label>Email address</label>
+                <input placeholder="example@example.com"
                        name="email"
                        type="text"
                        ng-model="signUp.email"
                        required>
             </div>
             <div class="required field">
-                <label>Пароль</label>
+                <label>Password</label>
                 <input type="password"
                        name="password"
                        ng-model="signUp.password"
@@ -26,7 +26,7 @@
                        required>
             </div>
             <div class="required field">
-                <label>Підтвердити пароль</label>
+                <label>Confirm password</label>
                 <input type="password"
                        name="cpassword"
                        ng-model="signUp.cpassword"
@@ -36,11 +36,11 @@
             <div class="inline field">
                 <div class="ui checkbox">
                     <input type="checkbox" name="terms">
-                    <label>Я погоджуюсь з умовами корустування</label>
+                    <label>I agree to the <a ui-sref="#">Terms of Service</a>.</label>
                 </div>
             </div>
             <button class="ui blue button"
-                    ng-click="registration.$invalid || submit(signUp)">Зареєструватись</button>
+                    ng-click="registration.$invalid || submit(signUp)">Register</button>
         </form>
     </div>
 </div>

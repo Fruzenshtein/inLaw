@@ -42,7 +42,7 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'Va
         // Registration form validation
         (function ($) {
             $('.ui.form')
-                .form(ValidationRules.uk);
+                .form(ValidationRules.en);
         })(jQuery);
 
 

@@ -3,7 +3,7 @@
         <form class="ui form segment inactive tab-content" name="languagesForm" novalidate>
             <div class="ui green message" ng-if="isUpdated">
                 <div class="header">
-                    Ви успішно обновили профайл!
+                    You have successfully updated profile!
                 </div>
             </div>
             <div class="ui red message" ng-if="error">
@@ -12,11 +12,11 @@
                 </ul>
             </div>
             <div class="ui error message"></div>
-            <h4 class="text-center">Мови</h4>
+            <h4 class="text-center">Languages</h4>
             <div>
                 <div class="two fields">
                     <div class="field">
-                        <label>Оберіть мову/мови:</label>
+                        <label>Select your languages:</label>
                         <ui-select multiple
                                    tagging
                                    tagging-label="false"
@@ -40,7 +40,7 @@
                 <div class="ui labeled icon button"
                      ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">
                     <i class="edit icon"></i>
-                    Редагувати
+                    Edit
                 </div>
             </div>
         </form>
