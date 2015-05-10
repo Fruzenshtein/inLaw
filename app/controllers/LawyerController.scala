@@ -1,6 +1,6 @@
 package controllers
 
-import javax.ws.rs.QueryParam
+import javax.ws.rs.{PathParam, QueryParam}
 
 import controllers.LawyerContactsController._
 import utils.CryptUtils
@@ -13,9 +13,11 @@ import play.api.mvc._
 import play.api.Logger
 import scala.concurrent.Future
 import play.api.libs.json.{JsObject, Json}
-import services.{EmailService, LawyerService}
+import services.{PasswordService, EmailService, LawyerService}
 import models.{BearerToken, Lawyer}
 import com.wordnik.swagger.annotations._
+
+import scala.util.Random
 
 /**
  * Created by Alex on 11/23/14.
@@ -280,6 +282,91 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
         }
       )
     }
+  }
+
+  @ApiOperation(
+    nickname = "resetPassword",
+    value = "Reset password",
+    notes = "Initialize process of reset password. Send email with recover link id.",
+    httpMethod = "POST",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Recover link was created"),
+    new ApiResponse(code = 400, message = ""),
+    new ApiResponse(code = 404, message = "User with such email not found")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Object contains email of user who needs password reset", dataType = "forms.Email", paramType = "body", required = true)
+  ))
+  def resetPassword = Action.async { implicit request =>
+    resetPasswordForm.bindFromRequest fold(
+      formWithErrors => {
+        Logger.info("Email validation failed")
+        Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+      },
+      emailData => {
+        LawyerService.findByEmail(emailData.email) map {
+          case Some(lawyer) => {
+            Logger.info("Recover password link creation...")
+            LawyerService.updatePassword(emailData.email, Random.alphanumeric.take(16).mkString)
+            PasswordService.createRecoverLink(lawyer.email)
+            PasswordService.findByEmail(lawyer.email) map {
+              case Some(recoverLink) => EmailService.sendRecoverPasswordLinkEmail(emailData.email, recoverLink._id.get.stringify)
+              case None =>
+            }
+            Ok(Json.obj("message" -> "Recover link was created"))
+          }
+          case None => {
+            Logger.info("User with such email not found")
+            NotFound(Json.obj("message" -> "User with such email not found"))
+          }
+        }
+
+      }
+    )
+  }
+
+  @ApiOperation(
+    nickname = "recoverPassword",
+    value = "Recover password",
+    notes = "Recovers password for user",
+    httpMethod = "POST",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 404, message = "Recover link does not exist"),
+    new ApiResponse(code = 200, message = "Password was successfully recovered"),
+    new ApiResponse(code = 400, message = "Passwords do not match")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Object contains new password", dataType = "forms.RecoverPassword", paramType = "body", required = true)
+  ))
+  def recoverPassword(@ApiParam(value = "Password recover link ID", required = true)@PathParam("id") recoverLinkID: String) = Action.async { implicit request =>
+    recoverPasswordForm.bindFromRequest fold(
+      formWithErrors => {
+        Logger.info("Password validation failed")
+        Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+      },
+      recoverPassData => {
+        Logger.info("Recover password process...")
+        if (recoverPassData.password == recoverPassData.repeatPassword) {
+          PasswordService.findById(recoverLinkID) map {
+            case Some(recoverLink) => {
+              Logger.info("Password was successfully recovered")
+              //TODO: Check if link is not expired
+              LawyerService.updatePassword(recoverLink.userEmail, CryptUtils.encryptPassword(recoverPassData.password))
+              PasswordService.remove(recoverLinkID)
+              Ok(Json.obj("message" -> "Password was successfully recovered"))
+            }
+            case None => {
+              Logger.info("Recover link does not exist")
+              NotFound(Json.obj("message" -> "Recover link does not exist"))
+            }
+          }
+        } else {
+          Logger.info("Passwords do not match")
+          Future.successful(BadRequest(Json.obj("message" -> "Passwords do not match")))
+        }
+      }
+    )
   }
 
 }

@@ -27,6 +27,19 @@ trait UserAccountForms extends LawyerValidators {
   )(ChangePassword.apply)(ChangePassword.unapply)
   )
 
+  val resetPasswordForm = Form(
+    mapping(
+      "email" -> email
+    )(Email.apply)(Email.unapply)
+  )
+
+  val recoverPasswordForm = Form(
+    mapping(
+      "password" -> nonEmptyText(minLength = 6),
+      "repeatPassword" -> nonEmptyText(minLength = 6)
+    )(RecoverPassword.apply)(RecoverPassword.unapply)
+  )
+
   val credentialsForm = Form(mapping(
     "email" -> email,
     "password" -> nonEmptyText(minLength = 6))
