@@ -81,7 +81,7 @@ input[type="range"]::-ms-thumb {
 }
 
 .ui-select-tagging {
-    height: 34px !important;
+    height: auto !important;
 }
 .empty-section {
     background: #fff url('../images/briefcase.png') no-repeat center;
