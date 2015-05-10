@@ -111,6 +111,11 @@ App.factory('$userInfo', ['$http', '$state', '$q',
             response.data = [{}];
             return response;
         }
+        //exception for Experiences, another structure (if not data)
+        if (response.data['workPlaces'] && _.isEmpty(response.data['workPlaces'])) {
+            response.data = [{}];
+            return response;
+        }
         // if user has deleted all data
         if (_.isEmpty(response.data)) {
             response.data = [{}];
@@ -146,9 +151,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     return deferred.promise;
                 case urlConfig.experiences:
                     // For experiences the server returns {'workPlaces': [...]} object if data exists
-                    info['experiences'] = _jsonData['data']['workPlaces'] ?
-                        _jsonData['data']['workPlaces'] : {} ;
-                    deferred.resolve(info['experiences']);
+                    info['experiences'] = _jsonData.data;
+                    deferred.resolve(copyOfData);
                     return deferred.promise;
                 case urlConfig.competence:
                     info['competences'] = _jsonData['data'];
