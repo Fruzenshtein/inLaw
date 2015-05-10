@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSanitize'])
+var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSanitize', 'ngSlider'])
     .config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function ($stateProvider, $locationProvider, $urlRouterProvider) {
 
         $urlRouterProvider.otherwise("/"); // root route

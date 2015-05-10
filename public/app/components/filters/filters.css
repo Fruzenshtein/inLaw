@@ -1,4 +1,76 @@
 .empty-section {
-    background: #fff url('../../../devbuild/images/briefcase.png') no-repeat center;
+    background: #fff url('../images/briefcase.png') no-repeat center;
     height: 300px;
+}
+
+.ui.divided.items>.items-container>.item:first-child {
+    border-top: none;
+    margin-top: 0!important;
+}
+.ui.divided.items>.items-container>.item {
+    border-top: 1px solid rgba(39,41,43,.15)!important;
+    margin: 0 !important;
+    padding: 1em 0 !important;
+}
+
+.ui.items>.items-container>.item>.content>.header:not(.ui) {
+    font-size: 1.2em;
+}
+
+.ui.items>.items-container>.item>.content>.header {
+    display: block;
+    margin: -.165em 0 0;
+    font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    color: rgba(0, 0, 0, .85);
+}
+
+.ui.items>.items-container>.item .meta * {
+    margin-right: .3em;
+}
+
+.ui.items>.items-container>.item .meta {
+    font-size: 1em;
+    line-height: 1em;
+    color: rgba(0,0,0,.6);
+}
+
+.ui.items>.items-container>.item>.image+.content {
+    display: table-cell;
+    margin-left: 0;
+    vertical-align: top;
+    padding-left: 1.5em;
+}
+.ui.items>.items-container>.item>.content {
+    display: block;
+    background: 0 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    font-size: 1em;
+    border: none;
+    border-radius: 0;
+}
+
+.ui.items>.items-container>.item>.image {
+    position: relative;
+    display: table-cell;
+    float: none;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+
+.ui.small.image {
+    width: 150px;
+    height: auto;
+    font-size: 0.92857143rem;
+}
+
+.ui.items>.items-container>.item>.image>img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: .125rem;
+    border: none;
 }

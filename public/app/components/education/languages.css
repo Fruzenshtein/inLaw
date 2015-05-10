@@ -2,3 +2,7 @@
 .ui-select-tagging  input {
     border: none !important;
 }
+
+.ui-select-tagging {
+    height: 34px !important;
+}
