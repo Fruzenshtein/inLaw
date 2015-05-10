@@ -3,7 +3,7 @@
         <form class="ui form segment inactive" name="profile" novalidate>
             <div class="ui green message" ng-if="isUpdated">
                 <div class="header">
-                    Ви успішно обновили профайл!
+                    You have successfully updated profile!
                 </div>
             </div>
             <div class="ui red message" ng-if="error">
@@ -12,11 +12,11 @@
                 </ul>
             </div>
             <div class="ui error message"></div>
-            <h4 class="text-center">ПРОФАЙЛ</h4>
+            <h4 class="text-center">PROFILE</h4>
             <div class="two fields">
                 <div class="field">
-                    <label>Ім'я</label>
-                    <input placeholder="Ім'я"
+                    <label>Name</label>
+                    <input placeholder="Name"
                            name="firstName"
                            type="text"
                            ng-model="userProfile.firstName"
@@ -24,7 +24,7 @@
                            ng-disabled="formStatus.isEditModeOpen">
                 </div>
                 <div class="field">
-                    <label>Стать:</label>
+                    <label>Gender:</label>
                     <ui-select ng-model="userProfile.gender" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
                         <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
@@ -34,29 +34,29 @@
                 </div>
             </div>
             <div class="field">
-                <label>Призвище</label>
-                <input placeholder="Призвище" name="lastName"
+                <label>Last name</label>
+                <input placeholder="last name" name="lastName"
                        type="text"
                        ng-model="userProfile.lastName"
                        ng-minlength="2"
                        ng-disabled="formStatus.isEditModeOpen">
             </div>
             <div class="field">
-                <label>По-батькові</label>
-                <input name="middleName" placeholder="По-батькові"
+                <label>Middle name</label>
+                <input name="middleName" placeholder="middle name"
                        type="text"
                        ng-model="userProfile.middleName"
                        ng-minlength="2"
                        ng-disabled="formStatus.isEditModeOpen">
             </div>
             <div class="ui horizontal divider">
-                День народження
+                Date of birth
             </div>
             <div class="tree fields">
                 <div class="field">
                     <label></label>
                     <ui-select ng-model="birthDate.day" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
-                        <ui-select-match placeholder="Виберіть день...">{{$select.selected}}</ui-select-match>
+                        <ui-select-match placeholder="Select a day...">{{$select.selected}}</ui-select-match>
                         <ui-select-choices repeat="day in selectorDays | filter: $select.search">
                             <span ng-bind-html="day | highlight: $select.search"></span>
                         </ui-select-choices>
@@ -65,7 +65,7 @@
                 <div class="field">
                     <label></label>
                     <ui-select ng-model="birthDate.month" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
-                        <ui-select-match placeholder="Виберіть місяць...">{{$select.selected}}</ui-select-match>
+                        <ui-select-match placeholder="Select a month...">{{$select.selected}}</ui-select-match>
                         <ui-select-choices repeat="month in selectorMonth | filter: $select.search">
                             <span ng-bind-html="month | highlight: $select.search"></span>
                         </ui-select-choices>
@@ -74,14 +74,14 @@
                 <div class="field">
                     <label></label>
                     <ui-select ng-model="birthDate.year" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
-                        <ui-select-match placeholder="Виберіть рік...">{{$select.selected}}</ui-select-match>
+                        <ui-select-match placeholder="Select a year...">{{$select.selected}}</ui-select-match>
                         <ui-select-choices repeat="year in selectorYears | filter: $select.search">
                             <span ng-bind-html="year | highlight: $select.search"></span>
                         </ui-select-choices>
                     </ui-select>
                 </div>
             </div>
-            <div class="ui horizontal divider">Мінімальний рейт</div>
+            <div class="ui horizontal divider">Min rate (per/hour)</div>
             <div class="field slider-input">
                 <label>{{userProfile.minRate}}</label>
                 <input type="range"
@@ -93,13 +93,13 @@
                        ng-disabled="formStatus.isEditModeOpen">
             </div>
             <div class="ui button"
-                    ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Редагувати
+                    ng-click="formStatus.isEditModeOpen = ! formStatus.isEditModeOpen">Edit
             </div>
             <button class="ui blue button"
-                    ng-click="profile.$invalid || updateProfile(userProfile)">Зберегти
+                    ng-click="profile.$invalid || updateProfile(userProfile)">Save
             </button>
             <div class="ui button"
-                    ng-click="discardChanges()">Відмінити
+                    ng-click="discardChanges()">Cancel
             </div>
         </form>
     </div>

@@ -106,7 +106,7 @@ App.controller('ProfileCtrl', ['$scope', '$http',
         // Profile form validation
         (function ($) {
             $('.ui.form')
-                .form(ValidationRules.uk);
+                .form(ValidationRules.en);
         })(jQuery);
 
 }]);
