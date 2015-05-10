@@ -9,7 +9,8 @@ App.run(function ($rootScope, $state, AuthService) {
 
         if ( requireLogin && !currentUser ) {
             $state.go('login');
-        }
+        };
+
     });
 
 });

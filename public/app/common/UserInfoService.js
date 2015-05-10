@@ -175,6 +175,9 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     function onError(data) {
         isAuthenticated(data);
         info.allowed = false;
+        var deferred = $q.defer();
+        deferred.reject(data);
+        return deferred.promise;
     };
 
     var info = {

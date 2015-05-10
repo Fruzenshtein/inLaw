@@ -6,16 +6,27 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
 
         $urlRouterProvider.otherwise("/"); // root route
 
-        $stateProvider.state('landing', {
-            url: '/',
+        $stateProvider.state('myAccount', {
+            url: '/myAccount',
             views: {
                 "mainView": {
-                    "templateUrl": 'assets/devbuild/assets/components/landing/landing.html',
+                    "templateUrl": 'assets/devbuild/assets/components/myAccount/myAccount.html',
                     "controller": 'LandingPageCtrl'
                 }
             },
             data: {
                 requireLogin: true
+            }
+        }).state('homePage', {
+            url: "/",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/devbuild/assets/components/home/home.html',
+                    controller: 'HomeCtrl'
+                }
+            },
+            data: {
+                requireLogin: false
             }
         }).state('registration', {
             url: "/registration",

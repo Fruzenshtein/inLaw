@@ -6,16 +6,27 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
 
         $urlRouterProvider.otherwise("/"); // root route
 
-        $stateProvider.state('landing', {
-            url: '/',
+        $stateProvider.state('myAccount', {
+            url: '/myAccount',
             views: {
                 "mainView": {
-                    "templateUrl": 'assets/devbuild/assets/components/landing/landing.html',
+                    "templateUrl": 'assets/devbuild/assets/components/myAccount/myAccount.html',
                     "controller": 'LandingPageCtrl'
                 }
             },
             data: {
                 requireLogin: true
+            }
+        }).state('homePage', {
+            url: "/",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/devbuild/assets/components/home/home.html',
+                    controller: 'HomeCtrl'
+                }
+            },
+            data: {
+                requireLogin: false
             }
         }).state('registration', {
             url: "/registration",
@@ -143,7 +154,8 @@ App.run(function ($rootScope, $state, AuthService) {
 
         if ( requireLogin && !currentUser ) {
             $state.go('login');
-        }
+        };
+
     });
 
 });
@@ -411,6 +423,9 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     function onError(data) {
         isAuthenticated(data);
         info.allowed = false;
+        var deferred = $q.defer();
+        deferred.reject(data);
+        return deferred.promise;
     };
 
     var info = {
@@ -1560,12 +1575,21 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
 'use strict';
 /* Controller */
 
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$userInfo',
-    function ($scope, $http, $userInfo, $rootScope) {
+// The controller injected directly into html, avoiding routers
+App.controller('HeaderCtrl', ['$scope', '$rootScope', '$http', '$userInfo',
+    function ($scope, $rootScope, $http, $userInfo) {
 
-        //For the test needs
-    $scope.currentUser = $rootScope.currentUser || $userInfo.isLoggedIn || sessionStorage.getItem('token');
+        $rootScope.currentUser = $rootScope.currentUser
+            || $userInfo.isLoggedIn
+            || sessionStorage.getItem('token');
 
+    }]);
+'use strict';
+/* Controller */
+
+// The controller injected directly into html, avoiding routers
+App.controller('HomeCtrl', ['$scope', '$http',
+    function ($scope, $http) {
 
     }]);
 'use strict';
@@ -1580,7 +1604,7 @@ App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthServ
                 .success(function(data, status, headers, config) {
                     $rootScope.currentUser = data['token'];
                     AuthService.setCurrentUser(data['token']);
-                    $state.go('landing');
+                    $state.go('myAccount');
             })
                 .error(function(data, status, headers, config) {
                     $scope.error = data.message;
@@ -1622,6 +1646,14 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
     };
 
 }]);
+'use strict';
+/* Controller */
+
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
+    function ($scope, $http, $userInfo, $rootScope, $state) {
+
+
+    }]);
 'use strict';
 /* Controller */
 
@@ -1801,7 +1833,7 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'Va
                 success(function(data, status, headers, config) {
                     sessionStorage.setItem('token', data.token);
                     $userInfo.setUserStatus(true);
-                    $state.go('landing');
+                    $state.go('myAccount');
                 }).
                 error(function(data, status, headers, config) {
                     $scope.loading = false;

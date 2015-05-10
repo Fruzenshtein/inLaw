@@ -10,7 +10,7 @@ App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthServ
                 .success(function(data, status, headers, config) {
                     $rootScope.currentUser = data['token'];
                     AuthService.setCurrentUser(data['token']);
-                    $state.go('landing');
+                    $state.go('myAccount');
             })
                 .error(function(data, status, headers, config) {
                     $scope.error = data.message;

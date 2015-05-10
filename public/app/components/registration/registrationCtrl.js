@@ -24,7 +24,7 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'Va
                 success(function(data, status, headers, config) {
                     sessionStorage.setItem('token', data.token);
                     $userInfo.setUserStatus(true);
-                    $state.go('landing');
+                    $state.go('myAccount');
                 }).
                 error(function(data, status, headers, config) {
                     $scope.loading = false;
