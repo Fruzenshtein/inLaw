@@ -27,7 +27,7 @@ object LawyerProfileController extends Controller with Security with UserAccount
     new ApiResponse(code = 400, message = "Bad arguments")))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
-    new ApiImplicitParam(value = "Lawyer Profile object which will update previous one", required = true, dataType = "models.swagger.Profile", paramType = "body")))
+    new ApiImplicitParam(value = "Lawyer Profile object which will update previous one", required = true, dataType = "models.Profile", paramType = "body")))
   def updateProfile = isAuthenticated { implicit acc =>
     implicit request => {
       updateLawyerProfileForm.bindFromRequest fold(
@@ -50,7 +50,7 @@ object LawyerProfileController extends Controller with Security with UserAccount
     value = "Get Lawyer Profile",
     notes = "Get Lawyer Profile",
     httpMethod = "GET",
-    response = classOf[models.swagger.InformationMessage])
+    response = classOf[models.Profile])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Information about Profile")))
   @ApiImplicitParams(Array(

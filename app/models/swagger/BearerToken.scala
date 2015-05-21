@@ -23,16 +23,6 @@ case class LawyerSearchResult(id: String,
                               minRate: Int,
                               availability: Boolean)
 
-
-case class Profile(gender: String,
-                   firstName: String,
-                   lastName: String,
-                   middleName: String,
-                   birthDate: Date,
-                   minRate: Int,
-                   active: Boolean,
-                   availability: Boolean)
-
 case class Contacts(country: Option[String],
                     city: Option[String],
                     street: Option[String],
