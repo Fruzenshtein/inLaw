@@ -21,6 +21,8 @@ PUT         /lawyers/change-password                controllers.LawyerController
 GET         /api-docs.json/lawyers/profile          controllers.ApiHelpController.getResource(path = "/lawyers/profile")
 PUT         /lawyers/profile                        controllers.LawyerProfileController.updateProfile
 GET         /lawyers/profile                        controllers.LawyerProfileController.getProfile
+PUT         /lawyers/bar-card                       controllers.LawyerProfileController.updateBarCard
+GET         /lawyers/bar-card                       controllers.LawyerProfileController.getBarCard
 
 GET         /api-docs.json/lawyers/contacts         controllers.ApiHelpController.getResource(path = "/lawyers/contacts")
 PUT         /lawyers/contacts                       controllers.LawyerContactsController.updateContacts

@@ -84,6 +84,17 @@ object LawyerService {
     )
   }
 
+  def updateBarCard(email: String, barCard: BarCard) = {
+    val updateBarCard= Json.obj(
+      "$set" -> Json.obj(
+        "barCard" -> barCard)
+    )
+    collection.update(
+      Json.obj("email" -> email),
+      updateBarCard
+    )
+  }
+
   def getProfile(email: String): Future[Option[Profile]] = {
     val query = Json.obj("email" -> email)
     val account = collection.find(query).one[Lawyer]

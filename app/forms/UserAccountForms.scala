@@ -59,6 +59,15 @@ trait UserAccountForms extends LawyerValidators {
     )(Profile.apply)(Profile.unapply)
   )
 
+  val updateLawyerBarCard = Form(
+    mapping(
+      "number" -> text(minLength = 6, maxLength = 20),
+      "state" -> text(minLength = 2, maxLength = 2),
+      "issuedDate" -> date(dateFormat),
+      "status" -> text(minLength = 6, maxLength = 9)
+    )(BarCard.apply)(BarCard.unapply)
+  )
+
   val updateContactsProfileForm = Form(
     mapping(
       "country" -> optional(text(maxLength = 40)),
