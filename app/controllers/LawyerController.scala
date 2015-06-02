@@ -231,7 +231,7 @@ object LawyerController extends Controller with UserAccountForms with LawyerFilt
     value = "Get lawyer by ID",
     notes = "Get lawyer by ID",
     httpMethod = "GET",
-    response = classOf[models.swagger.InformationMessage])
+    response = classOf[models.Lawyer])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Lawyer object"),
     new ApiResponse(code = 404, message = "Lawyer not found")))

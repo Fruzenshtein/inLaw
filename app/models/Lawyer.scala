@@ -22,6 +22,7 @@ case class Lawyer(_id: Option[BSONObjectID],
                   bearerToken: Option[BearerToken],
                   createdAt: DateTime,
                   profile: Option[Profile],
+                  barCard: Option[BarCard],
                   contacts: Option[Contacts],
                   education: Option[Education],
                   experience: Option[Experience],
@@ -37,6 +38,7 @@ object Lawyer {
     (JsPath \ "token").writeNullable[BearerToken] and
     (JsPath \ "createdAt").write[DateTime] and
     (JsPath \ "profile").writeNullable[Profile] and
+    (JsPath \ "barCard").writeNullable[BarCard] and
     (JsPath \ "contacts").writeNullable[Contacts] and
     (JsPath \ "education").writeNullable[Education] and
     (JsPath \ "experience").writeNullable[Experience] and
@@ -51,6 +53,7 @@ object Lawyer {
     (JsPath \ "token").readNullable[BearerToken] and
     (JsPath \ "createdAt").readNullable[DateTime].map(_.getOrElse(new DateTime(0))) and
     (JsPath \ "profile").readNullable[Profile] and
+    (JsPath \ "barCard").readNullable[BarCard] and
     (JsPath \ "contacts").readNullable[Contacts] and
     (JsPath \ "education").readNullable[Education] and
     (JsPath \ "experience").readNullable[Experience] and
@@ -65,7 +68,8 @@ object Lawyer {
       avatar = None,
       bearerToken = None,
       createdAt = new DateTime(),
-      profile = Some(Profile(None, None, None, None, None, None, None, true, true)),
+      profile = Some(Profile(None, None, None, None, None, None, true, true)),
+      barCard = None,
       contacts = None,
       education = None,
       experience = Some(Experience(0, None)),
@@ -82,7 +86,6 @@ case class Profile(gender: Option[String],
                    middleName: Option[String],
                    birthDate: Option[Date],
                    minRate: Option[Int],
-                   licenseId: Option[String],
                    active: Boolean = true,
                    availability: Boolean = true)
 
@@ -95,10 +98,22 @@ object Profile {
     (JsPath \ "middleName").formatNullable[String] and
     (JsPath \ "birthDate").formatNullable[Date] and
     (JsPath \ "minRate").formatNullable[Int] and
-    (JsPath \ "licenseId").formatNullable[String] and
     (JsPath \ "active").format[Boolean] and
     (JsPath \ "availability").format[Boolean]
   )(Profile.apply, unlift(Profile.unapply))
+
+}
+
+case class BarCard(number: String, state: String, issuedDate: Date, status: String)
+
+object BarCard {
+
+  implicit val barCardFormat: Format[BarCard] = (
+    (JsPath \ "number").format[String] and
+    (JsPath \ "state").format[String] and
+    (JsPath \ "issuedDate").format[Date] and
+    (JsPath \ "status").format[String]
+  )(BarCard.apply, unlift(BarCard.unapply))
 
 }
 
