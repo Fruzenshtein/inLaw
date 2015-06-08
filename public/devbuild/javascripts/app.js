@@ -272,12 +272,6 @@ App.factory('$userInfo', ['$http', '$state', '$q',
                     });
         };
 
-    //TODO: add a parser to check if a user has updated some form before or no
-    //TODO: (by 'id') and send appropriate request PUT or POST
-    function isFormModified(onFulfilled) {
-
-    };
-
     function getUserProfile() {
         return baseProfileURL(urlConfig.profile).then(function(onFulfilled) {
             return onSuccess(onFulfilled);
@@ -334,19 +328,6 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         });
     };
 
-    function isAuthenticated(data) {
-      if (!sessionStorage.getItem('token')) return;
-
-      if (data['status'] == 401) {
-            $state.go('login');
-            return false;
-        } else if (data['status'] == 200) {
-            return true;
-        } else {
-            return false;
-        }
-    };
-
     function setUserStatus(isLoggedIn) {
         var isLoggedIn = isLoggedIn || false;
         info.isLoggedIn = isLoggedIn;
@@ -378,8 +359,6 @@ App.factory('$userInfo', ['$http', '$state', '$q',
             var deferred = $q.defer(),
                 _jsonData = validateData( angular.fromJson(data) ),
                 copyOfData = angular.copy(_jsonData.data);
-            if ( !isAuthenticated(_jsonData) ) return;
-            info.allowed = true;
             switch (data.config.url) {
                 case urlConfig.profile:
                     info['profile'] = _jsonData['data'];
@@ -420,8 +399,8 @@ App.factory('$userInfo', ['$http', '$state', '$q',
         }
     };
 
+    //TODO: just mock for now. Update error handling
     function onError(data) {
-        isAuthenticated(data);
         info.allowed = false;
         var deferred = $q.defer();
         deferred.reject(data);
@@ -429,7 +408,6 @@ App.factory('$userInfo', ['$http', '$state', '$q',
     };
 
     var info = {
-        authenticate        : isAuthenticated,
         getUserProfile      : getUserProfile,
         getUserContacts     : getUserContacts,
         getUserUniversity   : getUserUniversity,
@@ -1757,6 +1735,14 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
 'use strict';
 /* Controller */
 
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
+    function ($scope, $http, $userInfo, $rootScope, $state) {
+
+
+    }]);
+'use strict';
+/* Controller */
+
 App.controller('ProfileCtrl', ['$scope', '$http',
     '$filter', '$userInfo', 'ValidationRules', 'UtilsService',
     function($scope, $http, $filter, $userInfo, ValidationRules, UtilsService) {
@@ -1867,14 +1853,6 @@ App.controller('ProfileCtrl', ['$scope', '$http',
 
 }]);
 
-'use strict';
-/* Controller */
-
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
-    function ($scope, $http, $userInfo, $rootScope, $state) {
-
-
-    }]);
 'use strict';
 /* Controller */
 
