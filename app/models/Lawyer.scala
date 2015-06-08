@@ -1,7 +1,5 @@
 package models
 
-import java.util.Date
-
 import reactivemongo.bson.BSONObjectID
 import play.modules.reactivemongo.json.BSONFormats._
 import org.joda.time.DateTime
