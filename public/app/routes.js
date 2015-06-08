@@ -138,6 +138,17 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             data: {
                 requireLogin: false
             }
+        }).state('marketPlaceLawyer', {
+            url: "/market/wizard",
+            views: {
+                "mainView": {
+                    templateUrl: 'assets/devbuild/assets/components/marketPlace/marketPlaceDetail.html',
+                    controller: 'MarketPlaceLawyerCtrl'
+                }
+            },
+            data: {
+                requireLogin: true
+            }
         });
         // Without server side support html5 must be disabled.
         return $locationProvider.html5Mode(false);
