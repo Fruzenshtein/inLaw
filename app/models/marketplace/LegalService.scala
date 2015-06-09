@@ -1,5 +1,6 @@
 package models.marketplace
 
+import models.swagger.LegalServiceDTO
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.modules.reactivemongo.json.BSONFormats._
@@ -40,6 +41,21 @@ object LegalService {
     (JsPath \ "estimation").read[Long] and
     (JsPath \ "tasks").read[Seq[ServiceTask]]
   )(LegalService.apply _)
+
+  def createLegalService(dto: LegalServiceDTO) = {
+    import models.marketplace.ServiceTask._
+    val legalService = LegalService(
+      None,
+      BSONObjectID.apply(dto.lawyerID),
+      dto.category,
+      dto.name,
+      dto.description,
+      dto.price,
+      dto.estimation,
+      dto.tasks map(createServiceTask(_))
+    )
+    legalService
+  }
 
 }
 

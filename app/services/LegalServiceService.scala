@@ -6,10 +6,9 @@ import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.modules.reactivemongo.json.collection.JSONCollection
 
 import play.api.Play.current
-import reactivemongo.core.commands.LastError
 import scala.concurrent.ExecutionContext.Implicits.global
-
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
+import scala.util.{Try, Failure, Success}
 
 /**
  * Created by Alex on 6/5/15.
@@ -18,10 +17,17 @@ object LegalServiceService {
 
   private val collection = ReactiveMongoPlugin.db.collection[JSONCollection]("legalService")
 
-  def add(legalService: LegalService) = {
+  def add(legalService: LegalService): Future[Try[String]] = {
     collection.insert(legalService) map {
-      case operation if (operation.ok) => Logger.info(s"LegalService successfully created")
-      case operation if (!operation.ok) => Logger.error(s"LegalService was not inserted due: ${operation.errMsg.get}")
+      case operation if (operation.ok) => {
+        val message = s"LegalService '${legalService.name}' successfully created"
+        Logger.info(message)
+        Success(message)
+      }
+      case operation if (!operation.ok) => {
+        Logger.error(s"LegalService was not inserted due: ${operation.errMsg.get}")
+        Failure(new Exception(operation.errMsg.get))
+      }
     }
   }
 

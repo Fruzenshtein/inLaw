@@ -3,15 +3,15 @@ package models.swagger
 /**
  * Created by Alex on 6/5/15.
  */
-case class LegalService(lawyerID: String,
+case class LegalServiceDTO(lawyerID: String,
                         category: String,
                         name: String,
                         description: String,
                         price: Int,
                         estimation: Long,
-                        tasks: Seq[ServiceTask])
+                        tasks: Seq[ServiceTaskDTO])
 
-case class ServiceTask(name: String,
+case class ServiceTaskDTO(name: String,
                        description: String,
                        requiredInfo: String,
                        status: String,

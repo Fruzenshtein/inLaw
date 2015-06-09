@@ -1,8 +1,8 @@
 package forms
 
 import forms.validators.CommonValidators
-import models.swagger.ServiceTask
-import models.swagger.LegalService
+import models.swagger.ServiceTaskDTO
+import models.swagger.LegalServiceDTO
 import play.api.data._
 import play.api.data.Forms._
 
@@ -26,9 +26,9 @@ trait LegalServiceForms extends CommonValidators {
           "requiredInfo" -> text(maxLength = 2048),
           "status" -> text(minLength = 2, maxLength = 8),
           "approved" -> boolean
-        )(ServiceTask.apply)(ServiceTask.unapply)
+        )(ServiceTaskDTO.apply)(ServiceTaskDTO.unapply)
       )
-    )(LegalService.apply)(LegalService.unapply)
+    )(LegalServiceDTO.apply)(LegalServiceDTO.unapply)
   )
 
 }
