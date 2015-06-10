@@ -18,7 +18,7 @@ trait LegalServiceForms extends CommonValidators {
       "description" -> nonEmptyText(maxLength = 1024),
       "price" -> number(min = 0),
       "estimation" -> longNumber(min = 3600),
-      "serviceTask" -> seq(
+      "tasks" -> seq(
         mapping(
           "name" -> nonEmptyText(maxLength = 40),
           "description" -> nonEmptyText(maxLength = 1024),
