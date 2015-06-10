@@ -59,5 +59,7 @@ GET         /lawyers/competences                    controllers.CompetenceContro
 DELETE      /lawyers/competences                    controllers.CompetenceController.removeCompetence(competence: String)
 GET         /competences                            controllers.CompetenceController.getCompetenceByQuery(competence: String)
 
+GET         /api-docs.json/legal-services           controllers.ApiHelpController.getResource(path = "/legal-services")
+POST        /legal-services                         controllers.LegalServiceController.addLegalService
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)

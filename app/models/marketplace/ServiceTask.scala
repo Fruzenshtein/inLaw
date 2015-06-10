@@ -25,7 +25,7 @@ case class ServiceTask(id: Option[String] = Some(Random.alphanumeric.take(12).mk
                        name: String,
                        description: String,
                        requiredInfo: String,
-                       status: String,
+                       status: String = "Open",
                        approved: Boolean = false,
                        comments: Option[Seq[Comment]] = None)
 object ServiceTask {
@@ -35,8 +35,7 @@ object ServiceTask {
     val serviceTask = ServiceTask(
       name = dto.name,
       description = dto.description,
-      requiredInfo = dto.requiredInfo,
-      status = dto.status
+      requiredInfo = dto.requiredInfo
     )
     serviceTask
   }

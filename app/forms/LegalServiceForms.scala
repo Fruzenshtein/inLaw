@@ -13,7 +13,6 @@ trait LegalServiceForms extends CommonValidators {
 
   val createLegalService = Form(
     mapping(
-      "lawyerID" -> bsonObjIdCheck,
       "category" -> nonEmptyText(maxLength = 40),
       "name" -> nonEmptyText(maxLength = 40),
       "description" -> nonEmptyText(maxLength = 1024),
@@ -23,9 +22,7 @@ trait LegalServiceForms extends CommonValidators {
         mapping(
           "name" -> nonEmptyText(maxLength = 40),
           "description" -> nonEmptyText(maxLength = 1024),
-          "requiredInfo" -> text(maxLength = 2048),
-          "status" -> text(minLength = 2, maxLength = 8),
-          "approved" -> boolean
+          "requiredInfo" -> text(maxLength = 2048)
         )(ServiceTaskDTO.apply)(ServiceTaskDTO.unapply)
       )
     )(LegalServiceDTO.apply)(LegalServiceDTO.unapply)

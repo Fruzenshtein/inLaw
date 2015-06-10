@@ -3,8 +3,7 @@ package models.swagger
 /**
  * Created by Alex on 6/5/15.
  */
-case class LegalServiceDTO(lawyerID: String,
-                        category: String,
+case class LegalServiceDTO(category: String,
                         name: String,
                         description: String,
                         price: Int,
@@ -13,6 +12,4 @@ case class LegalServiceDTO(lawyerID: String,
 
 case class ServiceTaskDTO(name: String,
                        description: String,
-                       requiredInfo: String,
-                       status: String,
-                       approved: Boolean)
+                       requiredInfo: String)

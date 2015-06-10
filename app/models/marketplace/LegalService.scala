@@ -42,11 +42,11 @@ object LegalService {
     (JsPath \ "tasks").read[Seq[ServiceTask]]
   )(LegalService.apply _)
 
-  def createLegalService(dto: LegalServiceDTO) = {
+  def createLegalService(dto: LegalServiceDTO, lawyerID: BSONObjectID) = {
     import models.marketplace.ServiceTask._
     val legalService = LegalService(
       None,
-      BSONObjectID.apply(dto.lawyerID),
+      lawyerID,
       dto.category,
       dto.name,
       dto.description,
