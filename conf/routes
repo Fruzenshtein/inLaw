@@ -61,5 +61,6 @@ GET         /competences                            controllers.CompetenceContro
 
 GET         /api-docs.json/legal-services           controllers.ApiHelpController.getResource(path = "/legal-services")
 POST        /legal-services                         controllers.LegalServiceController.addLegalService
-
+GET         /legal-services                         controllers.LegalServiceController.getLawyerLegalServices
+GET         /legal-services/:id                     controllers.LegalServiceController.getLawyerLegalService(id: String)
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
