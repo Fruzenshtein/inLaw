@@ -56,7 +56,8 @@ object LegalServiceController extends Controller with Security with LegalService
     value = "Get lawyers legal services",
     notes = "Get lawyers legal services",
     httpMethod = "GET",
-    response = classOf[models.marketplace.LegalService])
+    responseContainer="List",
+    response = classOf[models.swagger.response.LegalService])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "List of legal services")
   ))
@@ -78,7 +79,7 @@ object LegalServiceController extends Controller with Security with LegalService
     value = "Get lawyers legal service by id",
     notes = "Get lawyers legal service by id of the service",
     httpMethod = "GET",
-    response = classOf[models.marketplace.LegalService])
+    response = classOf[models.swagger.response.LegalService])
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Legal service"),
     new ApiResponse(code = 404, message = "Legal Service with id: $id does not exist")
