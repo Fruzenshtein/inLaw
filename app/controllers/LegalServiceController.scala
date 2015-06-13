@@ -7,7 +7,7 @@ import forms.LegalServiceForms
 import models.marketplace.LegalService
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Controller
+import play.api.mvc.{Results, Result, Controller}
 import services.LegalServiceService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -103,7 +103,6 @@ object LegalServiceController extends Controller with Security with LegalService
             NotFound(Json.obj("message" -> message))
           }
         }
-
       }
     }
   }
@@ -114,9 +113,42 @@ object LegalServiceController extends Controller with Security with LegalService
       "price" -> ls.price, "estimation" -> ls.estimation, "tasks" -> ls.tasks)
     serviceJson
   }
-  /*
-  def deleteLegalService(id: String) = isAuthenticated { implicit acc => implicit request =>
 
+  @ApiOperation(
+    nickname = "deleteLawyerLegalService",
+    value = "Delete lawyers legal service by id",
+    notes = "Delete lawyers legal service by id of the service",
+    httpMethod = "DELETE",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "LegalService with id: $id successfully deleted"),
+    new ApiResponse(code = 404, message = "Legal Service with id: $id does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def deleteLegalService(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
+    LegalServiceService.findByIdAndLawyerId(id, acc._id.get.stringify) flatMap {
+      case legalServiceOpt => {
+        Logger.info(s"Searching Legal Service by its ID: ${id}")
+        legalServiceOpt match {
+          case Some(legalService) => {
+            Logger.info(s"Deleting of Service with name: ${legalService.name}")
+
+            LegalServiceService.deleteById(id, acc._id.get.stringify) map {
+              case Success(msg) => Ok(Json.obj("message" -> msg.toString))
+              case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
+            }
+
+          }
+          case None => {
+            val message = s"Legal Service with id: $id does not exist"
+            Logger.info(message)
+            Future.successful(NotFound(Json.obj("message" -> message)))
+          }
+        }
+      }
+    }
   }
-  */
+
 }

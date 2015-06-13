@@ -63,4 +63,6 @@ GET         /api-docs.json/legal-services           controllers.ApiHelpControlle
 POST        /legal-services                         controllers.LegalServiceController.addLegalService
 GET         /legal-services                         controllers.LegalServiceController.getLawyerLegalServices
 GET         /legal-services/:id                     controllers.LegalServiceController.getLawyerLegalService(id: String)
+DELETE      /legal-services/:id                     controllers.LegalServiceController.deleteLegalService(id: String)
+
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)

@@ -45,10 +45,10 @@ object LegalServiceService {
     val legalService = collection.find(query).one[LegalService]
     legalService
   }
-/*
-  def deleteById(id: String) = {
-    collection.remove("_id" -> Json.obj("$oid" -> id)) map {
-      case operation if (operation.ok) => {
+
+  def deleteById(id: String, lawyerID: String): Future[Try[String]] = {
+    collection.remove(Json.obj("_id" -> Json.obj("$oid" -> id), "lawyerID" -> lawyerID)) map {
+      case operation if (operation.ok && operation.updated > 0) => {
         val message = s"LegalService with id: ${id} successfully deleted"
         Logger.info(message)
         Success(message)
@@ -59,5 +59,5 @@ object LegalServiceService {
       }
     }
   }
-*/
+
 }
