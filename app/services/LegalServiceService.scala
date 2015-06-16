@@ -1,6 +1,6 @@
 package services
 
-import models.marketplace.LegalService
+import models.marketplace.{LegalServiceEdit, LegalService}
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoPlugin
@@ -55,6 +55,31 @@ object LegalServiceService {
       }
       case operation if (!operation.ok) => {
         Logger.error(s"LegalService was not deleted due: ${operation.errMsg.get}")
+        Failure(new Exception(operation.errMsg.get))
+      }
+    }
+  }
+
+  def updateById(id: String, lawyerID: String, dto: LegalServiceEdit) = {
+    val updateLegalService = Json.obj(
+      "$set" -> Json.obj(
+        "category" -> dto.category,
+        "name" -> dto.name,
+        "description" -> dto.description,
+        "price" -> dto.price,
+        "estimation" -> dto.estimation)
+    )
+    collection.update(
+      Json.obj("_id" -> Json.obj("$oid" -> id), "lawyerID" -> lawyerID),
+      updateLegalService
+    )  map {
+      case operation if (operation.ok && operation.updated > 0) => {
+        val message = s"LegalService with id: ${id} successfully updated"
+        Logger.info(message)
+        Success(message)
+      }
+      case operation if (!operation.ok) => {
+        Logger.error(s"LegalService was not updated due: ${operation.errMsg.get}")
         Failure(new Exception(operation.errMsg.get))
       }
     }

@@ -1,6 +1,7 @@
 package forms
 
 import forms.validators.CommonValidators
+import models.marketplace.LegalServiceEdit
 import models.swagger.ServiceTaskDTO
 import models.swagger.LegalServiceDTO
 import play.api.data._
@@ -26,6 +27,16 @@ trait LegalServiceForms extends CommonValidators {
         )(ServiceTaskDTO.apply)(ServiceTaskDTO.unapply)
       )
     )(LegalServiceDTO.apply)(LegalServiceDTO.unapply)
+  )
+
+  val editLegalService = Form(
+    mapping(
+      "category" -> nonEmptyText(maxLength = 40),
+      "name" -> nonEmptyText(maxLength = 40),
+      "description" -> nonEmptyText(maxLength = 1024),
+      "price" -> number(min = 0),
+      "estimation" -> longNumber(min = 3600)
+    )(LegalServiceEdit.apply)(LegalServiceEdit.unapply)
   )
 
 }

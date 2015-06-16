@@ -151,4 +151,48 @@ object LegalServiceController extends Controller with Security with LegalService
     }
   }
 
+  @ApiOperation(
+    nickname = "updateLawyerLegalService",
+    value = "Update lawyers legal service by id",
+    notes = "Update lawyers legal service by id of the service",
+    httpMethod = "PUT",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "LegalService with id: $id successfully updated"),
+    new ApiResponse(code = 404, message = "Legal Service with id: $id does not exist")
+  ))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
+    new ApiImplicitParam(value = "Legal Service object which will be added", required = true, dataType = "models.marketplace.LegalServiceEdit", paramType = "body")
+  ))
+  def updateLegalService(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
+    LegalServiceService.findByIdAndLawyerId(id, acc._id.get.stringify) flatMap {
+      case legalServiceOpt => {
+        Logger.info(s"Searching Legal Service by its ID: ${id}")
+        legalServiceOpt match {
+          case Some(legalService) => {
+            editLegalService.bindFromRequest fold(
+              formWithErrors => {
+                Logger.info("Legal Service was with ERRORS")
+                Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+              },
+              dto => {
+                Logger.info(s"Updating of Service with name: ${legalService.name}")
+                LegalServiceService.updateById(id, acc._id.get.stringify, dto) map {
+                  case Success(msg) => Ok(Json.obj("message" -> msg.toString))
+                  case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
+                }
+              }
+            )
+          }
+          case None => {
+            val message = s"Legal Service with id: $id does not exist"
+            Logger.info(message)
+            Future.successful(NotFound(Json.obj("message" -> message)))
+          }
+        }
+      }
+    }
+  }
+
 }
