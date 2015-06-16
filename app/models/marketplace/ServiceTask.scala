@@ -1,9 +1,10 @@
 package models.marketplace
 
+import models.swagger.ServiceTaskDTO
 import org.joda.time.DateTime
 import play.api.libs.json.Json
 import reactivemongo.bson.BSONObjectID
-import play.modules.reactivemongo.json.BSONFormats._
+
 
 import scala.util.Random
 
@@ -16,6 +17,7 @@ case class Comment(id: Option[String] = Some(Random.alphanumeric.take(12).mkStri
                    body: String)
 
 object Comment {
+  import play.modules.reactivemongo.json.BSONFormats._
   implicit val commentFormat = Json.format[Comment]
 }
 
@@ -23,9 +25,18 @@ case class ServiceTask(id: Option[String] = Some(Random.alphanumeric.take(12).mk
                        name: String,
                        description: String,
                        requiredInfo: String,
-                       status: String,
-                       approved: Boolean,
-                       comments: Option[Seq[Comment]])
+                       status: String = "Open",
+                       approved: Boolean = false,
+                       comments: Option[Seq[Comment]] = None)
 object ServiceTask {
   implicit val serviceTaskFormat = Json.format[ServiceTask]
+
+  def createServiceTask(dto: ServiceTaskDTO) = {
+    val serviceTask = ServiceTask(
+      name = dto.name,
+      description = dto.description,
+      requiredInfo = dto.requiredInfo
+    )
+    serviceTask
+  }
 }
