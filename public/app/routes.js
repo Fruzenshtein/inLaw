@@ -139,11 +139,14 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                 requireLogin: false
             }
         }).state('marketPlaceLawyer', {
-            url: "/market/wizard",
+            url: "/market",
             views: {
                 "mainView": {
                     templateUrl: 'assets/devbuild/assets/components/marketPlace/marketPlaceDetail.html',
                     controller: 'MarketPlaceLawyerCtrl'
+                },
+                "wizardBar@marketPlaceLawyer": {
+                    templateUrl: 'assets/devbuild/assets/components/marketPlace/wizardBar.html'
                 }
             },
             data: {

@@ -1,35 +1,32 @@
 <div class="">
-    <div class="jumbotron text-center">
-        <h1>Market task <span class="label label-info">{{ todos.length }}</span></h1>
+    <div class="">
+        <div ui-view="wizardBar"></div>
     </div>
-
-    <!-- TODO LIST -->
-    <div id="todo-list" class="row">
-        <div class="col-sm-4 col-sm-offset-4">
-
-            <!-- LOOP OVER THE TODOS IN $scope.todos -->
-            <div class="checkbox" ng-repeat="todo in todos">
-                <label>
-                    <input type="checkbox" ng-click="deleteTodo(todo._id)"> {{ todo.text }}
-                </label>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- FORM TO CREATE TODOS -->
-    <div id="todo-form" class="row">
-        <div class="col-sm-8 col-sm-offset-2 text-center">
-            <form>
-                <div class="form-group">
-
-                    <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
-                    <input type="text" class="form-control input-lg text-center" placeholder="Add new task" ng-model="formData.text">
+    <section id="todoapp" class="ui form segment inactive tab-content">
+        <section class="">
+            <div class="ui divided items">
+                <h3 class="ui center aligned column">Create a legal service</h3>
+                <div class="item">
+                    <header id="header">
+                        <div class="ui fluid icon input">
+                            <label>Task</label>
+                            <input type="text" placeholder="Add task name for legal issue">
+                        </div>
+                    </header>
                 </div>
-
-                <!-- createToDo() WILL CREATE NEW TODOS -->
-                <button type="submit" class="btn btn-primary btn-lg" ng-click="createTodo()">Add</button>
-            </form>
-        </div>
-    </div>
+                <div class="item">
+                    <label>What is included?</label>
+                    <textarea placeholder="What will be done for particular task"></textarea>
+                </div>
+                <div class="item">
+                    <label>What is NOT included?</label>
+                    <textarea placeholder="What will not be done for particular task"></textarea>
+                </div>
+                <div class="item">
+                    <label>What is required from a client?</label>
+                    <textarea placeholder="What have to be provided from the client?"></textarea>
+                </div>
+            </div>
+        </section>
+    </section>
 </div>

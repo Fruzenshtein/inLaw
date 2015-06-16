@@ -1028,6 +1028,117 @@ App.controller('ContactsCtrl', ['$scope', '$http',
 'use strict';
 /* Controller */
 
+App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
+    function ($scope, $http, $userInfo, UtilsService) {
+
+        // if data had been saved before, do not send a request
+        if ( _.isEmpty($userInfo.experiences) ) {
+            var promiseGetExperience = $userInfo.getUserExperience();
+            promiseGetExperience.then(function (onFulfilled) {
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                // extra validation is needed due to another structure of data for the Experiences
+                $scope.experiences = ( onFulfilled['workPlaces'] && !_.isEmpty(onFulfilled['workPlaces']) )
+                    ? UtilsService.convertDate(onFulfilled['workPlaces'])
+                    : [{}];
+            }, function (onReject) {
+                $scope.experiences = [{}];
+            });
+        };
+
+        this.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+        $scope.experience = {};
+        $scope.experiences = $userInfo.experiences || [{}];
+        $scope.selectorYears = UtilsService.generateYears();
+        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+            format = formats[0],
+            experiencesCounter = 0;
+        $scope.addExperience = function () {
+            var experiencesTemplate = {
+                id: experiencesCounter
+            };
+            experiencesCounter += 1;
+            $scope.experiences.push(experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
+                // if user added a form that not saved on the server yet, just delete UI
+                if ($scope.experiences.length != $scope.experiences.length &&
+                    $scope.experiences[index]['id'] == obj['id']) {
+                    $scope.experiences.splice(index, 1);
+                    return;
+                }
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
+                    $http({
+                        method: 'DELETE',
+                        url: '/lawyers/experience/' + obj['id'],
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                        }
+                    }).
+                        success(function (data, status, headers, config) {
+                            $scope.experiences.splice(index, 1);
+                        }).
+                        error(function (data, status, headers, config) {
+                            $scope.error = 'Unexpected error. Please try again later.';
+                        });
+                }
+            })
+        };
+        $scope.updateExperience = function (object) {
+            var copyObject = angular.copy(object);
+            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
+            // The server generates hash ID for saved forms,
+            // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
+            var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
+                url = method == 'POST' ? '/lawyers/experience' : '/lawyers/experience/' + object.id;
+            $http({
+                method: method,
+                url: url,
+                data: copyObject,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                }
+            }).
+                success(function (data, status, headers, config) {
+                    $scope.isUpdated = true;
+                    $scope.error = false;
+                }).
+                error(function (data, status, headers, config) {
+                    $scope.error = 'Unexpected error. Please try again later.';
+                    $scope.isUpdated = false;
+                });
+
+        };
+}]);
+'use strict';
+/* Controller */
+
+// The controller injected directly into html, avoiding routers
+App.controller('HeaderCtrl', ['$scope', '$rootScope', '$http', '$userInfo',
+    function ($scope, $rootScope, $http, $userInfo) {
+
+        $rootScope.currentUser = $rootScope.currentUser
+            || $userInfo.isLoggedIn
+            || sessionStorage.getItem('token');
+
+    }]);
+'use strict';
+/* Controller */
+
+// The controller injected directly into html, avoiding routers
+App.controller('HomeCtrl', ['$scope', '$http',
+    function ($scope, $http) {
+
+    }]);
+'use strict';
+/* Controller */
+
 App.controller('CertificatesCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
     function($scope, $http, $userInfo, UtilsService) {
 
@@ -1259,95 +1370,213 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
         };
     }]);
 'use strict';
+/* Controller - part of My Account (manage legal services), visible for lawyer, not a user */
+
+App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService',
+    function ($scope, $http, MarketPlaceService) {
+
+        $scope.formData = {};
+
+        // when landing on the page, get all todos and show them
+        /*
+        MarketPlaceService.get()
+            .success(function(data) {
+                $scope.todos = data;
+            })
+            .error(function(data) {
+                console.log('Error: ' + data);
+            });
+
+        // when submitting the add form, send the text to the node API
+        $scope.createMarket = function() {
+            MarketPlaceService.create($scope.formData)
+                .success(function(data) {
+                    $scope.formData = {}; // clear the form so our user is ready to enter another
+                    $scope.todos = data;
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+        };
+
+        // delete a todo after checking it
+        $scope.deleteMarket = function(id) {
+            MarketPlaceService.delete(id)
+                .success(function(data) {
+                    $scope.todos = data;
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+        };
+
+
+        //------
+
+        var todos = $scope.todos = todoStorage.get();
+
+        $scope.newTodo = '';
+        $scope.remainingCount = $filter('filter')(todos, {completed: false}).length;
+        $scope.editedTodo = null;
+
+        if ($location.path() === '') {
+            $location.path('/');
+        }
+
+        $scope.location = $location;
+
+        $scope.$watch('location.path()', function (path) {
+            $scope.statusFilter = { '/active': {completed: false}, '/completed': {completed: true} }[path];
+        });
+
+        $scope.$watch('remainingCount == 0', function (val) {
+            $scope.allChecked = val;
+        });
+
+        $scope.addTodo = function () {
+            var newTodo = $scope.newTodo.trim();
+            if (newTodo.length === 0) {
+                return;
+            }
+
+            todos.push({
+                title: newTodo,
+                completed: false
+            });
+            todoStorage.put(todos);
+
+            $scope.newTodo = '';
+            $scope.remainingCount++;
+        };
+
+        $scope.editTodo = function (todo) {
+            $scope.editedTodo = todo;
+            // Clone the original todo to restore it on demand.
+            $scope.originalTodo = angular.extend({}, todo);
+        };
+
+        $scope.doneEditing = function (todo) {
+            $scope.editedTodo = null;
+            todo.title = todo.title.trim();
+
+            if (!todo.title) {
+                $scope.removeTodo(todo);
+            }
+
+            todoStorage.put(todos);
+        };
+
+        $scope.revertEditing = function (todo) {
+            todos[todos.indexOf(todo)] = $scope.originalTodo;
+            $scope.doneEditing($scope.originalTodo);
+        };
+
+        $scope.removeTodo = function (todo) {
+            $scope.remainingCount -= todo.completed ? 0 : 1;
+            todos.splice(todos.indexOf(todo), 1);
+            todoStorage.put(todos);
+        };
+
+        $scope.todoCompleted = function (todo) {
+            $scope.remainingCount += todo.completed ? -1 : 1;
+            todoStorage.put(todos);
+        };
+
+        $scope.clearCompletedTodos = function () {
+            $scope.todos = todos = todos.filter(function (val) {
+                return !val.completed;
+            });
+            todoStorage.put(todos);
+        };
+
+        $scope.markAll = function (completed) {
+            todos.forEach(function (todo) {
+                todo.completed = !completed;
+            });
+            $scope.remainingCount = completed ? todos.length : 0;
+            todoStorage.put(todos);
+        };
+*/
+    }]);
+'use strict';
+/* Service */
+
+// The factory returns promise for MarketPlace
+App.factory('MarketPlaceService', function($http) {
+        return {
+            get : function() {
+                return $http.get('/api/...');
+            },
+            create : function(marketTask) {
+                return $http.post('/api/...', marketTask);
+            },
+            delete : function(id) {
+                return $http.delete('/api/.../' + id);
+            }
+        }
+    });
+'use strict';
 /* Controller */
 
-App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
-    function ($scope, $http, $userInfo, UtilsService) {
+App.controller('MarketPlace', [ '$scope', '$http',
+    function( $scope, $http ) {
 
-        // if data had been saved before, do not send a request
-        if ( _.isEmpty($userInfo.experiences) ) {
-            var promiseGetExperience = $userInfo.getUserExperience();
-            promiseGetExperience.then(function (onFulfilled) {
-                // assign [{}] object if request returns an empty object.
-                // [{}] - is used to build default html template
-                // extra validation is needed due to another structure of data for the Experiences
-                $scope.experiences = ( onFulfilled['workPlaces'] && !_.isEmpty(onFulfilled['workPlaces']) )
-                    ? UtilsService.convertDate(onFulfilled['workPlaces'])
-                    : [{}];
-            }, function (onReject) {
-                $scope.experiences = [{}];
+
+    }]);
+
+'use strict';
+
+App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthService', '$rootScope', 'ValidationRules',
+    function($scope, $state, $http, $userInfo, AuthService, $rootScope, ValidationRules) {
+
+        $scope.signIn = {};
+        $scope.error = false;
+        $scope.submit = function(signIn) {
+            AuthService.login(signIn)
+                .success(function(data, status, headers, config) {
+                    $rootScope.currentUser = data['token'];
+                    AuthService.setCurrentUser(data['token']);
+                    $state.go('myAccount');
+            })
+                .error(function(data, status, headers, config) {
+                    $scope.error = data.message;
             });
         };
 
-        this.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-        $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [{}];
-        $scope.selectorYears = UtilsService.generateYears();
-        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
-            format = formats[0],
-            experiencesCounter = 0;
-        $scope.addExperience = function () {
-            var experiencesTemplate = {
-                id: experiencesCounter
-            };
-            experiencesCounter += 1;
-            $scope.experiences.push(experiencesTemplate);
-        };
-        $scope.removeExperience = function(obj) {
-            angular.forEach($scope.experiences, function(elem, index) {
-                // if user added a form that not saved on the server yet, just delete UI
-                if ($scope.experiences.length != $scope.experiences.length &&
-                    $scope.experiences[index]['id'] == obj['id']) {
-                    $scope.experiences.splice(index, 1);
-                    return;
-                }
-                if ( $scope.experiences[index]['id'] == obj['id'] ) {
-                    $http({
-                        method: 'DELETE',
-                        url: '/lawyers/experience/' + obj['id'],
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                        }
-                    }).
-                        success(function (data, status, headers, config) {
-                            $scope.experiences.splice(index, 1);
-                        }).
-                        error(function (data, status, headers, config) {
-                            $scope.error = 'Unexpected error. Please try again later.';
-                        });
-                }
-            })
-        };
-        $scope.updateExperience = function (object) {
-            var copyObject = angular.copy(object);
-            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
-            // The server generates hash ID for saved forms,
-            // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
-            var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
-                url = method == 'POST' ? '/lawyers/experience' : '/lawyers/experience/' + object.id;
-            $http({
-                method: method,
-                url: url,
-                data: copyObject,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                }
-            }).
-                success(function (data, status, headers, config) {
-                    $scope.isUpdated = true;
-                    $scope.error = false;
-                }).
-                error(function (data, status, headers, config) {
-                    $scope.error = 'Unexpected error. Please try again later.';
-                    $scope.isUpdated = false;
-                });
+        // *** JQUERY SECTION ***
 
+        // Login form validation
+        (function ($) {
+            $('.ui.form')
+                .form(ValidationRules.en);
+        })(jQuery);
+
+
+}]);
+'use strict';
+/* Controller */
+
+App.controller('LoginModalCtrl', ['$scope', '$http',
+    function ($scope, $http) {
+
+    this.cancel = $scope.$dismiss;
+
+    $scope.submit = function (email, password) {
+        var data = {
+            'email': email,
+            'password': password
         };
+        $http({
+            method: 'POST',
+            url: '/auth/login',
+            data: data,
+            headers: {'Content-Type': 'application/json'}
+        }).then(function (user) {
+            $scope.$close(user);
+        });
+
+    };
+
 }]);
 'use strict';
 /* Controller */
@@ -1673,239 +1902,51 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
     }]);
 
 'use strict';
-/* Controller */
 
-// The controller injected directly into html, avoiding routers
-App.controller('HeaderCtrl', ['$scope', '$rootScope', '$http', '$userInfo',
-    function ($scope, $rootScope, $http, $userInfo) {
+App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'ValidationRules',
+    function($scope, $state, $http, $userInfo, ValidationRules) {
 
-        $rootScope.currentUser = $rootScope.currentUser
-            || $userInfo.isLoggedIn
-            || sessionStorage.getItem('token');
-
-    }]);
-'use strict';
-/* Controller */
-
-// The controller injected directly into html, avoiding routers
-App.controller('HomeCtrl', ['$scope', '$http',
-    function ($scope, $http) {
-
-    }]);
-'use strict';
-
-App.controller('LoginCtrl', ['$scope', '$state', '$http', '$userInfo', 'AuthService', '$rootScope', 'ValidationRules',
-    function($scope, $state, $http, $userInfo, AuthService, $rootScope, ValidationRules) {
-
-        $scope.signIn = {};
+        $scope.signUp = {};
         $scope.error = false;
-        $scope.submit = function(signIn) {
-            AuthService.login(signIn)
-                .success(function(data, status, headers, config) {
-                    $rootScope.currentUser = data['token'];
-                    AuthService.setCurrentUser(data['token']);
+        $scope.loading = false;
+
+        $scope.submit = function(signUp) {
+            var data = {
+                "email": signUp.email,
+                "password": signUp.password,
+                "repeatPassword": signUp.cpassword
+            };
+            $scope.loading = true;
+
+            $http({
+                method: 'POST',
+                url: '/lawyers',
+                data: data,
+                headers: {'Content-Type': 'application/json'}
+            }).
+                success(function(data, status, headers, config) {
+                    sessionStorage.setItem('token', data.token);
+                    $userInfo.setUserStatus(true);
                     $state.go('myAccount');
-            })
-                .error(function(data, status, headers, config) {
+                }).
+                error(function(data, status, headers, config) {
+                    $scope.loading = false;
                     $scope.error = data.message;
-            });
+                });
+        };
+
+        $scope.cleanError = function() {
+            this.error = false;
         };
 
         // *** JQUERY SECTION ***
-
-        // Login form validation
+        // Activate checkbox
+        $('.ui.checkbox').checkbox();
+        // Registration form validation
         (function ($) {
             $('.ui.form')
                 .form(ValidationRules.en);
         })(jQuery);
-
-
-}]);
-'use strict';
-/* Controller */
-
-App.controller('LoginModalCtrl', ['$scope', '$http',
-    function ($scope, $http) {
-
-    this.cancel = $scope.$dismiss;
-
-    $scope.submit = function (email, password) {
-        var data = {
-            'email': email,
-            'password': password
-        };
-        $http({
-            method: 'POST',
-            url: '/auth/login',
-            data: data,
-            headers: {'Content-Type': 'application/json'}
-        }).then(function (user) {
-            $scope.$close(user);
-        });
-
-    };
-
-}]);
-'use strict';
-/* Controller - part of My Account (manage legal services), visible for lawyer, not a user */
-
-App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService',
-    function ($scope, $http, MarketPlaceService) {
-
-        $scope.formData = {};
-
-        // when landing on the page, get all todos and show them
-        /*
-        MarketPlaceService.get()
-            .success(function(data) {
-                $scope.todos = data;
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-
-        // when submitting the add form, send the text to the node API
-        $scope.createMarket = function() {
-            MarketPlaceService.create($scope.formData)
-                .success(function(data) {
-                    $scope.formData = {}; // clear the form so our user is ready to enter another
-                    $scope.todos = data;
-                })
-                .error(function(data) {
-                    console.log('Error: ' + data);
-                });
-        };
-
-        // delete a todo after checking it
-        $scope.deleteMarket = function(id) {
-            MarketPlaceService.delete(id)
-                .success(function(data) {
-                    $scope.todos = data;
-                })
-                .error(function(data) {
-                    console.log('Error: ' + data);
-                });
-        };
-
-
-        //------
-
-        var todos = $scope.todos = todoStorage.get();
-
-        $scope.newTodo = '';
-        $scope.remainingCount = $filter('filter')(todos, {completed: false}).length;
-        $scope.editedTodo = null;
-
-        if ($location.path() === '') {
-            $location.path('/');
-        }
-
-        $scope.location = $location;
-
-        $scope.$watch('location.path()', function (path) {
-            $scope.statusFilter = { '/active': {completed: false}, '/completed': {completed: true} }[path];
-        });
-
-        $scope.$watch('remainingCount == 0', function (val) {
-            $scope.allChecked = val;
-        });
-
-        $scope.addTodo = function () {
-            var newTodo = $scope.newTodo.trim();
-            if (newTodo.length === 0) {
-                return;
-            }
-
-            todos.push({
-                title: newTodo,
-                completed: false
-            });
-            todoStorage.put(todos);
-
-            $scope.newTodo = '';
-            $scope.remainingCount++;
-        };
-
-        $scope.editTodo = function (todo) {
-            $scope.editedTodo = todo;
-            // Clone the original todo to restore it on demand.
-            $scope.originalTodo = angular.extend({}, todo);
-        };
-
-        $scope.doneEditing = function (todo) {
-            $scope.editedTodo = null;
-            todo.title = todo.title.trim();
-
-            if (!todo.title) {
-                $scope.removeTodo(todo);
-            }
-
-            todoStorage.put(todos);
-        };
-
-        $scope.revertEditing = function (todo) {
-            todos[todos.indexOf(todo)] = $scope.originalTodo;
-            $scope.doneEditing($scope.originalTodo);
-        };
-
-        $scope.removeTodo = function (todo) {
-            $scope.remainingCount -= todo.completed ? 0 : 1;
-            todos.splice(todos.indexOf(todo), 1);
-            todoStorage.put(todos);
-        };
-
-        $scope.todoCompleted = function (todo) {
-            $scope.remainingCount += todo.completed ? -1 : 1;
-            todoStorage.put(todos);
-        };
-
-        $scope.clearCompletedTodos = function () {
-            $scope.todos = todos = todos.filter(function (val) {
-                return !val.completed;
-            });
-            todoStorage.put(todos);
-        };
-
-        $scope.markAll = function (completed) {
-            todos.forEach(function (todo) {
-                todo.completed = !completed;
-            });
-            $scope.remainingCount = completed ? todos.length : 0;
-            todoStorage.put(todos);
-        };
-*/
-    }]);
-'use strict';
-/* Service */
-
-// The factory returns promise for MarketPlace
-App.factory('MarketPlaceService', function($http) {
-        return {
-            get : function() {
-                return $http.get('/api/...');
-            },
-            create : function(marketTask) {
-                return $http.post('/api/...', marketTask);
-            },
-            delete : function(id) {
-                return $http.delete('/api/.../' + id);
-            }
-        }
-    });
-'use strict';
-/* Controller */
-
-App.controller('MarketPlace', [ '$scope', '$http',
-    function( $scope, $http ) {
-
-
-    }]);
-
-'use strict';
-/* Controller */
-
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
-    function ($scope, $http, $userInfo, $rootScope, $state) {
 
 
     }]);
@@ -2025,6 +2066,14 @@ App.controller('ProfileCtrl', ['$scope', '$http',
 'use strict';
 /* Controller */
 
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
+    function ($scope, $http, $userInfo, $rootScope, $state) {
+
+
+    }]);
+'use strict';
+/* Controller */
+
 App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$location',
     function ($scope, $http, $filterService, $location) {
 
@@ -2059,55 +2108,6 @@ App.controller('PublicProfileCtrl', ['$scope', '$http', '$filterService', '$loca
         $scope.experiences = userProfileObj.experience.total == 0
             ? []
             : userProfileObj.experience.workPlaces;
-
-
-    }]);
-'use strict';
-
-App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'ValidationRules',
-    function($scope, $state, $http, $userInfo, ValidationRules) {
-
-        $scope.signUp = {};
-        $scope.error = false;
-        $scope.loading = false;
-
-        $scope.submit = function(signUp) {
-            var data = {
-                "email": signUp.email,
-                "password": signUp.password,
-                "repeatPassword": signUp.cpassword
-            };
-            $scope.loading = true;
-
-            $http({
-                method: 'POST',
-                url: '/lawyers',
-                data: data,
-                headers: {'Content-Type': 'application/json'}
-            }).
-                success(function(data, status, headers, config) {
-                    sessionStorage.setItem('token', data.token);
-                    $userInfo.setUserStatus(true);
-                    $state.go('myAccount');
-                }).
-                error(function(data, status, headers, config) {
-                    $scope.loading = false;
-                    $scope.error = data.message;
-                });
-        };
-
-        $scope.cleanError = function() {
-            this.error = false;
-        };
-
-        // *** JQUERY SECTION ***
-        // Activate checkbox
-        $('.ui.checkbox').checkbox();
-        // Registration form validation
-        (function ($) {
-            $('.ui.form')
-                .form(ValidationRules.en);
-        })(jQuery);
 
 
     }]);
