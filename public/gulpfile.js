@@ -10,10 +10,17 @@ var runSequence = require( 'run-sequence').use(gulp);
 
 
 gulp.task('development', ['clean'], function() {
-    runSequence(
-        ['dev',
-            'jshint'
-        ]
+    runSequence([
+            'scripts',
+            'vendorScripts',
+            'styles',
+            'vendorStyles',
+            'jshint',
+            'watch']
     );
+});
+
+gulp.task('production', ['clean'], function() {
+   // runSequence([]);
 });
 

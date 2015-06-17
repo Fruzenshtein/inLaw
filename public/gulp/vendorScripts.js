@@ -7,12 +7,12 @@ var gulp = require('gulp'),
     gulpif = require('gulp-if'),
     notify = require('gulp-notify');
 
-gulp.task('scripts', function() {
-    gulp.src(paths.scripts)
-        .pipe(concat("app.js"))
+gulp.task('vendorScripts', function() {
+    gulp.src(paths.vendorScripts)
+        .pipe(concat("vendor.js"))
         .pipe(gulpif(false, rename({suffix: '.min'})))
         .pipe(gulpif(false, uglify()))
         .pipe(gulp.dest(paths.dist + "javascripts/"))
-        .pipe(notify({ message: 'Scripts task completed' }));
+        .pipe(notify({ message: 'VendorScripts task completed' }));
 
 });
