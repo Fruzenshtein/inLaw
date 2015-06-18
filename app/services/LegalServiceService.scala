@@ -1,6 +1,6 @@
 package services
 
-import models.marketplace.{LegalServiceEdit, LegalService}
+import models.marketplace.{ServiceTask, LegalServiceEdit, LegalService}
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoPlugin
@@ -80,6 +80,28 @@ object LegalServiceService {
       }
       case operation if (!operation.ok) => {
         Logger.error(s"LegalService was not updated due: ${operation.errMsg.get}")
+        Failure(new Exception(operation.errMsg.get))
+      }
+    }
+  }
+
+  def addTask(id: String, lawyerID: String, task: ServiceTask) = {
+    val addTask = Json.obj(
+      "$push" -> Json.obj(
+        "tasks" -> task
+      )
+    )
+    collection.update(
+      Json.obj("_id" -> Json.obj("$oid" -> id), "lawyerID" -> lawyerID),
+      addTask
+    ) map {
+      case operation if (operation.ok) => {
+        val message = s"ServiceTask '${task.name}' successfully added"
+        Logger.info(message)
+        Success(message)
+      }
+      case operation if (!operation.ok) => {
+        Logger.error(s"ServiceTask was not added due: ${operation.errMsg.get}")
         Failure(new Exception(operation.errMsg.get))
       }
     }

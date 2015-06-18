@@ -195,4 +195,49 @@ object LegalServiceController extends Controller with Security with LegalService
     }
   }
 
+  @ApiOperation(
+    nickname = "serviceTasks",
+    value = "Add service task",
+    notes = "Add service task to legal service",
+    httpMethod = "POST",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "ServiceTask $name successfully added"),
+    new ApiResponse(code = 400, message = "Bad arguments"),
+    new ApiResponse(code = 404, message = "Legal Service with id: $id does not exist")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
+    new ApiImplicitParam(value = "Service Task object which will be added", required = true, dataType = "models.swagger.ServiceTaskDTO", paramType = "body")))
+  def addServiceTask(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
+    LegalServiceService.findByIdAndLawyerId(id, acc._id.get.stringify) flatMap {
+      case legalServiceOpt => {
+        Logger.info(s"Searching Legal Service by its ID: ${id}")
+        legalServiceOpt match {
+          case Some(legalService) => {
+            addTask.bindFromRequest fold(
+              formWithErrors => {
+                Logger.info("Legal Task was with ERRORS")
+                Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+              },
+              dto => {
+                import models.marketplace.ServiceTask._
+                Logger.info(s"Creation of Service Task with name: ${dto.name}")
+                LegalServiceService.addTask(id, acc._id.get.stringify, createServiceTask(dto)) map {
+                  case Success(msg) => Ok(Json.obj("message" -> msg))
+                  case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
+                }
+              }
+              )
+          }
+          case None => {
+            val message = s"Legal Service with id: $id does not exist"
+            Logger.info(message)
+            Future.successful(NotFound(Json.obj("message" -> message)))
+          }
+        }
+      }
+    }
+
+  }
+
 }

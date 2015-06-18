@@ -24,10 +24,7 @@ object Comment {
 case class ServiceTask(id: Option[String] = Some(Random.alphanumeric.take(12).mkString),
                        name: String,
                        description: String,
-                       requiredInfo: String,
-                       status: String = "Open",
-                       approved: Boolean = false,
-                       comments: Option[Seq[Comment]] = None)
+                       requiredInfo: String)
 object ServiceTask {
   implicit val serviceTaskFormat = Json.format[ServiceTask]
 
