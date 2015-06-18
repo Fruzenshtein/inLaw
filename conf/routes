@@ -65,5 +65,6 @@ GET         /legal-services                         controllers.LegalServiceCont
 GET         /legal-services/:id                     controllers.LegalServiceController.getLawyerLegalService(id: String)
 DELETE      /legal-services/:id                     controllers.LegalServiceController.deleteLegalService(id: String)
 PUT         /legal-services/:id                     controllers.LegalServiceController.updateLegalService(id: String)
+POST        /legal-services/:id/tasks               controllers.LegalServiceController.addServiceTask(id: String)
 
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
