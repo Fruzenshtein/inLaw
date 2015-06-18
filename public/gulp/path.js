@@ -21,7 +21,8 @@ module.exports = {
         'app/**/*.js'
     ],
     "fonts": [
-        'fonts/*.*'
+        'fonts/*.*',
+
     ],
     "themes": [
         'bower_components/semantic-ui/dist/themes/*.*'

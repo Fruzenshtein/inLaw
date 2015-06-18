@@ -15,6 +15,10 @@ gulp.task('development', ['clean'], function() {
             'vendorScripts',
             'styles',
             'vendorStyles',
+            'html',
+            'images',
+            'fonts',
+
             'jshint',
             'watch']
     );

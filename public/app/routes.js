@@ -10,7 +10,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: '/myAccount',
             views: {
                 "mainView": {
-                    "templateUrl": 'assets/devbuild/assets/components/myAccount/myAccount.html',
+                    "templateUrl": 'assets/build/assets/components/myAccount/myAccount.html',
                     "controller": 'LandingPageCtrl'
                 }
             },
@@ -21,7 +21,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/home/home.html',
+                    templateUrl: 'assets/build/assets/components/home/home.html',
                     controller: 'HomeCtrl'
                 }
             },
@@ -32,7 +32,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/registration",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/registration/registration.html',
+                    templateUrl: 'assets/build/assets/components/registration/registration.html',
                     controller: 'RegistrationCtrl'
                 }
             },
@@ -43,7 +43,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/login",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/login/login.html',
+                    templateUrl: 'assets/build/assets/components/login/login.html',
                     controller: 'LoginCtrl'
                 }
             },
@@ -54,7 +54,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/profile",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/profile/profile.html',
+                    templateUrl: 'assets/build/assets/components/profile/profile.html',
                     controller: 'ProfileCtrl'
                 }
             },
@@ -65,7 +65,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/contacts",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/contacts/contacts.html',
+                    templateUrl: 'assets/build/assets/components/contacts/contacts.html',
                     controller: 'ContactsCtrl'
                 }
             },
@@ -76,18 +76,18 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/education",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/education/education.html'
+                    templateUrl: 'assets/build/assets/components/education/education.html'
                 },
                 "universities@education": {
-                    templateUrl: 'assets/devbuild/assets/components/education/universities.html',
+                    templateUrl: 'assets/build/assets/components/education/universities.html',
                     controller: 'UniversitiesCtrl'
                 },
                 "certificates@education": {
-                    templateUrl: 'assets/devbuild/assets/components/education/certificates.html',
+                    templateUrl: 'assets/build/assets/components/education/certificates.html',
                     controller: 'CertificatesCtrl'
                 },
                 "languages@education": {
-                    templateUrl: 'assets/devbuild/assets/components/education/languages.html',
+                    templateUrl: 'assets/build/assets/components/education/languages.html',
                     controller: 'LanguagesCtrl'
                 }
             },
@@ -98,7 +98,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/experience",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/experience/experience.html',
+                    templateUrl: 'assets/build/assets/components/experience/experience.html',
                     controller: 'ExperienceCtrl'
                 }
             },
@@ -109,7 +109,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/lawyers/filters",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/filters/filters.html',
+                    templateUrl: 'assets/build/assets/components/filters/filters.html',
                     controller: 'FiltersCtrl'
                 }
             },
@@ -120,7 +120,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/competences",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/competence/competence.html',
+                    templateUrl: 'assets/build/assets/components/competence/competence.html',
                     controller: 'CompetenceCtrl'
                 }
             },
@@ -131,7 +131,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/public/:id",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/public/publicProfile.html',
+                    templateUrl: 'assets/build/assets/components/public/publicProfile.html',
                     controller: 'PublicProfileCtrl'
                 }
             },
@@ -142,11 +142,11 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             url: "/market",
             views: {
                 "mainView": {
-                    templateUrl: 'assets/devbuild/assets/components/marketPlace/marketPlaceDetail.html',
+                    templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html',
                     controller: 'MarketPlaceLawyerCtrl'
                 },
                 "wizardBar@marketPlaceLawyer": {
-                    templateUrl: 'assets/devbuild/assets/components/marketPlace/wizardBar.html'
+                    templateUrl: 'assets/build/assets/components/marketPlace/wizardBar.html'
                 }
             },
             data: {

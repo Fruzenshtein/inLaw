@@ -2,19 +2,19 @@
 <html ng-app="App">
 <head lang="en">
 <meta charset="UTF-8">
-    <link href="@routes.Assets.at("devbuild/stylesheets/vendor.css")" rel="stylesheet">
-    <link href="@routes.Assets.at("devbuild/stylesheets/app.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("build/stylesheets/vendor.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("build/stylesheets/app.css")" rel="stylesheet">
     <title>InLaw</title>
 </head>
 <body>
 <div class="ui centered grid">
     <div class="ten wide column">
-        <div class="ui menu" ng-include="'../assets/devbuild/assets/components/header/header.html'"></div>
+        <div class="ui menu" ng-include="'../assets/build/assets/components/header/header.html'"></div>
         <div ui-view="mainView"></div>
     </div>
 </div>
 <!-- ----- JS ----- -->
-<script src="@routes.Assets.at("devbuild/javascripts/vendor.js")"></script>
-<script src="@routes.Assets.at("devbuild/javascripts/app.js")"></script>
+<script src="@routes.Assets.at("build/javascripts/vendor.js")"></script>
+<script src="@routes.Assets.at("build/javascripts/app.js")"></script>
 </body>
 </html>

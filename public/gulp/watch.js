@@ -9,9 +9,9 @@ gulp.task('watch', function() {
     liveReload.listen();
     gulp.watch(paths.scripts, ['scripts']);
     gulp.watch(paths.styles, ['styles']);
-   // gulp.watch(paths.fonts, ['fonts']);
-   // gulp.watch(paths.images, ['images']);
-   // gulp.watch(paths.templates, ['html']);
+    gulp.watch(paths.fonts, ['fonts']);
+    gulp.watch(paths.images, ['images']);
+    gulp.watch(paths.templates, ['html']);
 
     gulp.watch([
         paths.scripts,

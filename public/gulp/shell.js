@@ -9,7 +9,7 @@ var projectRoot = {
 };
 // for internal development
 gulp.task('shell-internal', shell.task([
-    projectRoot.mongod,
-    'cd ' + projectRoot.scaleServer + ' && activator run'
+    projectRoot.mongod + ' &', // run mongod
+    'cd ' + projectRoot.scaleServer + ' && activator run &' // start Scala server
 ]));
 
