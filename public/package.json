@@ -47,12 +47,11 @@
   "scripts": {
     "prebower-install": "npm install",
     "bower-install": "bower install",
-    "prebuild": "npm run bower-install",
-    "prestart": "npm run build",
-    "start": "npm run shell && npm run develop",
+    "prebuild": "npm run prebower-install",
+    "prestart": "npm run prebower-install",
+    "start": "gulp production",
     "build": "gulp development",
-    "predevelop": "npm run shell",
-    "shell": "gulp shell-internal",
+    "server": "gulp runServer",
     "develop": "gulp development"
   },
   "private": true,

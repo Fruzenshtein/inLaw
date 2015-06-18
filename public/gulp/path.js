@@ -25,7 +25,7 @@ module.exports = {
 
     ],
     "themes": [
-        'bower_components/semantic-ui/dist/themes/*.*'
+        'bower_components/semantic-ui/dist/themes/**'
     ],
     "templates": ['app/**/*.html'],
     "images": ['images/*.*'],
