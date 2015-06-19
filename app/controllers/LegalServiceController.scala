@@ -65,7 +65,7 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
   ))
   def getLawyerLegalServices = isAuthenticated {implicit acc => implicit request =>
-  LegalServiceService.listByLawyerId(acc._id.get.stringify) map {
+    LegalServiceService.listByLawyerId(acc._id.get.stringify) map {
       case legalServices => {
         Logger.info("List Lawyer's Legal Services...")
         val legalServicesJSON = legalServices map(legalServiceToJson(_))
@@ -88,23 +88,10 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
   ))
   def getLawyerLegalService(@QueryParam("id") id: String) = isAuthenticated {implicit acc => implicit request =>
-    LegalServiceService.findByIdAndLawyerId(id, acc._id.get.stringify) map {
-      case legalServiceOpt => {
-        Logger.info(s"Get Legal Service by its ID: ${id}")
-        legalServiceOpt match {
-          case Some(legalService) => {
-            Logger.info(s"Legal Service with name: ${legalService.name} was found")
-            val legalServiceJSON =  legalServiceToJson(legalService)
-            Ok(Json.toJson(legalServiceJSON))
-          }
-          case None => {
-            val message = s"Legal Service with id: $id does not exist"
-            Logger.info(message)
-            NotFound(Json.obj("message" -> message))
-          }
-        }
-      }
-    }
+    withLegalService(id, acc._id.get.stringify, implicit service => {
+      val legalServiceJSON =  legalServiceToJson(service)
+      Future.successful(Ok(Json.toJson(legalServiceJSON)))
+    })
   }
 
   private def legalServiceToJson(ls: LegalService): JsObject = {
@@ -128,27 +115,13 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
   ))
   def deleteLegalService(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
-    LegalServiceService.findByIdAndLawyerId(id, acc._id.get.stringify) flatMap {
-      case legalServiceOpt => {
-        Logger.info(s"Searching Legal Service by its ID: ${id}")
-        legalServiceOpt match {
-          case Some(legalService) => {
-            Logger.info(s"Deleting of Service with name: ${legalService.name}")
-
-            LegalServiceService.deleteById(id, acc._id.get.stringify) map {
-              case Success(msg) => Ok(Json.obj("message" -> msg.toString))
-              case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
-            }
-
-          }
-          case None => {
-            val message = s"Legal Service with id: $id does not exist"
-            Logger.info(message)
-            Future.successful(NotFound(Json.obj("message" -> message)))
-          }
-        }
+    withLegalService(id, acc._id.get.stringify, implicit service => {
+      Logger.info(s"Deleting of Service with id: ${id}")
+      LegalServiceService.deleteById(id, acc._id.get.stringify) map {
+        case Success(msg) => Ok(Json.obj("message" -> msg.toString))
+        case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
       }
-    }
+    })
   }
 
   @ApiOperation(
@@ -166,33 +139,21 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiImplicitParam(value = "Legal Service object which will be added", required = true, dataType = "models.marketplace.LegalServiceEdit", paramType = "body")
   ))
   def updateLegalService(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
-    LegalServiceService.findByIdAndLawyerId(id, acc._id.get.stringify) flatMap {
-      case legalServiceOpt => {
-        Logger.info(s"Searching Legal Service by its ID: ${id}")
-        legalServiceOpt match {
-          case Some(legalService) => {
-            editLegalService.bindFromRequest fold(
-              formWithErrors => {
-                Logger.info("Legal Service was with ERRORS")
-                Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
-              },
-              dto => {
-                Logger.info(s"Updating of Service with name: ${legalService.name}")
-                LegalServiceService.updateById(id, acc._id.get.stringify, dto) map {
-                  case Success(msg) => Ok(Json.obj("message" -> msg.toString))
-                  case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
-                }
-              }
-            )
-          }
-          case None => {
-            val message = s"Legal Service with id: $id does not exist"
-            Logger.info(message)
-            Future.successful(NotFound(Json.obj("message" -> message)))
+    withLegalService(id, acc._id.get.stringify, implicit service =>
+      editLegalService.bindFromRequest fold(
+        formWithErrors => {
+          Logger.info("Legal Service was with ERRORS")
+          Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+        },
+        dto => {
+          Logger.info(s"Updating of Service with id: ${id}")
+          LegalServiceService.updateById(id, acc._id.get.stringify, dto) map {
+            case Success(msg) => Ok(Json.obj("message" -> msg.toString))
+            case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
           }
         }
-      }
-    }
+      )
+    )
   }
 
   @ApiOperation(
@@ -209,26 +170,30 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
     new ApiImplicitParam(value = "Service Task object which will be added", required = true, dataType = "models.swagger.ServiceTaskDTO", paramType = "body")))
   def addServiceTask(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
-    LegalServiceService.findByIdAndLawyerId(id, acc._id.get.stringify) flatMap {
+    withLegalService(id, acc._id.get.stringify, implicit service =>
+    addTask.bindFromRequest fold(
+      formWithErrors => {
+        Logger.info("Legal Task was with ERRORS")
+        Future.successful(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+      },
+      dto => {
+        import models.marketplace.ServiceTask._
+        Logger.info(s"Creation of Service Task with name: ${dto.name}")
+        LegalServiceService.addTask(id, acc._id.get.stringify, createServiceTask(dto)) map {
+          case Success(msg) => Ok(Json.obj("message" -> msg))
+          case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
+        }
+      }
+      )
+    )
+  }
+
+  def withLegalService(id: String, accID: String, f: LegalService => Future[Result]): Future[Result] = {
+    LegalServiceService.findByIdAndLawyerId(id, accID) flatMap {
       case legalServiceOpt => {
         Logger.info(s"Searching Legal Service by its ID: ${id}")
         legalServiceOpt match {
-          case Some(legalService) => {
-            addTask.bindFromRequest fold(
-              formWithErrors => {
-                Logger.info("Legal Task was with ERRORS")
-                Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
-              },
-              dto => {
-                import models.marketplace.ServiceTask._
-                Logger.info(s"Creation of Service Task with name: ${dto.name}")
-                LegalServiceService.addTask(id, acc._id.get.stringify, createServiceTask(dto)) map {
-                  case Success(msg) => Ok(Json.obj("message" -> msg))
-                  case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
-                }
-              }
-              )
-          }
+          case Some(legalService) => f(legalService)
           case None => {
             val message = s"Legal Service with id: $id does not exist"
             Logger.info(message)
@@ -237,7 +202,6 @@ object LegalServiceController extends Controller with Security with LegalService
         }
       }
     }
-
   }
 
 }
