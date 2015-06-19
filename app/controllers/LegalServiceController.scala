@@ -4,7 +4,7 @@ import javax.ws.rs.QueryParam
 
 import com.wordnik.swagger.annotations._
 import forms.LegalServiceForms
-import models.marketplace.LegalService
+import models.marketplace.{ServiceTask, LegalService}
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Results, Result, Controller}
@@ -94,13 +94,6 @@ object LegalServiceController extends Controller with Security with LegalService
     })
   }
 
-  private def legalServiceToJson(ls: LegalService): JsObject = {
-    val serviceJson = Json.obj("id" -> ls._id.get.stringify, "lawyerID" -> ls.lawyerID,
-      "category" -> ls.category, "name" -> ls.name, "description" -> ls.description,
-      "price" -> ls.price, "estimation" -> ls.estimation, "tasks" -> ls.tasks)
-    serviceJson
-  }
-
   @ApiOperation(
     nickname = "deleteLawyerLegalService",
     value = "Delete lawyers legal service by id",
@@ -171,7 +164,7 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiImplicitParam(value = "Service Task object which will be added", required = true, dataType = "models.swagger.ServiceTaskDTO", paramType = "body")))
   def addServiceTask(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
     withLegalService(id, acc._id.get.stringify, implicit service =>
-    addTask.bindFromRequest fold(
+    taskInfo.bindFromRequest fold(
       formWithErrors => {
         Logger.info("Legal Task was with ERRORS")
         Future.successful(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
@@ -186,6 +179,59 @@ object LegalServiceController extends Controller with Security with LegalService
       }
       )
     )
+  }
+
+  @ApiOperation(
+    nickname = "serviceTasks",
+    value = "Update service task",
+    notes = "Update service task of legal service",
+    httpMethod = "PUT",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "ServiceTask with ID $taskID successfully updated"),
+    new ApiResponse(code = 400, message = "Bad arguments"),
+    new ApiResponse(code = 404, message = "Service Task with ID: $taskID does not exist")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
+    new ApiImplicitParam(value = "Service Task object which will be added", required = true, dataType = "models.swagger.ServiceTaskDTO", paramType = "body")))
+  def updateServiceTask(@QueryParam("id") id: String, @QueryParam("taskID") taskID: String) = isAuthenticated
+  { implicit acc => implicit request =>
+    val lawyerId = acc._id.get.stringify
+    withLegalService(id, lawyerId, implicit service =>
+      taskInfo.bindFromRequest fold(
+        formWithErrors => {
+          Logger.info("Legal Task was with ERRORS")
+          Future.successful(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+        },
+        dto => {
+          service.tasks.find( task => task.id == taskID) match {
+            case Some(serviceTask) => {
+              Logger.info(s"Update of Service Task with id: ${taskID}")
+              LegalServiceService.deleteTask(id, lawyerId, taskID) flatMap {
+                case Success(msg) => {
+                  LegalServiceService.addTask(id, lawyerId,
+                    ServiceTask(id, dto.name, dto.description, dto.requiredInfo)) map {
+                      case Success(msg) => Ok(Json.obj("message" -> s"ServiceTask with ID '${taskID}' successfully updated"))
+                      case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
+                    }
+                }
+                case Failure(ex) => Future.successful(BadRequest(Json.obj("message" -> ex.getMessage)))
+              }
+            }
+            case None => Future.successful(NotFound(
+              Json.obj("message" -> s"Service Task with ID: ${taskID} does not exist"))
+            )
+          }
+        }
+      )
+    )
+  }
+
+  private def legalServiceToJson(ls: LegalService): JsObject = {
+    val serviceJson = Json.obj("id" -> ls._id.get.stringify, "lawyerID" -> ls.lawyerID,
+      "category" -> ls.category, "name" -> ls.name, "description" -> ls.description,
+      "price" -> ls.price, "estimation" -> ls.estimation, "tasks" -> ls.tasks)
+    serviceJson
   }
 
   def withLegalService(id: String, accID: String, f: LegalService => Future[Result]): Future[Result] = {

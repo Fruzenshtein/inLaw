@@ -21,7 +21,7 @@ object Comment {
   implicit val commentFormat = Json.format[Comment]
 }
 
-case class ServiceTask(id: Option[String] = Some(Random.alphanumeric.take(12).mkString),
+case class ServiceTask(id: String = Random.alphanumeric.take(12).mkString,
                        name: String,
                        description: String,
                        requiredInfo: String)

@@ -275,22 +275,6 @@ object LawyerService {
       }
       case Failure(reason) => Logger.info("Failure: Total experience wan not defined")
     }
-/*
-    totalExperience map {
-      case total: Int => {
-        Logger.info(s"Total experience is $total")
-        val updateTotalExp = Json.obj(
-          "$set" -> Json.obj(
-            "experience.total" -> total)
-        )
-        collection.update(
-          Json.obj("email" -> email),
-          updateTotalExp
-        )
-      }
-      case _ => Logger.info("Total experience wan not Int")
-    }
-*/
   }
 
   def addLawyerCompetence(email: String, competence: String) = {

@@ -39,7 +39,7 @@ trait LegalServiceForms extends CommonValidators {
     )(LegalServiceEdit.apply)(LegalServiceEdit.unapply)
   )
 
-  val addTask = Form(
+  val taskInfo = Form(
     mapping(
       "name" -> nonEmptyText(maxLength = 40),
       "description" -> nonEmptyText(maxLength = 1024),

@@ -107,4 +107,26 @@ object LegalServiceService {
     }
   }
 
+  def deleteTask(id: String, lawyerID: String, taskID: String) = {
+    val deleteTask = Json.obj(
+      "$pull" -> Json.obj(
+        "tasks" -> Json.obj("id" -> taskID)
+      )
+    )
+    collection.update(
+      Json.obj("_id" -> Json.obj("$oid" -> id), "lawyerID" -> lawyerID),
+      deleteTask
+    ) map {
+      case operation if (operation.ok  && operation.updated > 0) => {
+        val message = s"ServiceTask with id '${taskID}' successfully deleted"
+        Logger.info(message)
+        Success(message)
+      }
+      case operation if (!operation.ok) => {
+        Logger.error(s"ServiceTask was not deleted due: ${operation.errMsg.get}")
+        Failure(new Exception(operation.errMsg.get))
+      }
+    }
+  }
+
 }
