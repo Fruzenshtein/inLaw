@@ -227,6 +227,33 @@ object LegalServiceController extends Controller with Security with LegalService
     )
   }
 
+  @ApiOperation(
+    nickname = "serviceTasks",
+    value = "Delete service task",
+    notes = "Delete service task from legal service",
+    httpMethod = "DELETE",
+    response = classOf[models.swagger.InformationMessage])
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "ServiceTask with ID $taskID successfully deleted"),
+    new ApiResponse(code = 400, message = "Legal Service must contain at least one Task"),
+    new ApiResponse(code = 404, message = "Legal Service with id: $id does not exist")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
+  ))
+  def deleteServiceTask(@QueryParam("id") id: String, @QueryParam("taskID") taskID: String) = isAuthenticated {
+    implicit acc => implicit request => withLegalService(id, acc._id.get.stringify, implicit service => {
+      service.tasks.length match {
+        case length: Int if (length > 1) => {
+          LegalServiceService.deleteTask(id, acc._id.get.stringify, taskID) map {
+            case Success(msg) => Ok(Json.obj("message" -> s"ServiceTask with ID '${taskID}' successfully deleted"))
+            case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
+          }
+        }
+        case _ => Future.successful(BadRequest(Json.obj("message" -> "Legal Service must contain at least one Task")))
+      }
+    })
+  }
+
   private def legalServiceToJson(ls: LegalService): JsObject = {
     val serviceJson = Json.obj("id" -> ls._id.get.stringify, "lawyerID" -> ls.lawyerID,
       "category" -> ls.category, "name" -> ls.name, "description" -> ls.description,
