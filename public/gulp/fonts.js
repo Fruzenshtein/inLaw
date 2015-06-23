@@ -1,30 +1,16 @@
 'use strict';
 var paths = require('./path');
-var gulp = require('gulp'),
-    merge = require('merge-stream');
+var gulp = require('gulp');
+var notify = require('gulp-notify');
 
 gulp.task("fonts", function () {
     gulp.src(paths.fonts)
-        .pipe(gulp.dest(paths.dist + "fonts/"));
+        .pipe(gulp.dest(paths.dist + "fonts/"))
+        .pipe(notify({
+            title: "GULP FONTS",
+            message: "*** FONTS TASK COMPLETED ***",
+            notifier: function (options, callback) {
+                // empty function to avoid system pop-up notifier
+            }
+        }));
 });
-
-
-/*
- //TODO: need to be wreritted to merged stream
- gulp.task("fonts", function () {
- var fontsStream = gulp.src(paths.fonts)
- .pipe(gulp.dest(paths.dist + "fonts/"))
- .on('error', function (error) {
- console.error('FontsTask: ' + error);
- });
- // TODO: semantic UI (themes, fonts) should be rebuilded to "custom" path
- var semanticFontsStream = gulp.src(paths.themes)
- .pipe(gulp.dest(paths.dist + "stylesheets/themes/"))
- .on('error', function (error) {
- console.error('Themes task: ' + error);
- });
-
- return merge(semanticFontsStream, fontsStream);
-
- });
- */

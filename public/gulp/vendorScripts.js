@@ -13,6 +13,12 @@ gulp.task('vendorScripts', function() {
         .pipe(gulpif(false, rename({suffix: '.min'})))
         .pipe(gulpif(false, uglify()))
         .pipe(gulp.dest(paths.dist + "javascripts/"))
-        .pipe(notify({ message: 'VendorScripts task completed' }));
+        .pipe(notify({
+            title: "GULP VENDOR JS",
+            message: "*** VENDOR JS TASK COMPLETED ***",
+            notifier: function (options, callback) {
+                // empty function to avoid system pop-up notifier
+            }
+        }));
 
 });

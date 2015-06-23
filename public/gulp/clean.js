@@ -5,5 +5,6 @@ var gulp = require('gulp'),
 
 gulp.task('clean', function () {
     // delete all content in the build folder
-    del([paths.dist])
+    // TODO: throws an exception if user @paths variable
+    del('/build/**/*');
 });

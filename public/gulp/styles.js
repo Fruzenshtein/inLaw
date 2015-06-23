@@ -13,5 +13,11 @@ gulp.task('styles', function() {
         .pipe(gulpif(false, rename({suffix: '.min'})))
         .pipe(gulpif(false, minifycss()))
         .pipe(gulp.dest(paths.dist + "stylesheets/"))
-        .pipe(notify({ message: 'Styles task completed' }));
+        .pipe(notify({
+            title: "GULP STYLES",
+            message: "*** STYLES TASK COMPLETED ***",
+            notifier: function (options, callback) {
+                // empty function to avoid system pop-up notifier
+            }
+        }));
 });

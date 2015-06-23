@@ -13,5 +13,11 @@ gulp.task('vendorStyles', function() {
         .pipe(gulpif(false, rename({suffix: '.min'})))
         .pipe(gulpif(false, minifycss()))
         .pipe(gulp.dest(paths.dist + "stylesheets/"))
-        .pipe(notify({ message: 'VendorStyles task completed' }));
+        .pipe(notify({
+            title: "GULP VENDOR CSS",
+            message: "*** VENDOR CSS TASK COMPLETED ***",
+            notifier: function (options, callback) {
+                // empty function to avoid system pop-up notifier
+            }
+        }));
 });

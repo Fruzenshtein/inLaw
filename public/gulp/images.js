@@ -13,5 +13,11 @@ gulp.task('images', function () {
             use: [pngquant()]
         }))
         .pipe(gulp.dest(paths.dist + "images/"))
-        .pipe(notify({ message: 'Images task completed' }));
+        .pipe(notify({
+            title: "GULP IMAGE",
+            message: "*** IMAGES TASK COMPLETED ***",
+            notifier: function (options, callback) {
+              // empty function to avoid system pop-up notifier
+            }
+        }));
 });

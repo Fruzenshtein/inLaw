@@ -70,19 +70,6 @@ input[type="range"]::-ms-thumb {
     border: 0;
     background: linear-gradient(transparent,rgba(0,0,0,.05))#fff;
 }
-/* Overwriting of Semantic stales */
-.tab-content {
-    border-radius: 0 !important;
-    box-shadow: none !important;
-}
-/* Overwriting of Semantic stales */
-.ui-select-tagging  input {
-    border: none !important;
-}
-
-.ui-select-tagging {
-    height: auto !important;
-}
 .empty-section {
     background: #fff url('../images/briefcase.png') no-repeat center;
     height: 300px;
@@ -160,6 +147,19 @@ input[type="range"]::-ms-thumb {
     border: none;
 }
 
+/* Overwriting of Semantic stales */
+.tab-content {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+/* Overwriting of Semantic stales */
+.ui-select-tagging  input {
+    border: none !important;
+}
+
+.ui-select-tagging {
+    height: auto !important;
+}
 
 body {
     background-image: url('../../../assets/build/images/Treestone.jpg');

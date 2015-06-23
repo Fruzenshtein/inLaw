@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    "dist": "./build/",
+    "dist": "build/",
     "vendorScripts": [
         'bower_components/jquery/dist/jquery.js',
         'bower_components/angular/angular.js',
@@ -21,13 +21,12 @@ module.exports = {
         'app/**/*.js'
     ],
     "fonts": [
-        'fonts/*.*',
-
+        'fonts/*.*'
     ],
     "themes": [
         'bower_components/semantic-ui/dist/themes/**'
     ],
-    "templates": ['app/**/*.html'],
+    "templates": ['app/**/**/*.html'],
     "images": ['images/*.*'],
     "styles": ['app/**/*.css'],
     "vendorStyle": [
