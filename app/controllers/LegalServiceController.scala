@@ -210,7 +210,7 @@ object LegalServiceController extends Controller with Security with LegalService
               LegalServiceService.deleteTask(id, lawyerId, taskID) flatMap {
                 case Success(msg) => {
                   LegalServiceService.addTask(id, lawyerId,
-                    ServiceTask(id, dto.name, dto.description, dto.requiredInfo)) map {
+                    ServiceTask(taskID, dto.name, dto.description, dto.requiredInfo)) map {
                       case Success(msg) => Ok(Json.obj("message" -> s"ServiceTask with ID '${taskID}' successfully updated"))
                       case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
                     }
@@ -242,14 +242,18 @@ object LegalServiceController extends Controller with Security with LegalService
   ))
   def deleteServiceTask(@QueryParam("id") id: String, @QueryParam("taskID") taskID: String) = isAuthenticated {
     implicit acc => implicit request => withLegalService(id, acc._id.get.stringify, implicit service => {
-      service.tasks.length match {
-        case length: Int if (length > 1) => {
-          LegalServiceService.deleteTask(id, acc._id.get.stringify, taskID) map {
-            case Success(msg) => Ok(Json.obj("message" -> s"ServiceTask with ID '${taskID}' successfully deleted"))
-            case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
+      service.tasks.find(t => t.id == taskID) match {
+        case Some(task) =>
+          service.tasks.length match {
+          case length: Int if (length > 1) => {
+            LegalServiceService.deleteTask (id, acc._id.get.stringify, taskID) map {
+              case Success (msg) => Ok (Json.obj ("message" -> s"ServiceTask with ID '${taskID}' successfully deleted") )
+              case Failure (ex) => BadRequest (Json.obj ("message" -> ex.getMessage) )
+            }
           }
-        }
-        case _ => Future.successful(BadRequest(Json.obj("message" -> "Legal Service must contain at least one Task")))
+          case _ => Future.successful (BadRequest (Json.obj ("message" -> "Legal Service must contain at least one Task")))
+          }
+        case None => Future.successful (NotFound (Json.obj ("message" -> s"Legal Task with id: ${taskID} does not exist")))
       }
     })
   }
