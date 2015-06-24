@@ -1,5 +1,5 @@
 
 body {
-    background-image: url('../../../assets/build/images/Treestone.jpg');
+    background: #FCFCFC url('../../../assets/build/images/bg.jpg') repeat;
     height: 100%;
 }

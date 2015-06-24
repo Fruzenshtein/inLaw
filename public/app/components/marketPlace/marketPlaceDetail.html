@@ -1,82 +1,78 @@
 <div class="ui segment">
     <h3 class="ui center aligned column">Create a legal service</h3>
     <div class="ui clearing divider"></div>
+    <div class="ui fluid action huge input">
+        <input type="text"
+               placeholder="Create legal issue..."
+               ng-model="taskTitle.title">
+        <button class="ui button" ng-click="addNewTask()">Add</button>
+    </div>
+    <div class="ui clearing divider"></div>
     <div class="ui sixteen column middle aligned relaxed fitted stackable grid">
         <div class="six wide column">
-            <div class="ui list">
-                <div class="item">
-                    <div class="ui card">
+            <div class="ui fluid vertical steps">
+                <div ng-repeat="task in tasksInLegalIssue track by $index">
+                    <div class="step"
+                         ng-click="taskStatus.isActive = !taskStatus.isActive; getElement(task)"
+                         ng-class="{active : taskStatus.isActive}">
+                        <i class="tasks icon"></i>
                         <div class="content">
-                            <i class="right floated star icon"></i>
-                            <div class="header">Task #1</div>
-                            <div class="description">
-                                <p></p>
-                            </div>
-                        </div>
-                        <div class="extra content">
-                            <span class="left floated like">
-                                <i class="save icon"></i>
-                                Save
-                            </span>
-                            <span class="right floated star">
-                               <i class="write icon"></i>
-                              Edit
-                            </span>
+                            <div class="title">{{task.title}}</div>
                         </div>
                     </div>
                 </div>
-                <div class="item">
-                    <div class="ui card">
-                        <div class="content">
-                            <i class="right floated star icon"></i>
-                            <div class="header">Task #2</div>
-                            <div class="description">
-                                <p></p>
-                            </div>
-                        </div>
-                        <div class="extra content">
-                            <span class="left floated like">
-                                <i class="save icon"></i>
-                                Save
-                            </span>
-                            <span class="right floated star">
-                               <i class="write icon"></i>
-                              Edit
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            <div>
+            </div>
         </div>
-    </div>
-</div>
         <div class="ten wide column top aligned">
-            <section id="todoapp" class="ui form segment inactive tab-content">
-                <section class="">
+            <section class="ui form segment inactive tab-content">
+                <section class="menu-controls">
+                    <div class="ui text menu">
+                        <a class="active item">
+                            <i class="save icon"></i> Save
+                        </a>
+                        <a class="item">
+                            <i class="edit icon"></i> Edit
+                        </a>
+                        <a class="item">
+                            <i class="remove icon"></i> Remove
+                        </a>
+                    </div>
+                </section>
+                <p></p>
+                <section ng-show="taskDetail">
                     <div class="ui divided items">
                         <div class="item">
                             <header id="header">
                                 <div class="ui fluid icon input">
                                     <label>Task</label>
-                                    <input type="text" placeholder="Add task name for legal issue">
+                                    <input type="text"
+                                           ng-model="taskDetail.title"
+                                           placeholder="Add task name for legal issue">
                                 </div>
                             </header>
                         </div>
                         <div class="item">
                             <label>What is included?</label>
-                            <textarea placeholder="What will be done for particular task"></textarea>
+                            <textarea
+                                    ng-model="taskDetail.description"
+                                    placeholder="What will be done for particular task"></textarea>
                         </div>
                         <div class="item">
                             <label>What is NOT included?</label>
-                            <textarea placeholder="What will not be done for particular task"></textarea>
+                            <textarea
+                                    ng-model="taskDetail.description2"
+                                    placeholder="What will not be done for particular task"></textarea>
                         </div>
                         <div class="item">
                             <label>What is required from a client?</label>
-                            <textarea placeholder="What have to be provided from the client?"></textarea>
+                            <textarea
+                                    ng-model="taskDetail.required"
+                                    placeholder="What have to be provided from the client?"></textarea>
                         </div>
                     </div>
                 </section>
             </section>
         </div>
-        </div>
     </div>
+</div>
+
