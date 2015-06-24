@@ -198,32 +198,27 @@ object LegalServiceController extends Controller with Security with LegalService
   { implicit acc => implicit request =>
     val lawyerId = acc._id.get.stringify
     withLegalService(id, lawyerId, implicit service =>
+      taskExist(taskID, implicit task => {
       taskInfo.bindFromRequest fold(
         formWithErrors => {
           Logger.info("Legal Task was with ERRORS")
           Future.successful(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
         },
         dto => {
-          service.tasks.find( task => task.id == taskID) match {
-            case Some(serviceTask) => {
-              Logger.info(s"Update of Service Task with id: ${taskID}")
-              LegalServiceService.deleteTask(id, lawyerId, taskID) flatMap {
-                case Success(msg) => {
-                  LegalServiceService.addTask(id, lawyerId,
-                    ServiceTask(taskID, dto.name, dto.description, dto.requiredInfo)) map {
-                      case Success(msg) => Ok(Json.obj("message" -> s"ServiceTask with ID '${taskID}' successfully updated"))
-                      case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
-                    }
+          Logger.info(s"Update of Service Task with id: ${taskID}")
+          LegalServiceService.deleteTask(id, lawyerId, taskID) flatMap {
+            case Success(msg) => {
+              LegalServiceService.addTask(id, lawyerId,
+                ServiceTask(taskID, dto.name, dto.description, dto.requiredInfo)) map {
+                  case Success(msg) => Ok(Json.obj("message" -> s"ServiceTask with ID '${taskID}' successfully updated"))
+                  case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
                 }
-                case Failure(ex) => Future.successful(BadRequest(Json.obj("message" -> ex.getMessage)))
-              }
             }
-            case None => Future.successful(NotFound(
-              Json.obj("message" -> s"Service Task with ID: ${taskID} does not exist"))
-            )
+            case Failure(ex) => Future.successful(BadRequest(Json.obj("message" -> ex.getMessage)))
           }
         }
       )
+      })
     )
   }
 
@@ -241,20 +236,20 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
   ))
   def deleteServiceTask(@QueryParam("id") id: String, @QueryParam("taskID") taskID: String) = isAuthenticated {
-    implicit acc => implicit request => withLegalService(id, acc._id.get.stringify, implicit service => {
-      service.tasks.find(t => t.id == taskID) match {
-        case Some(task) =>
+    implicit acc => implicit request =>
+      val accID = acc._id.get.stringify
+      withLegalService(id, accID, implicit service => {
+        taskExist(taskID, implicit task => {
           service.tasks.length match {
-          case length: Int if (length > 1) => {
-            LegalServiceService.deleteTask (id, acc._id.get.stringify, taskID) map {
-              case Success (msg) => Ok (Json.obj ("message" -> s"ServiceTask with ID '${taskID}' successfully deleted") )
-              case Failure (ex) => BadRequest (Json.obj ("message" -> ex.getMessage) )
+            case length: Int if (length > 1) => {
+              LegalServiceService.deleteTask (id, accID, taskID) map {
+                case Success (msg) => Ok (Json.obj ("message" -> s"ServiceTask with ID '${taskID}' successfully deleted") )
+                case Failure (ex) => BadRequest (Json.obj ("message" -> ex.getMessage) )
+              }
             }
+            case _ => Future.successful (BadRequest (Json.obj ("message" -> "Legal Service must contain at least one Task")))
           }
-          case _ => Future.successful (BadRequest (Json.obj ("message" -> "Legal Service must contain at least one Task")))
-          }
-        case None => Future.successful (NotFound (Json.obj ("message" -> s"Legal Task with id: ${taskID} does not exist")))
-      }
+        })
     })
   }
 
@@ -265,7 +260,7 @@ object LegalServiceController extends Controller with Security with LegalService
     serviceJson
   }
 
-  def withLegalService(id: String, accID: String, f: LegalService => Future[Result]): Future[Result] = {
+  private def withLegalService(id: String, accID: String, f: LegalService => Future[Result]): Future[Result] = {
     LegalServiceService.findByIdAndLawyerId(id, accID) flatMap {
       case legalServiceOpt => {
         Logger.info(s"Searching Legal Service by its ID: ${id}")
@@ -278,6 +273,13 @@ object LegalServiceController extends Controller with Security with LegalService
           }
         }
       }
+    }
+  }
+
+  private def taskExist(taskID: String, f: ServiceTask => Future[Result])(implicit service: LegalService) = {
+    service.tasks.find(t => t.id == taskID) match {
+      case Some(task) => f(task)
+      case None => Future.successful (NotFound (Json.obj ("message" -> s"Legal Task with id: ${taskID} does not exist")))
     }
   }
 
