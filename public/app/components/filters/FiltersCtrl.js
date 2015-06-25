@@ -81,7 +81,7 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
             angular.forEach(data, function(elem, index) {
                 if (_.isNull(data[index]['avatar'])) {
                     // TODO add constant to CONSTANT object
-                    data[index]['avatar'] = 'assets/devbuild/images/mock_64.svg';
+                    data[index]['avatar'] = 'assets/build/images/mock_64.svg';
                 }
             });
             return data;

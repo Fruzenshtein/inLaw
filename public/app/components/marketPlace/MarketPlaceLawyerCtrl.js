@@ -4,6 +4,7 @@
 App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService',
   function ($scope, $http, MarketPlaceService) {
 
+    var taskCounter = 0;
     $scope.tasksInLegalIssue = [];
     $scope.allLegalIssues = [];
     $scope.taskTitle = {};
@@ -13,7 +14,10 @@ App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService'
 
     $scope.addNewTask = function() {
       var task = angular.copy($scope.taskTitle);
+      // assign ID to added task
+      task.id = taskCounter;
       $scope.tasksInLegalIssue.push(task);
+      taskCounter += 1;
     };
 
     $scope.getElement = function(obj) {

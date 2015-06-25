@@ -1432,7 +1432,7 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
             angular.forEach(data, function(elem, index) {
                 if (_.isNull(data[index]['avatar'])) {
                     // TODO add constant to CONSTANT object
-                    data[index]['avatar'] = 'assets/devbuild/images/mock_64.svg';
+                    data[index]['avatar'] = 'assets/build/images/mock_64.svg';
                 }
             });
             return data;
@@ -1747,11 +1747,20 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
 
 }]);
 'use strict';
+/* Controller */
+
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
+    function ($scope, $http, $userInfo, $rootScope, $state) {
+
+
+    }]);
+'use strict';
 /* Controller - part of My Account (manage legal services), visible for lawyer, not a user */
 
 App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService',
   function ($scope, $http, MarketPlaceService) {
 
+    var taskCounter = 0;
     $scope.tasksInLegalIssue = [];
     $scope.allLegalIssues = [];
     $scope.taskTitle = {};
@@ -1761,7 +1770,10 @@ App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService'
 
     $scope.addNewTask = function() {
       var task = angular.copy($scope.taskTitle);
+      // assign ID to added task
+      task.id = taskCounter;
       $scope.tasksInLegalIssue.push(task);
+      taskCounter += 1;
     };
 
     $scope.getElement = function(obj) {
@@ -1823,14 +1835,6 @@ App.controller('MarketPlace', [ '$scope', '$http',
 
     }]);
 
-'use strict';
-/* Controller */
-
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
-    function ($scope, $http, $userInfo, $rootScope, $state) {
-
-
-    }]);
 'use strict';
 /* Controller */
 
