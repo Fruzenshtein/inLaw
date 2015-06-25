@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var browserSync = require('browser-sync');
 
 
-gulp.task('bs', function() {
+gulp.task('browser-sync', function() {
   browserSync({
     // By default, Play is listening on port 9000
     proxy: '0.0.0.0:9000',
@@ -20,6 +20,7 @@ gulp.task('bs', function() {
       paths.images,
       paths.templates
     ],
+    // Log all information about tasks of BS
     logLevel: "debug",
     // Log information about changed files
     logFileChanges: true,
@@ -33,10 +34,10 @@ function reportChange(event){
 }
 
 // Return task if something was changed
-gulp.task('watch', function() {
+gulp.task('watch', ['browser-sync'], function() {
     gulp.watch(paths.scripts, ['scripts', browserSync.reload])
         .on('change', reportChange);
-    gulp.watch(paths.styles, ['styles', 'bs'])
+    gulp.watch(paths.styles, ['styles', browserSync.reload])
         .on('change', reportChange);
     gulp.watch(paths.fonts, ['fonts', browserSync.reload])
         .on('change', reportChange);
