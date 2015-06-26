@@ -1,3 +1,40 @@
 .menu-controls {
     border-bottom: 1px solid rgba(22, 164, 208, 0.1);
 }
+
+#add-market-task {
+    background-color: rgba(0,0,0,0);
+    border: none;
+    color: #404040;
+    font-size: 18px;
+    font-weight: normal;
+    height: 46px;
+    margin-left: 13px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    padding: 0 13px;
+    width: 353px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+#wrap-add-market-task {
+    background-color: #f0f0f0;
+    bottom: 0;
+    height: 106px;
+    width: auto;
+    z-index: 1;
+    -webkit-box-shadow: rgba(0,0,0,0.15) 0 10px 20px 0,rgba(0,0,0,0.3) 0 0 30px 0;
+    box-shadow: rgba(0,0,0,0.15) 0 10px 20px 0,rgba(0,0,0,0.3) 0 0 10px 0;
+    margin-bottom: 40px;
+}
+
+#add-market-task-button {
+    background-color: transparent;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#add-market-task-button > i {
+    font-size: 3em;
+}
