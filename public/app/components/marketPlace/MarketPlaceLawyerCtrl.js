@@ -8,9 +8,6 @@ App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService'
     $scope.tasksInLegalIssue = [];
     $scope.allLegalIssues = [];
     $scope.taskTitle = {};
-    this.taskStatus =  {
-      isActive: false
-    };
 
     $scope.addNewTask = function() {
       var task = angular.copy($scope.taskTitle);
@@ -18,10 +15,15 @@ App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService'
       task.id = taskCounter;
       $scope.tasksInLegalIssue.push(task);
       taskCounter += 1;
+      // clear input after adding the task
+      $scope.taskTitle.title = '';
     };
 
-    $scope.getElement = function(obj) {
+    $scope.getElement = function(obj, index) {
+      // Save information about selected object for ng-class
+      // and for Detail section
       $scope.taskDetail = obj;
+      $scope.taskDetail.index = index;
     };
 
     $scope.removeTask = function(obj) {

@@ -30,9 +30,18 @@
 }
 
 #add-market-task-button {
+    border: none;
     background-color: transparent;
     margin-top: 20px;
     margin-bottom: 20px;
+}
+
+#add-market-task-button:hover {
+    color: rgba(0, 0, 0, 0.8);
+}
+
+#add-market-task-button:disabled {
+    background-color: transparent !important;
 }
 
 #add-market-task-button > i {

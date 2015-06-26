@@ -10,7 +10,7 @@
         <i class="idea icon"></i>
         <div class="content">
             <div class="title">Create</div>
-            <div class="description">Create new leggal issue</div>
+            <div class="description">Create new legal issue</div>
         </div>
     </div>
     <div class="disabled step">
@@ -22,15 +22,17 @@
     </div>
 </div>
 <div class="ui segment">
-    <h3 class="ui center aligned column">Create a legal service</h3>
+    <h3 class="ui center aligned column">CREATE A LEGAL SERVICE</h3>
     <div class="ui clearing divider"></div>
     <div class="ui fluid action huge input" id="wrap-add-market-task">
         <input type="text" id="add-market-task"
-               placeholder="Create legal issue..."
+               placeholder="Put a name of new task..."
                ng-model="taskTitle.title">
-        <div class="ui button" id="add-market-task-button" ng-click="addNewTask()">
+        <button class="ui button" id="add-market-task-button"
+                ng-disabled="!taskTitle.title"
+                ng-click="addNewTask()">
             <i class="plus icon"></i>
-        </div>
+        </button>
     </div>
     <div ng-if="!tasksInLegalIssue.length">
         <div class="content">
@@ -56,8 +58,8 @@
             <div class="ui fluid vertical steps">
                 <div ng-repeat="task in tasksInLegalIssue track by $index">
                     <div class="step"
-                         ng-click="taskStatus.isActive = !taskStatus.isActive; getElement(task)"
-                         ng-class="{active : taskStatus.isActive}">
+                         ng-click="getElement(task, $index)"
+                         ng-class="{active : $index == taskDetail.index}">
                         <i class="tasks icon"></i>
                         <div class="content">
                             <div class="title">{{task.title}}</div>
@@ -68,17 +70,24 @@
         </div>
         <div class="ten wide column top aligned">
             <section class="ui form segment inactive tab-content">
+                <div class="column center aligned" ng-show="!taskDetail">
+                    <i class="massive folder outline icon"></i>
+                    <h3>Let's start! Open the task to modify.</h3>
+                </div>
                 <section ng-show="taskDetail">
                     <section class="menu-controls">
                         <div class="ui text menu">
-                            <a class="active item">
+                            <a class="item">
                                 <i class="save icon"></i> Save
                             </a>
                             <a class="item">
                                 <i class="edit icon"></i> Edit
                             </a>
                             <a class="item" ng-click="removeTask(taskDetail)">
-                                <i class="remove icon"></i> Remove
+                                <i class="trash icon"></i> Remove
+                            </a>
+                            <a class="item" ng-click="getElement()">
+                                <i class="remove icon"></i> Close
                             </a>
                         </div>
                     </section>
