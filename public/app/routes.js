@@ -139,7 +139,7 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
                 requireLogin: false
             }
         }).state('marketPlaceLawyerView', {
-            url: "/market",
+            url: "/legal-services",
             views: {
                 "mainView": {
                     templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceList.html',
@@ -152,10 +152,10 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             data: {
                 requireLogin: true
             }
-        }).state('marketPlaceLawyerCreate', {
-            url: "/market/create",
+        }).state('marketPlaceLawyerView.marketPlaceLawyerCreate', {
+            url: "/create",
             views: {
-                "mainView": {
+                "mainView@": {
                     templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html',
                     controller: 'MarketPlaceLawyerCtrl'
                 }
@@ -163,6 +163,17 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
             data: {
                 requireLogin: true
             }
+        }).state('marketPlaceLawyerEdit', {
+          url: "/legal-services/modify/:id",
+          views: {
+            "mainView": {
+              templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html',
+              controller: 'MarketPlaceLawyerCtrl'
+            }
+          },
+          data: {
+            requireLogin: true
+          }
         });
         // Without server side support html5 must be disabled.
         return $locationProvider.html5Mode(false);

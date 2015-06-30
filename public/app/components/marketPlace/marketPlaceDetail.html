@@ -2,8 +2,11 @@
     <div class="step">
         <i class="browser icon"></i>
         <div class="content">
-            <div class="title">Market Place</div>
-            <div class="description">List of your issues</div>
+            <a ui-sref="marketPlaceLawyerView">
+                <div class="title">Market Place</div>
+                <div class="description">List of your issues</div>
+            </a>
+
         </div>
     </div>
     <div class="active step">
@@ -34,7 +37,7 @@
             <i class="plus icon"></i>
         </button>
     </div>
-    <div ng-if="!tasksInLegalIssue.length">
+    <div ng-if="!legalServiceTasks.length">
         <div class="content">
             <h4 class="center aligned column">How it works diagram...</h4>
             <img class="ui small left floated image" src="assets/build/images/mock_64.svg">
@@ -53,10 +56,10 @@
             </p>
             </div>
     </div>
-    <div class="ui sixteen column middle aligned relaxed fitted stackable grid" ng-if="tasksInLegalIssue.length">
+    <div class="ui sixteen column middle aligned relaxed fitted stackable grid" ng-if="legalServiceTasks.length">
         <div class="six wide column">
             <div class="ui fluid vertical steps">
-                <div ng-repeat="task in tasksInLegalIssue track by $index">
+                <div ng-repeat="task in legalServiceTasks track by $index">
                     <div class="step"
                          ng-click="getElement(task, $index)"
                          ng-class="{active : $index == taskDetail.index}">
@@ -66,21 +69,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="ui header">
+                <button class="ui button fluid">Confirm</button>
+                </div>
             </div>
         </div>
         <div class="ten wide column top aligned">
-            <section class="ui form segment inactive tab-content">
+            <div class="ui form segment inactive tab-content">
                 <div class="column center aligned" ng-show="!taskDetail">
                     <i class="massive folder outline icon"></i>
                     <h3>Let's start! Open the task to modify.</h3>
                 </div>
-                <section ng-show="taskDetail">
-                    <section class="menu-controls">
+                <div ng-show="taskDetail">
+                    <div class="menu-controls">
                         <div class="ui text menu">
-                            <a class="item">
+                            <a class="item" ng-click="saveLegalIssueToStorage()">
                                 <i class="save icon"></i> Save
                             </a>
-                            <a class="item">
+                            <a class="item" ng-click="formStatus.isEditModeOpen = !formStatus.isEditModeOpen">
                                 <i class="edit icon"></i> Edit
                             </a>
                             <a class="item" ng-click="removeTask(taskDetail)">
@@ -90,39 +96,43 @@
                                 <i class="remove icon"></i> Close
                             </a>
                         </div>
-                    </section>
-                    <div class="ui divided items">
-                        <div class="item">
-                            <header id="header">
-                                <div class="ui fluid icon input">
-                                    <label>Task</label>
-                                    <input type="text"
-                                           ng-model="taskDetail.title"
-                                           placeholder="Add task name for legal issue">
-                                </div>
-                            </header>
-                        </div>
-                        <div class="item">
-                            <label>What is included?</label>
-                            <textarea
-                                    ng-model="taskDetail.included"
-                                    placeholder="What will be done for particular task"></textarea>
-                        </div>
-                        <div class="item">
-                            <label>What is NOT included?</label>
-                            <textarea
-                                    ng-model="taskDetail.excluded"
-                                    placeholder="What will not be done for particular task"></textarea>
-                        </div>
-                        <div class="item">
-                            <label>What is required from a client?</label>
-                            <textarea
-                                    ng-model="taskDetail.required"
-                                    placeholder="What have to be provided from the client?"></textarea>
-                        </div>
                     </div>
-                </section>
-            </section>
+                    <fieldset class="remove-fieldset"
+                              ng-disabled="!formStatus.isEditModeOpen"
+                              ng-class="{disabled: !formStatus.isEditModeOpen, field: !formStatus.isEditModeOpen}">
+                        <div class="ui divided items">
+                            <div class="item">
+                                <header id="header">
+                                    <div class="ui fluid icon input">
+                                        <label>Name of the task</label>
+                                        <input type="text"
+                                               ng-model="taskDetail.title"
+                                               placeholder="Add task name for legal issue">
+                                    </div>
+                                </header>
+                            </div>
+                            <div class="item">
+                                <label>What is included?</label>
+                                <textarea
+                                        ng-model="taskDetail.included"
+                                        placeholder="What will be done for particular task"></textarea>
+                            </div>
+                            <div class="item">
+                                <label>What is NOT included?</label>
+                                <textarea
+                                        ng-model="taskDetail.excluded"
+                                        placeholder="What will not be done for particular task"></textarea>
+                            </div>
+                            <div class="item">
+                                <label>What is required from a client?</label>
+                                <textarea
+                                        ng-model="taskDetail.required"
+                                        placeholder="What have to be provided from the client?"></textarea>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
         </div>
     </div>
 </div>

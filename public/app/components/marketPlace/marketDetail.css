@@ -1,5 +1,6 @@
 .menu-controls {
-    border-bottom: 1px solid rgba(22, 164, 208, 0.1);
+    border-bottom: 2px solid rgba(22, 164, 208, 0.1);
+    margin-bottom: 20px;
 }
 
 #add-market-task {
