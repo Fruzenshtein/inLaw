@@ -7,6 +7,8 @@ case class LegalService(id: String,
                         lawyerID: String,
                         category: String,
                         name: String,
-                        description: String,
                         price: Int,
-                        estimation: Long)
+                        estimation: Long,
+                        included: Seq[String],
+                        excluded: Seq[String],
+                        required: Seq[String])

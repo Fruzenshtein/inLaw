@@ -32,7 +32,7 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiResponse(code = 400, message = "Bad arguments")))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
-    new ApiImplicitParam(value = "Legal Service object which will be added", required = true, dataType = "models.swagger.LegalServiceDTO", paramType = "body")))
+    new ApiImplicitParam(value = "Legal Service object which will be added", required = true, dataType = "models.marketplace.LegalServiceDTO", paramType = "body")))
   def addLegalService = isAuthenticated {
     implicit acc => implicit request => {
       legalServiceInfo.bindFromRequest fold(
@@ -89,7 +89,7 @@ object LegalServiceController extends Controller with Security with LegalService
   ))
   def getLawyerLegalService(@QueryParam("id") id: String) = isAuthenticated {implicit acc => implicit request =>
     withLegalService(id, acc._id.get.stringify, implicit service => {
-      val legalServiceJSON =  legalServiceToJson(service)
+      val legalServiceJSON = legalServiceToJson(service)
       Future.successful(Ok(Json.toJson(legalServiceJSON)))
     })
   }
@@ -129,7 +129,7 @@ object LegalServiceController extends Controller with Security with LegalService
   ))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
-    new ApiImplicitParam(value = "Legal Service object which will be added", required = true, dataType = "models.marketplace.LegalServiceEdit", paramType = "body")
+    new ApiImplicitParam(value = "Legal Service object which will be added", required = true, dataType = "models.marketplace.LegalServiceDTO", paramType = "body")
   ))
   def updateLegalService(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
     withLegalService(id, acc._id.get.stringify, implicit service =>
@@ -151,8 +151,8 @@ object LegalServiceController extends Controller with Security with LegalService
 
   private def legalServiceToJson(ls: LegalService): JsObject = {
     val serviceJson = Json.obj("id" -> ls._id.get.stringify, "lawyerID" -> ls.lawyerID,
-      "category" -> ls.category, "name" -> ls.name, "description" -> ls.description,
-      "price" -> ls.price, "estimation" -> ls.estimation)
+      "category" -> ls.category, "name" -> ls.name, "price" -> ls.price, "estimation" -> ls.estimation,
+      "included" -> ls.included, "excluded" -> ls.excluded, "required" -> ls.required)
     serviceJson
   }
 

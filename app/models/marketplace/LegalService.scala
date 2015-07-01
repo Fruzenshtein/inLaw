@@ -12,9 +12,11 @@ case class LegalService(_id: Option[BSONObjectID],
                         lawyerID: String,
                         category: String,
                         name: String,
-                        description: String,
                         price: Int,
-                        estimation: Long)
+                        estimation: Long,
+                        included: Seq[String],
+                        excluded: Seq[String],
+                        required: Seq[String])
 
 object LegalService {
 
@@ -23,9 +25,11 @@ object LegalService {
     (JsPath \ "lawyerID").write[String] and
     (JsPath \ "category").write[String] and
     (JsPath \ "name").write[String] and
-    (JsPath \ "description").write[String] and
     (JsPath \ "price").write[Int] and
-    (JsPath \ "estimation").write[Long]
+    (JsPath \ "estimation").write[Long] and
+    (JsPath \ "included").write[Seq[String]] and
+    (JsPath \ "excluded").write[Seq[String]] and
+    (JsPath \ "required").write[Seq[String]]
   )(unlift(LegalService.unapply))
 
   implicit val legalServiceReads: Reads[LegalService] = (
@@ -33,9 +37,11 @@ object LegalService {
     (JsPath \ "lawyerID").read[String] and
     (JsPath \ "category").read[String] and
     (JsPath \ "name").read[String] and
-    (JsPath \ "description").read[String] and
     (JsPath \ "price").read[Int] and
-    (JsPath \ "estimation").read[Long]
+    (JsPath \ "estimation").read[Long] and
+    (JsPath \ "included").read[Seq[String]] and
+    (JsPath \ "excluded").read[Seq[String]] and
+    (JsPath \ "required").read[Seq[String]]
   )(LegalService.apply _)
 
   def createLegalService(dto: LegalServiceDTO, lawyerID: String) = {
@@ -44,9 +50,11 @@ object LegalService {
       lawyerID,
       dto.category,
       dto.name,
-      dto.description,
       dto.price,
-      dto.estimation
+      dto.estimation,
+      dto.included,
+      dto.excluded,
+      dto.required
     )
     legalService
   }

@@ -65,9 +65,11 @@ object LegalServiceService {
       "$set" -> Json.obj(
         "category" -> dto.category,
         "name" -> dto.name,
-        "description" -> dto.description,
         "price" -> dto.price,
-        "estimation" -> dto.estimation)
+        "estimation" -> dto.estimation,
+        "included" -> dto.included,
+        "excluded" -> dto.excluded,
+        "required" -> dto.required)
     )
     collection.update(
       Json.obj("_id" -> Json.obj("$oid" -> id), "lawyerID" -> lawyerID),

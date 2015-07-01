@@ -5,6 +5,8 @@ package models.marketplace
  */
 case class LegalServiceDTO(category: String,
                            name: String,
-                           description: String,
                            price: Int,
-                           estimation: Long)
+                           estimation: Long,
+                           included: Seq[String],
+                           excluded: Seq[String],
+                           required: Seq[String])

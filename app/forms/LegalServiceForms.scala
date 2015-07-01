@@ -14,9 +14,11 @@ trait LegalServiceForms extends CommonValidators {
     mapping(
       "category" -> nonEmptyText(maxLength = 40),
       "name" -> nonEmptyText(maxLength = 40),
-      "description" -> nonEmptyText(maxLength = 1024),
       "price" -> number(min = 0),
-      "estimation" -> longNumber(min = 3600)
+      "estimation" -> longNumber(min = 3600),
+      "included" ->seq(nonEmptyText(maxLength = 240)),
+      "excluded" ->seq(nonEmptyText(maxLength = 240)),
+      "required" ->seq(nonEmptyText(maxLength = 240))
     )(LegalServiceDTO.apply)(LegalServiceDTO.unapply)
   )
 
