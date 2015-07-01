@@ -15,6 +15,33 @@ App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService'
       isEditModeOpen: false
     };
 
+    //Show appropriate wizard (animation) based on selected url
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+      $scope.wizardStatus = {};
+      switch (toState.url) {
+        case '/legal-services':
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = true;
+          $scope.wizardStatus.step3 = true;
+          break;
+        case '/create':
+            console.log(2);
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = false;
+          $scope.wizardStatus.step3 = true;
+          break;
+        case '/confirm':
+          console.log(3);
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = false;
+          $scope.wizardStatus.step3 = false;
+          break;
+        default:
+          console.log(4);
+          break;
+      }
+    });
+
     $scope.addNewTask = function() {
       var task = angular.copy($scope.taskTitle);
       // assign ID to added task

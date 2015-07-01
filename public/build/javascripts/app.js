@@ -4,179 +4,188 @@
 var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSanitize', 'ngSlider'])
     .config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function ($stateProvider, $locationProvider, $urlRouterProvider) {
 
-        $urlRouterProvider.otherwise("/"); // root route
+      $urlRouterProvider.otherwise("/"); // root route
 
-        $stateProvider.state('myAccount', {
-            url: '/myAccount',
-            views: {
-                "mainView": {
-                    "templateUrl": 'assets/build/assets/components/myAccount/myAccount.html',
-                    "controller": 'LandingPageCtrl'
-                }
-            },
-            data: {
-                requireLogin: true
-            }
-        }).state('homePage', {
-            url: "/",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/home/home.html',
-                    controller: 'HomeCtrl'
-                }
-            },
-            data: {
-                requireLogin: false
-            }
-        }).state('registration', {
-            url: "/registration",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/registration/registration.html',
-                    controller: 'RegistrationCtrl'
-                }
-            },
-            data: {
-                requireLogin: false
-            }
-        }).state('login', {
-            url: "/login",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/login/login.html',
-                    controller: 'LoginCtrl'
-                }
-            },
-            data: {
-                requireLogin: false
-            }
-        }).state('profile', {
-            url: "/profile",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/profile/profile.html',
-                    controller: 'ProfileCtrl'
-                }
-            },
-            data: {
-                requireLogin: true
-            }
-        }).state('contacts', {
-            url: "/contacts",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/contacts/contacts.html',
-                    controller: 'ContactsCtrl'
-                }
-            },
-            data: {
-                requireLogin: true
-            }
-        }).state('education', {
-            url: "/education",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/education/education.html'
-                },
-                "universities@education": {
-                    templateUrl: 'assets/build/assets/components/education/universities.html',
-                    controller: 'UniversitiesCtrl'
-                },
-                "certificates@education": {
-                    templateUrl: 'assets/build/assets/components/education/certificates.html',
-                    controller: 'CertificatesCtrl'
-                },
-                "languages@education": {
-                    templateUrl: 'assets/build/assets/components/education/languages.html',
-                    controller: 'LanguagesCtrl'
-                }
-            },
-            data: {
-                requireLogin: true
-            }
-        }).state('experience', {
-            url: "/experience",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/experience/experience.html',
-                    controller: 'ExperienceCtrl'
-                }
-            },
-            data: {
-                requireLogin: true
-            }
-        }).state('filters', {
-            url: "/lawyers/filters",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/filters/filters.html',
-                    controller: 'FiltersCtrl'
-                }
-            },
-            data: {
-                requireLogin: false
-            }
-        }).state('competence', {
-            url: "/competences",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/competence/competence.html',
-                    controller: 'CompetenceCtrl'
-                }
-            },
-            data: {
-                requireLogin: true
-            }
-        }).state('publicProfile', {
-            url: "/public/:id",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/public/publicProfile.html',
-                    controller: 'PublicProfileCtrl'
-                }
-            },
-            data: {
-                requireLogin: false
-            }
-        }).state('marketPlaceLawyerView', {
-            url: "/legal-services",
-            views: {
-                "mainView": {
-                    templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceList.html',
-                    controller: 'MarketPlaceLawyerCtrl'
-                },
-                "wizardBar@marketPlaceLawyer": {
-                    templateUrl: 'assets/build/assets/components/marketPlace/wizardBar.html'
-                }
-            },
-            data: {
-                requireLogin: true
-            }
-        }).state('marketPlaceLawyerView.marketPlaceLawyerCreate', {
-            url: "/create",
-            views: {
-                "mainView@": {
-                    templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html',
-                    controller: 'MarketPlaceLawyerCtrl'
-                }
-            },
-            data: {
-                requireLogin: true
-            }
-        }).state('marketPlaceLawyerEdit', {
-          url: "/legal-services/modify/:id",
-          views: {
-            "mainView": {
-              templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html',
-              controller: 'MarketPlaceLawyerCtrl'
-            }
-          },
-          data: {
-            requireLogin: true
+      $stateProvider.state('myAccount', {
+        url: '/myAccount',
+        views: {
+          "mainView": {
+            "templateUrl": 'assets/build/assets/components/myAccount/myAccount.html',
+            "controller": 'LandingPageCtrl'
           }
-        });
-        // Without server side support html5 must be disabled.
-        return $locationProvider.html5Mode(false);
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('homePage', {
+        url: "/",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/home/home.html',
+            controller: 'HomeCtrl'
+          }
+        },
+        data: {
+          requireLogin: false
+        }
+      }).state('registration', {
+        url: "/registration",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/registration/registration.html',
+            controller: 'RegistrationCtrl'
+          }
+        },
+        data: {
+          requireLogin: false
+        }
+      }).state('login', {
+        url: "/login",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/login/login.html',
+            controller: 'LoginCtrl'
+          }
+        },
+        data: {
+          requireLogin: false
+        }
+      }).state('profile', {
+        url: "/profile",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/profile/profile.html',
+            controller: 'ProfileCtrl'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('contacts', {
+        url: "/contacts",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/contacts/contacts.html',
+            controller: 'ContactsCtrl'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('education', {
+        url: "/education",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/education/education.html'
+          },
+          "universities@education": {
+            templateUrl: 'assets/build/assets/components/education/universities.html',
+            controller: 'UniversitiesCtrl'
+          },
+          "certificates@education": {
+            templateUrl: 'assets/build/assets/components/education/certificates.html',
+            controller: 'CertificatesCtrl'
+          },
+          "languages@education": {
+            templateUrl: 'assets/build/assets/components/education/languages.html',
+            controller: 'LanguagesCtrl'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('experience', {
+        url: "/experience",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/experience/experience.html',
+            controller: 'ExperienceCtrl'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('filters', {
+        url: "/lawyers/filters",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/filters/filters.html',
+            controller: 'FiltersCtrl'
+          }
+        },
+        data: {
+          requireLogin: false
+        }
+      }).state('competence', {
+        url: "/competences",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/competence/competence.html',
+            controller: 'CompetenceCtrl'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('publicProfile', {
+        url: "/public/:id",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/public/publicProfile.html',
+            controller: 'PublicProfileCtrl'
+          }
+        },
+        data: {
+          requireLogin: false
+        }
+      }).state('marketPlaceLawyerView', {
+        url: "/legal-services",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html',
+            controller: 'MarketPlaceLawyerCtrl'
+          },
+          "marketPlace@marketPlaceLawyerView": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceList.html'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('marketPlaceLawyerView.marketPlaceLawyerCreate', {
+        url: "/create",
+        views: {
+          "marketPlace@marketPlaceLawyerView": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('marketPlaceLawyerView.marketPlaceLawyerConfirm', {
+        url: "/confirm",
+        views: {
+          "marketPlace@marketPlaceLawyerView": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceConfirm.html'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('marketPlaceLawyerEdit', {
+        url: "/legal-services/modify/:id",
+        views: {
+          "mainView": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html',
+            controller: 'MarketPlaceLawyerCtrl'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      });
+      // Without server side support html5 must be disabled.
+      return $locationProvider.html5Mode(false);
     }]);
 
 'use strict';
@@ -1283,97 +1292,6 @@ App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
 'use strict';
 /* Controller */
 
-App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
-    function ($scope, $http, $userInfo, UtilsService) {
-
-        // if data had been saved before, do not send a request
-        if ( _.isEmpty($userInfo.experiences) ) {
-            var promiseGetExperience = $userInfo.getUserExperience();
-            promiseGetExperience.then(function (onFulfilled) {
-                // assign [{}] object if request returns an empty object.
-                // [{}] - is used to build default html template
-                // extra validation is needed due to another structure of data for the Experiences
-                $scope.experiences = ( onFulfilled['workPlaces'] && !_.isEmpty(onFulfilled['workPlaces']) )
-                    ? UtilsService.convertDate(onFulfilled['workPlaces'])
-                    : [{}];
-            }, function (onReject) {
-                $scope.experiences = [{}];
-            });
-        };
-
-        this.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-        $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [{}];
-        $scope.selectorYears = UtilsService.generateYears();
-        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
-            format = formats[0],
-            experiencesCounter = 0;
-        $scope.addExperience = function () {
-            var experiencesTemplate = {
-                id: experiencesCounter
-            };
-            experiencesCounter += 1;
-            $scope.experiences.push(experiencesTemplate);
-        };
-        $scope.removeExperience = function(obj) {
-            angular.forEach($scope.experiences, function(elem, index) {
-                // if user added a form that not saved on the server yet, just delete UI
-                if ($scope.experiences.length != $scope.experiences.length &&
-                    $scope.experiences[index]['id'] == obj['id']) {
-                    $scope.experiences.splice(index, 1);
-                    return;
-                }
-                if ( $scope.experiences[index]['id'] == obj['id'] ) {
-                    $http({
-                        method: 'DELETE',
-                        url: '/lawyers/experience/' + obj['id'],
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                        }
-                    }).
-                        success(function (data, status, headers, config) {
-                            $scope.experiences.splice(index, 1);
-                        }).
-                        error(function (data, status, headers, config) {
-                            $scope.error = 'Unexpected error. Please try again later.';
-                        });
-                }
-            })
-        };
-        $scope.updateExperience = function (object) {
-            var copyObject = angular.copy(object);
-            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
-            // The server generates hash ID for saved forms,
-            // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
-            var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
-                url = method == 'POST' ? '/lawyers/experience' : '/lawyers/experience/' + object.id;
-            $http({
-                method: method,
-                url: url,
-                data: copyObject,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                }
-            }).
-                success(function (data, status, headers, config) {
-                    $scope.isUpdated = true;
-                    $scope.error = false;
-                }).
-                error(function (data, status, headers, config) {
-                    $scope.error = 'Unexpected error. Please try again later.';
-                    $scope.isUpdated = false;
-                });
-
-        };
-}]);
-'use strict';
-/* Controller */
-
 
 App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', '$filterService',
     '$timeout',
@@ -1769,141 +1687,6 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
 
 }]);
 'use strict';
-/* Controller - part of My Account (manage legal services), visible for lawyer,
-not for a user */
-
-App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService',
-  function ($scope, $http, MarketPlaceService) {
-
-    var taskCounter = 0;
-    $scope.legalServiceInProgress = MarketPlaceService.getLegalIssueFromStorage()
-        ? MarketPlaceService.getLegalIssueFromStorage()
-        : false;
-    $scope.legalServiceTasks = [];
-    $scope.taskTitle = {};
-    this.formStatus = {
-      isEditModeOpen: false
-    };
-
-    $scope.addNewTask = function() {
-      var task = angular.copy($scope.taskTitle);
-      // assign ID to added task
-      task.id = taskCounter;
-      $scope.legalServiceTasks.push(task);
-      taskCounter += 1;
-      // clear input after adding the task
-      $scope.taskTitle.title = '';
-    };
-
-    $scope.getElement = function(obj, index) {
-      // De-select active object if 'close' button clicked
-      if ( !obj && !index ) {
-        $scope.taskDetail = null;
-        return;
-      };
-      // Save information about selected object for ng-class
-      // and for Detail section
-      $scope.taskDetail = obj;
-      $scope.taskDetail.index = index;
-    };
-
-    $scope.removeTask = function(obj) {
-      angular.forEach($scope.legalServiceTasks, function(elem, index) {
-        // if user added a form that not saved on the server yet, just delete UI
-        if ($scope.legalServiceTasks.length != $scope.legalServiceTasks.length &&
-            $scope.legalServiceTasks[index]['id'] == obj['id']) {
-          $scope.legalServiceTasks.splice(index, 1);
-          return;
-        }
-        if ( $scope.legalServiceTasks[index]['id'] == obj['id'] ) {
-          $http({
-            method: 'DELETE',
-            url: '/api/..' + obj['id'],
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-            }
-          }).
-              success(function (data, status, headers, config) {
-                $scope.legalServiceTasks.splice(index, 1);
-              }).
-              error(function (data, status, headers, config) {
-                $scope.error = 'Unexpected error. Please try again later.';
-              });
-        }
-      })
-    };
-
-    $scope.saveLegalIssueToStorage = function() {
-      MarketPlaceService.saveLegalIssueToStorage($scope.legalServiceTasks);
-    };
-
-  }]);
-'use strict';
-/* Service */
-
-// The factory returns promise for MarketPlace
-App.factory('MarketPlaceService', function($http) {
-
-    function getLegalIssues() {
-      return $http.get('/api/...');
-    };
-
-    function createLegalIssue(marketTask) {
-      return $http.post('/api/...', marketTask);
-    };
-
-    function updateLegalIssue(marketTask) {
-      return $http.post('/api/...', marketTask);
-    };
-
-    function deleteLegalIssue(id) {
-      return $http.delete('/api/.../' + id);
-    };
-
-    function deleteTaskOfLegalIssue(id) {
-      return $http.delete('/api/.../' + id);
-    };
-
-    function saveLegalIssueToStorage(obj) {
-      var objStr = angular.toJson(obj);
-      localStorage.setItem('legalIssue', objStr);
-    };
-
-    function getLegalIssueFromStorage() {
-      return angular.fromJson(localStorage.getItem('legalIssue'));
-    };
-
-
-    return {
-      getLegalIssues : getLegalIssues,
-      createLegalIssue :createLegalIssue,
-      updateLegalIssue : updateLegalIssue,
-      deleteLegalIssue: deleteLegalIssue,
-      deleteTaskOfLegalIssue: deleteTaskOfLegalIssue,
-      saveLegalIssueToStorage: saveLegalIssueToStorage,
-      getLegalIssueFromStorage: getLegalIssueFromStorage
-    }
-
-});
-'use strict';
-/* Controller */
-
-App.controller('MarketPlace', [ '$scope', '$http',
-    function( $scope, $http ) {
-
-
-    }]);
-
-'use strict';
-/* Controller */
-
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
-    function ($scope, $http, $userInfo, $rootScope, $state) {
-
-
-    }]);
-'use strict';
 /* Controller */
 
 App.controller('ProfileCtrl', ['$scope', '$http',
@@ -2102,6 +1885,250 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'Va
             $('.ui.form')
                 .form(ValidationRules.en);
         })(jQuery);
+
+
+    }]);
+'use strict';
+/* Controller */
+
+App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
+    function ($scope, $http, $userInfo, UtilsService) {
+
+        // if data had been saved before, do not send a request
+        if ( _.isEmpty($userInfo.experiences) ) {
+            var promiseGetExperience = $userInfo.getUserExperience();
+            promiseGetExperience.then(function (onFulfilled) {
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                // extra validation is needed due to another structure of data for the Experiences
+                $scope.experiences = ( onFulfilled['workPlaces'] && !_.isEmpty(onFulfilled['workPlaces']) )
+                    ? UtilsService.convertDate(onFulfilled['workPlaces'])
+                    : [{}];
+            }, function (onReject) {
+                $scope.experiences = [{}];
+            });
+        };
+
+        this.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+        $scope.experience = {};
+        $scope.experiences = $userInfo.experiences || [{}];
+        $scope.selectorYears = UtilsService.generateYears();
+        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+            format = formats[0],
+            experiencesCounter = 0;
+        $scope.addExperience = function () {
+            var experiencesTemplate = {
+                id: experiencesCounter
+            };
+            experiencesCounter += 1;
+            $scope.experiences.push(experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
+                // if user added a form that not saved on the server yet, just delete UI
+                if ($scope.experiences.length != $scope.experiences.length &&
+                    $scope.experiences[index]['id'] == obj['id']) {
+                    $scope.experiences.splice(index, 1);
+                    return;
+                }
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
+                    $http({
+                        method: 'DELETE',
+                        url: '/lawyers/experience/' + obj['id'],
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                        }
+                    }).
+                        success(function (data, status, headers, config) {
+                            $scope.experiences.splice(index, 1);
+                        }).
+                        error(function (data, status, headers, config) {
+                            $scope.error = 'Unexpected error. Please try again later.';
+                        });
+                }
+            })
+        };
+        $scope.updateExperience = function (object) {
+            var copyObject = angular.copy(object);
+            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
+            // The server generates hash ID for saved forms,
+            // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
+            var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
+                url = method == 'POST' ? '/lawyers/experience' : '/lawyers/experience/' + object.id;
+            $http({
+                method: method,
+                url: url,
+                data: copyObject,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                }
+            }).
+                success(function (data, status, headers, config) {
+                    $scope.isUpdated = true;
+                    $scope.error = false;
+                }).
+                error(function (data, status, headers, config) {
+                    $scope.error = 'Unexpected error. Please try again later.';
+                    $scope.isUpdated = false;
+                });
+
+        };
+}]);
+'use strict';
+/* Controller - part of My Account (manage legal services), visible for lawyer,
+not for a user */
+
+App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService',
+  function ($scope, $http, MarketPlaceService) {
+
+    var taskCounter = 0;
+    $scope.legalServiceInProgress = MarketPlaceService.getLegalIssueFromStorage()
+        ? MarketPlaceService.getLegalIssueFromStorage()
+        : false;
+    $scope.legalServiceTasks = [];
+    $scope.taskTitle = {};
+    this.formStatus = {
+      isEditModeOpen: false
+    };
+
+    //Show appropriate wizard (animation) based on selected url
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+      $scope.wizardStatus = {};
+      switch (toState.url) {
+        case '/legal-services':
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = true;
+          $scope.wizardStatus.step3 = true;
+          break;
+        case '/create':
+            console.log(2);
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = false;
+          $scope.wizardStatus.step3 = true;
+          break;
+        case '/confirm':
+          console.log(3);
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = false;
+          $scope.wizardStatus.step3 = false;
+          break;
+        default:
+          console.log(4);
+          break;
+      }
+    });
+
+    $scope.addNewTask = function() {
+      var task = angular.copy($scope.taskTitle);
+      // assign ID to added task
+      task.id = taskCounter;
+      $scope.legalServiceTasks.push(task);
+      taskCounter += 1;
+      // clear input after adding the task
+      $scope.taskTitle.title = '';
+    };
+
+    $scope.getElement = function(obj, index) {
+      // De-select active object if 'close' button clicked
+      if ( !obj && !index ) {
+        $scope.taskDetail = null;
+        return;
+      };
+      // Save information about selected object for ng-class
+      // and for Detail section
+      $scope.taskDetail = obj;
+      $scope.taskDetail.index = index;
+    };
+
+    $scope.removeTask = function(obj) {
+      angular.forEach($scope.legalServiceTasks, function(elem, index) {
+        // if user added a form that not saved on the server yet, just delete UI
+        if ($scope.legalServiceTasks.length != $scope.legalServiceTasks.length &&
+            $scope.legalServiceTasks[index]['id'] == obj['id']) {
+          $scope.legalServiceTasks.splice(index, 1);
+          return;
+        }
+        if ( $scope.legalServiceTasks[index]['id'] == obj['id'] ) {
+          $http({
+            method: 'DELETE',
+            url: '/api/..' + obj['id'],
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+            }
+          }).
+              success(function (data, status, headers, config) {
+                $scope.legalServiceTasks.splice(index, 1);
+              }).
+              error(function (data, status, headers, config) {
+                $scope.error = 'Unexpected error. Please try again later.';
+              });
+        }
+      })
+    };
+
+    $scope.saveLegalIssueToStorage = function() {
+      MarketPlaceService.saveLegalIssueToStorage($scope.legalServiceTasks);
+    };
+
+  }]);
+'use strict';
+/* Service */
+
+// The factory returns promise for MarketPlace
+App.factory('MarketPlaceService', function($http) {
+
+    function getLegalIssues() {
+      return $http.get('/api/...');
+    };
+
+    function createLegalIssue(marketTask) {
+      return $http.post('/api/...', marketTask);
+    };
+
+    function updateLegalIssue(marketTask) {
+      return $http.post('/api/...', marketTask);
+    };
+
+    function deleteLegalIssue(id) {
+      return $http.delete('/api/.../' + id);
+    };
+
+    function deleteTaskOfLegalIssue(id) {
+      return $http.delete('/api/.../' + id);
+    };
+
+    function saveLegalIssueToStorage(obj) {
+      var objStr = angular.toJson(obj);
+      localStorage.setItem('legalIssue', objStr);
+    };
+
+    function getLegalIssueFromStorage() {
+      return angular.fromJson(localStorage.getItem('legalIssue'));
+    };
+
+
+    return {
+      getLegalIssues : getLegalIssues,
+      createLegalIssue :createLegalIssue,
+      updateLegalIssue : updateLegalIssue,
+      deleteLegalIssue: deleteLegalIssue,
+      deleteTaskOfLegalIssue: deleteTaskOfLegalIssue,
+      saveLegalIssueToStorage: saveLegalIssueToStorage,
+      getLegalIssueFromStorage: getLegalIssueFromStorage
+    }
+
+});
+'use strict';
+/* Controller */
+
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
+    function ($scope, $http, $userInfo, $rootScope, $state) {
 
 
     }]);
