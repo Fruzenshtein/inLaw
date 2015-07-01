@@ -4,10 +4,10 @@ import javax.ws.rs.QueryParam
 
 import com.wordnik.swagger.annotations._
 import forms.LegalServiceForms
-import models.marketplace.{ServiceTask, LegalService}
+import models.marketplace.LegalService
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Results, Result, Controller}
+import play.api.mvc.{Result, Controller}
 import services.LegalServiceService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,7 +35,7 @@ object LegalServiceController extends Controller with Security with LegalService
     new ApiImplicitParam(value = "Legal Service object which will be added", required = true, dataType = "models.swagger.LegalServiceDTO", paramType = "body")))
   def addLegalService = isAuthenticated {
     implicit acc => implicit request => {
-      createLegalService.bindFromRequest fold(
+      legalServiceInfo.bindFromRequest fold(
         formWithErrors => {
           Logger.info("Legal Service was with ERRORS")
           Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
@@ -133,7 +133,7 @@ object LegalServiceController extends Controller with Security with LegalService
   ))
   def updateLegalService(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
     withLegalService(id, acc._id.get.stringify, implicit service =>
-      editLegalService.bindFromRequest fold(
+      legalServiceInfo.bindFromRequest fold(
         formWithErrors => {
           Logger.info("Legal Service was with ERRORS")
           Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
@@ -149,114 +149,10 @@ object LegalServiceController extends Controller with Security with LegalService
     )
   }
 
-  @ApiOperation(
-    nickname = "serviceTasks",
-    value = "Add service task",
-    notes = "Add service task to legal service",
-    httpMethod = "POST",
-    response = classOf[models.swagger.InformationMessage])
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "ServiceTask $name successfully added"),
-    new ApiResponse(code = 400, message = "Bad arguments"),
-    new ApiResponse(code = 404, message = "Legal Service with id: $id does not exist")))
-  @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
-    new ApiImplicitParam(value = "Service Task object which will be added", required = true, dataType = "models.swagger.ServiceTaskDTO", paramType = "body")))
-  def addServiceTask(@QueryParam("id") id: String) = isAuthenticated { implicit acc => implicit request =>
-    withLegalService(id, acc._id.get.stringify, implicit service =>
-    taskInfo.bindFromRequest fold(
-      formWithErrors => {
-        Logger.info("Legal Task was with ERRORS")
-        Future.successful(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
-      },
-      dto => {
-        import models.marketplace.ServiceTask._
-        Logger.info(s"Creation of Service Task with name: ${dto.name}")
-        LegalServiceService.addTask(id, acc._id.get.stringify, createServiceTask(dto)) map {
-          case Success(msg) => Ok(Json.obj("message" -> msg))
-          case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
-        }
-      }
-      )
-    )
-  }
-
-  @ApiOperation(
-    nickname = "serviceTasks",
-    value = "Update service task",
-    notes = "Update service task of legal service",
-    httpMethod = "PUT",
-    response = classOf[models.swagger.InformationMessage])
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "ServiceTask with ID $taskID successfully updated"),
-    new ApiResponse(code = 400, message = "Bad arguments"),
-    new ApiResponse(code = 404, message = "Service Task with ID: $taskID does not exist")))
-  @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true),
-    new ApiImplicitParam(value = "Service Task object which will be added", required = true, dataType = "models.swagger.ServiceTaskDTO", paramType = "body")))
-  def updateServiceTask(@QueryParam("id") id: String, @QueryParam("taskID") taskID: String) = isAuthenticated
-  { implicit acc => implicit request =>
-    val lawyerId = acc._id.get.stringify
-    withLegalService(id, lawyerId, implicit service =>
-      taskExist(taskID, implicit task => {
-      taskInfo.bindFromRequest fold(
-        formWithErrors => {
-          Logger.info("Legal Task was with ERRORS")
-          Future.successful(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
-        },
-        dto => {
-          Logger.info(s"Update of Service Task with id: ${taskID}")
-          LegalServiceService.deleteTask(id, lawyerId, taskID) flatMap {
-            case Success(msg) => {
-              LegalServiceService.addTask(id, lawyerId,
-                ServiceTask(taskID, dto.name, dto.description, dto.requiredInfo)) map {
-                  case Success(msg) => Ok(Json.obj("message" -> s"ServiceTask with ID '${taskID}' successfully updated"))
-                  case Failure(ex) => BadRequest(Json.obj("message" -> ex.getMessage))
-                }
-            }
-            case Failure(ex) => Future.successful(BadRequest(Json.obj("message" -> ex.getMessage)))
-          }
-        }
-      )
-      })
-    )
-  }
-
-  @ApiOperation(
-    nickname = "serviceTasks",
-    value = "Delete service task",
-    notes = "Delete service task from legal service",
-    httpMethod = "DELETE",
-    response = classOf[models.swagger.InformationMessage])
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "ServiceTask with ID $taskID successfully deleted"),
-    new ApiResponse(code = 400, message = "Legal Service must contain at least one Task"),
-    new ApiResponse(code = 404, message = "Legal Service with id: $id does not exist")))
-  @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "Authorization", value = "Header parameter. Example 'Bearer yourTokenHere'.", dataType = "string", paramType = "header", required = true)
-  ))
-  def deleteServiceTask(@QueryParam("id") id: String, @QueryParam("taskID") taskID: String) = isAuthenticated {
-    implicit acc => implicit request =>
-      val accID = acc._id.get.stringify
-      withLegalService(id, accID, implicit service => {
-        taskExist(taskID, implicit task => {
-          service.tasks.length match {
-            case length: Int if (length > 1) => {
-              LegalServiceService.deleteTask (id, accID, taskID) map {
-                case Success (msg) => Ok (Json.obj ("message" -> s"ServiceTask with ID '${taskID}' successfully deleted") )
-                case Failure (ex) => BadRequest (Json.obj ("message" -> ex.getMessage) )
-              }
-            }
-            case _ => Future.successful (BadRequest (Json.obj ("message" -> "Legal Service must contain at least one Task")))
-          }
-        })
-    })
-  }
-
   private def legalServiceToJson(ls: LegalService): JsObject = {
     val serviceJson = Json.obj("id" -> ls._id.get.stringify, "lawyerID" -> ls.lawyerID,
       "category" -> ls.category, "name" -> ls.name, "description" -> ls.description,
-      "price" -> ls.price, "estimation" -> ls.estimation, "tasks" -> ls.tasks)
+      "price" -> ls.price, "estimation" -> ls.estimation)
     serviceJson
   }
 
@@ -273,13 +169,6 @@ object LegalServiceController extends Controller with Security with LegalService
           }
         }
       }
-    }
-  }
-
-  private def taskExist(taskID: String, f: ServiceTask => Future[Result])(implicit service: LegalService) = {
-    service.tasks.find(t => t.id == taskID) match {
-      case Some(task) => f(task)
-      case None => Future.successful (NotFound (Json.obj ("message" -> s"Legal Task with id: ${taskID} does not exist")))
     }
   }
 

@@ -1,6 +1,5 @@
 package models.marketplace
 
-import models.swagger.LegalServiceDTO
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.modules.reactivemongo.json.BSONFormats._
@@ -15,8 +14,7 @@ case class LegalService(_id: Option[BSONObjectID],
                         name: String,
                         description: String,
                         price: Int,
-                        estimation: Long,
-                        tasks: Seq[ServiceTask])
+                        estimation: Long)
 
 object LegalService {
 
@@ -27,8 +25,7 @@ object LegalService {
     (JsPath \ "name").write[String] and
     (JsPath \ "description").write[String] and
     (JsPath \ "price").write[Int] and
-    (JsPath \ "estimation").write[Long] and
-    (JsPath \ "tasks").write[Seq[ServiceTask]]
+    (JsPath \ "estimation").write[Long]
   )(unlift(LegalService.unapply))
 
   implicit val legalServiceReads: Reads[LegalService] = (
@@ -38,12 +35,10 @@ object LegalService {
     (JsPath \ "name").read[String] and
     (JsPath \ "description").read[String] and
     (JsPath \ "price").read[Int] and
-    (JsPath \ "estimation").read[Long] and
-    (JsPath \ "tasks").read[Seq[ServiceTask]]
+    (JsPath \ "estimation").read[Long]
   )(LegalService.apply _)
 
   def createLegalService(dto: LegalServiceDTO, lawyerID: String) = {
-    import models.marketplace.ServiceTask._
     val legalService = LegalService(
       None,
       lawyerID,
@@ -51,8 +46,7 @@ object LegalService {
       dto.name,
       dto.description,
       dto.price,
-      dto.estimation,
-      dto.tasks map(createServiceTask(_))
+      dto.estimation
     )
     legalService
   }
