@@ -2,7 +2,7 @@ package services
 
 import models.marketplace.{LegalServiceDTO, LegalService}
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.modules.reactivemongo.json.collection.JSONCollection
 
@@ -85,6 +85,13 @@ object LegalServiceService {
         Failure(new Exception(operation.errMsg.get))
       }
     }
+  }
+
+  def filterLegalServices(query: JsObject): Future[Seq[LegalService]] = {
+    val services = collection.find(query)
+      .cursor[LegalService]
+      .collect[Seq]()
+    services
   }
 
 }
