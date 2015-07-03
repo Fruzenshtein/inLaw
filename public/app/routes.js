@@ -142,20 +142,33 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
         url: "/legal-services",
         views: {
           "mainView": {
-            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html',
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceList.html',
             controller: 'MarketPlaceLawyerCtrl'
-          },
-          "marketPlace@marketPlaceLawyerView": {
-            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceList.html'
           }
         },
         data: {
           requireLogin: true
         }
       }).state('marketPlaceLawyerView.marketPlaceLawyerCreate', {
-        url: "/create",
+        url: "/step1",
         views: {
-          "marketPlace@marketPlaceLawyerView": {
+          "mainView@": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html'
+          },
+          "marketPlace@marketPlaceLawyerView.marketPlaceLawyerCreate": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceGeneral.html'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('marketPlaceLawyerView.marketPlaceLawyerDetail', {
+        url: "/step2",
+        views: {
+          "mainView@": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html'
+          },
+          "marketPlace@marketPlaceLawyerView.marketPlaceLawyerDetail": {
             templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html'
           }
         },
@@ -163,9 +176,12 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
           requireLogin: true
         }
       }).state('marketPlaceLawyerView.marketPlaceLawyerConfirm', {
-        url: "/confirm",
+        url: "/step3",
         views: {
-          "marketPlace@marketPlaceLawyerView": {
+          "mainView@": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html'
+          },
+          "marketPlace@marketPlaceLawyerView.marketPlaceLawyerConfirm": {
             templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceConfirm.html'
           }
         },

@@ -142,20 +142,33 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
         url: "/legal-services",
         views: {
           "mainView": {
-            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html',
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceList.html',
             controller: 'MarketPlaceLawyerCtrl'
-          },
-          "marketPlace@marketPlaceLawyerView": {
-            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceList.html'
           }
         },
         data: {
           requireLogin: true
         }
       }).state('marketPlaceLawyerView.marketPlaceLawyerCreate', {
-        url: "/create",
+        url: "/step1",
         views: {
-          "marketPlace@marketPlaceLawyerView": {
+          "mainView@": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html'
+          },
+          "marketPlace@marketPlaceLawyerView.marketPlaceLawyerCreate": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceGeneral.html'
+          }
+        },
+        data: {
+          requireLogin: true
+        }
+      }).state('marketPlaceLawyerView.marketPlaceLawyerDetail', {
+        url: "/step2",
+        views: {
+          "mainView@": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html'
+          },
+          "marketPlace@marketPlaceLawyerView.marketPlaceLawyerDetail": {
             templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceDetail.html'
           }
         },
@@ -163,9 +176,12 @@ var App = angular.module('App', ['ui.router', 'ui.bootstrap', 'ui.select', 'ngSa
           requireLogin: true
         }
       }).state('marketPlaceLawyerView.marketPlaceLawyerConfirm', {
-        url: "/confirm",
+        url: "/step3",
         views: {
-          "marketPlace@marketPlaceLawyerView": {
+          "mainView@": {
+            templateUrl: 'assets/build/assets/components/marketPlace/marketPlace.html'
+          },
+          "marketPlace@marketPlaceLawyerView.marketPlaceLawyerConfirm": {
             templateUrl: 'assets/build/assets/components/marketPlace/marketPlaceConfirm.html'
           }
         },
@@ -1059,56 +1075,60 @@ App.controller('ContactsCtrl', ['$scope', '$http',
 'use strict';
 /* Controller */
 
-App.controller('CertificatesCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
-    function($scope, $http, $userInfo, UtilsService) {
+App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
+    function ($scope, $http, $userInfo, UtilsService) {
 
-        var formats = ['MM', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
-            format = formats[0],
-            certificateCounter = 0;
+        // if data had been saved before, do not send a request
+        if ( _.isEmpty($userInfo.experiences) ) {
+            var promiseGetExperience = $userInfo.getUserExperience();
+            promiseGetExperience.then(function (onFulfilled) {
+                // assign [{}] object if request returns an empty object.
+                // [{}] - is used to build default html template
+                // extra validation is needed due to another structure of data for the Experiences
+                $scope.experiences = ( onFulfilled['workPlaces'] && !_.isEmpty(onFulfilled['workPlaces']) )
+                    ? UtilsService.convertDate(onFulfilled['workPlaces'])
+                    : [{}];
+            }, function (onReject) {
+                $scope.experiences = [{}];
+            });
+        };
 
         this.formStatus = {
             isEditModeOpen: true,
             isEditModeDisabled: false
         };
-
-        // if data had saved before, do not send a request
-        if ( _.isEmpty($userInfo.certificates) ) {
-            var promiseGetCertificates = $userInfo.getUserCertificates();
-            promiseGetCertificates.then(function (onFulfilled) {
-                $scope.certificates = UtilsService.convertDate(onFulfilled) || [{}];
-            }, function (onReject) {
-                $scope.certificates = [{}];
-            });
-        };
-        $scope.certificate = {};
-        $scope.certificates = $userInfo.certificates || [{}];
-        $scope.addCertificate = function () {
-            var certificateTemplate = {
-                id: certificateCounter
-            };
-            certificateCounter += 1;
-            $scope.certificates.push(certificateTemplate);
-        };
+        $scope.experience = {};
+        $scope.experiences = $userInfo.experiences || [{}];
         $scope.selectorYears = UtilsService.generateYears();
-        $scope.removeCertificate = function(obj) {
-            angular.forEach($scope.certificates, function(elem, index) {
+        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+            format = formats[0],
+            experiencesCounter = 0;
+        $scope.addExperience = function () {
+            var experiencesTemplate = {
+                id: experiencesCounter
+            };
+            experiencesCounter += 1;
+            $scope.experiences.push(experiencesTemplate);
+        };
+        $scope.removeExperience = function(obj) {
+            angular.forEach($scope.experiences, function(elem, index) {
                 // if user added a form that not saved on the server yet, just delete UI
-                if ($userInfo.certificates.length != $scope.certificates.length &&
-                    $scope.certificates[index]['id'] == obj['id']) {
-                    $scope.certificates.splice(index, 1);
+                if ($scope.experiences.length != $scope.experiences.length &&
+                    $scope.experiences[index]['id'] == obj['id']) {
+                    $scope.experiences.splice(index, 1);
                     return;
                 }
-                if ( $scope.certificates[index]['id'] == obj['id'] ) {
+                if ( $scope.experiences[index]['id'] == obj['id'] ) {
                     $http({
                         method: 'DELETE',
-                        url: '/lawyers/certificates/' + obj['id'],
+                        url: '/lawyers/experience/' + obj['id'],
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ' + sessionStorage.getItem('token')
                         }
                     }).
                         success(function (data, status, headers, config) {
-                            $scope.certificates.splice(index, 1);
+                            $scope.experiences.splice(index, 1);
                         }).
                         error(function (data, status, headers, config) {
                             $scope.error = 'Unexpected error. Please try again later.';
@@ -1116,179 +1136,33 @@ App.controller('CertificatesCtrl', ['$scope', '$http', '$userInfo', 'UtilsServic
                 }
             })
         };
-
-        $scope.updateCertificates = function (object) {
+        $scope.updateExperience = function (object) {
             var copyObject = angular.copy(object);
             copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
             // The server generates hash ID for saved forms,
             // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
             var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
-                url = method == 'POST' ? '/lawyers/certificates' : '/lawyers/certificates/' + object.id;
-
-                $http({
-                    method: method,
-                    url: url,
-                    data: copyObject,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                    }
-                }).
-                    success(function (data, status, headers, config) {
-                        $scope.isUpdated = true;
-                        $scope.error = false;
-                    }).
-                    error(function (data, status, headers, config) {
-                        $scope.error = 'Unexpected error. Please try again later.';
-                        $scope.isUpdated = false;
-                    });
-        };
-
-}]);
-'use strict';
-/* Controller */
-
-App.controller('LanguagesCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList',
-    function ($scope, $http, $userInfo, LanguagesList) {
-
-        // if data had saved before, do not send a request
-        if ( _.isEmpty($userInfo.languages) ) {
-            var promiseGetLanguages = $userInfo.getUserLanguages();
-            promiseGetLanguages.then(function (onFulfilled) {
-                $scope.languages = onFulfilled || [];
-            }, function (onReject) {
-                $scope.languages = [];
-            });
-        };
-        $scope.language = {};
-        $scope.languages = $userInfo.languages || [];
-        $scope.listOfLanguages = LanguagesList.languages;
-        $scope.languagesModel = {};
-        $scope.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-        $scope.tagTransform = function (newTag) {
-            var item = {
-                name: newTag
-            };
-
-            return item;
-        };
-        $scope.setLanguages = function(language, event) {
-            var language = {language: language},
-                method = event == 'select' ? 'POST' : 'DELETE';
+                url = method == 'POST' ? '/lawyers/experience' : '/lawyers/experience/' + object.id;
             $http({
-                method:  method,
-                url: '/lawyers/languages?language=' + language.language,
+                method: method,
+                url: url,
+                data: copyObject,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + sessionStorage.getItem('token')
                 }
             }).
                 success(function (data, status, headers, config) {
-
+                    $scope.isUpdated = true;
+                    $scope.error = false;
                 }).
                 error(function (data, status, headers, config) {
                     $scope.error = 'Unexpected error. Please try again later.';
+                    $scope.isUpdated = false;
                 });
-        }
-
-
-
-    }]);
-'use strict';
-/* Controller */
-
-App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
-    function ($scope, $http, $userInfo, UtilsService) {
-
-        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
-            format = formats[0],
-            universityCounter = 0;
-
-        this.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-
-        // if data had saved before, do not send a request
-        if ( _.isEmpty($userInfo.universities) ) {
-            var promiseGetUniversity = $userInfo.getUserUniversity();
-            promiseGetUniversity.then(function (onFulfilled) {
-                $scope.universities = UtilsService.convertDate(onFulfilled) || [{}];
-            }, function (onReject) {
-                $scope.universities = [{}];
-            });
-        };
-        $scope.university = {};
-        $scope.universities = $userInfo.universities || [{}];
-        $scope.degrees = [
-          "master"
-        ];
-        $scope.selectorYears = UtilsService.generateYears();
-
-        $scope.addUniversity = function () {
-            var universityTemplate = {
-                id: universityCounter
-            };
-            universityCounter += 1;
-            $scope.universities.push(universityTemplate);
-        };
-        $scope.removeUniversity = function(obj) {
-            angular.forEach($scope.universities, function(elem, index) {
-                // if user added a form that not saved on the server yet, just delete UI
-                if ($userInfo.universities.length != $scope.universities.length &&
-                    $scope.universities[index]['id'] == obj['id']) {
-                    $scope.universities.splice(index, 1);
-                    return;
-                }
-                if ( $scope.universities[index]['id'] == obj['id'] ) {
-                    $http({
-                        method: 'DELETE',
-                        url: '/lawyers/universities/' + obj['id'],
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                        }
-                    }).
-                        success(function (data, status, headers, config) {
-                            $scope.universities.splice(index, 1);
-                        }).
-                        error(function (data, status, headers, config) {
-                            $scope.error = 'Unexpected error. Please try again later.';
-                        });
-                }
-            })
-        };
-
-        $scope.updateEducation = function (object) {
-            var copyObject = angular.copy(object);
-            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
-                // The server generates hash ID for saved forms,
-                // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
-                var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
-                    url = method == 'POST' ? '/lawyers/universities' : '/lawyers/universities/' + object.id;
-                $http({
-                    method: method,
-                    url: url,
-                    data: copyObject,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                    }
-                }).
-                    success(function (data, status, headers, config) {
-                        $scope.isUpdated = true;
-                        $scope.error = false;
-                    }).
-                    error(function (data, status, headers, config) {
-                        $scope.error = 'Unexpected error. Please try again later.';
-                        $scope.isUpdated = false;
-                    });
 
         };
-    }]);
+}]);
 'use strict';
 /* Controller */
 
@@ -1615,6 +1489,239 @@ App.controller('FiltersCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList', 
 'use strict';
 /* Controller */
 
+App.controller('CertificatesCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
+    function($scope, $http, $userInfo, UtilsService) {
+
+        var formats = ['MM', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+            format = formats[0],
+            certificateCounter = 0;
+
+        this.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+
+        // if data had saved before, do not send a request
+        if ( _.isEmpty($userInfo.certificates) ) {
+            var promiseGetCertificates = $userInfo.getUserCertificates();
+            promiseGetCertificates.then(function (onFulfilled) {
+                $scope.certificates = UtilsService.convertDate(onFulfilled) || [{}];
+            }, function (onReject) {
+                $scope.certificates = [{}];
+            });
+        };
+        $scope.certificate = {};
+        $scope.certificates = $userInfo.certificates || [{}];
+        $scope.addCertificate = function () {
+            var certificateTemplate = {
+                id: certificateCounter
+            };
+            certificateCounter += 1;
+            $scope.certificates.push(certificateTemplate);
+        };
+        $scope.selectorYears = UtilsService.generateYears();
+        $scope.removeCertificate = function(obj) {
+            angular.forEach($scope.certificates, function(elem, index) {
+                // if user added a form that not saved on the server yet, just delete UI
+                if ($userInfo.certificates.length != $scope.certificates.length &&
+                    $scope.certificates[index]['id'] == obj['id']) {
+                    $scope.certificates.splice(index, 1);
+                    return;
+                }
+                if ( $scope.certificates[index]['id'] == obj['id'] ) {
+                    $http({
+                        method: 'DELETE',
+                        url: '/lawyers/certificates/' + obj['id'],
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                        }
+                    }).
+                        success(function (data, status, headers, config) {
+                            $scope.certificates.splice(index, 1);
+                        }).
+                        error(function (data, status, headers, config) {
+                            $scope.error = 'Unexpected error. Please try again later.';
+                        });
+                }
+            })
+        };
+
+        $scope.updateCertificates = function (object) {
+            var copyObject = angular.copy(object);
+            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
+            // The server generates hash ID for saved forms,
+            // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
+            var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
+                url = method == 'POST' ? '/lawyers/certificates' : '/lawyers/certificates/' + object.id;
+
+                $http({
+                    method: method,
+                    url: url,
+                    data: copyObject,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                }).
+                    success(function (data, status, headers, config) {
+                        $scope.isUpdated = true;
+                        $scope.error = false;
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                        $scope.isUpdated = false;
+                    });
+        };
+
+}]);
+'use strict';
+/* Controller */
+
+App.controller('LanguagesCtrl', ['$scope', '$http', '$userInfo', 'LanguagesList',
+    function ($scope, $http, $userInfo, LanguagesList) {
+
+        // if data had saved before, do not send a request
+        if ( _.isEmpty($userInfo.languages) ) {
+            var promiseGetLanguages = $userInfo.getUserLanguages();
+            promiseGetLanguages.then(function (onFulfilled) {
+                $scope.languages = onFulfilled || [];
+            }, function (onReject) {
+                $scope.languages = [];
+            });
+        };
+        $scope.language = {};
+        $scope.languages = $userInfo.languages || [];
+        $scope.listOfLanguages = LanguagesList.languages;
+        $scope.languagesModel = {};
+        $scope.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+        $scope.tagTransform = function (newTag) {
+            var item = {
+                name: newTag
+            };
+
+            return item;
+        };
+        $scope.setLanguages = function(language, event) {
+            var language = {language: language},
+                method = event == 'select' ? 'POST' : 'DELETE';
+            $http({
+                method:  method,
+                url: '/lawyers/languages?language=' + language.language,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                }
+            }).
+                success(function (data, status, headers, config) {
+
+                }).
+                error(function (data, status, headers, config) {
+                    $scope.error = 'Unexpected error. Please try again later.';
+                });
+        }
+
+
+
+    }]);
+'use strict';
+/* Controller */
+
+App.controller('UniversitiesCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
+    function ($scope, $http, $userInfo, UtilsService) {
+
+        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+            format = formats[0],
+            universityCounter = 0;
+
+        this.formStatus = {
+            isEditModeOpen: true,
+            isEditModeDisabled: false
+        };
+
+        // if data had saved before, do not send a request
+        if ( _.isEmpty($userInfo.universities) ) {
+            var promiseGetUniversity = $userInfo.getUserUniversity();
+            promiseGetUniversity.then(function (onFulfilled) {
+                $scope.universities = UtilsService.convertDate(onFulfilled) || [{}];
+            }, function (onReject) {
+                $scope.universities = [{}];
+            });
+        };
+        $scope.university = {};
+        $scope.universities = $userInfo.universities || [{}];
+        $scope.degrees = [
+          "master"
+        ];
+        $scope.selectorYears = UtilsService.generateYears();
+
+        $scope.addUniversity = function () {
+            var universityTemplate = {
+                id: universityCounter
+            };
+            universityCounter += 1;
+            $scope.universities.push(universityTemplate);
+        };
+        $scope.removeUniversity = function(obj) {
+            angular.forEach($scope.universities, function(elem, index) {
+                // if user added a form that not saved on the server yet, just delete UI
+                if ($userInfo.universities.length != $scope.universities.length &&
+                    $scope.universities[index]['id'] == obj['id']) {
+                    $scope.universities.splice(index, 1);
+                    return;
+                }
+                if ( $scope.universities[index]['id'] == obj['id'] ) {
+                    $http({
+                        method: 'DELETE',
+                        url: '/lawyers/universities/' + obj['id'],
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                        }
+                    }).
+                        success(function (data, status, headers, config) {
+                            $scope.universities.splice(index, 1);
+                        }).
+                        error(function (data, status, headers, config) {
+                            $scope.error = 'Unexpected error. Please try again later.';
+                        });
+                }
+            })
+        };
+
+        $scope.updateEducation = function (object) {
+            var copyObject = angular.copy(object);
+            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
+                // The server generates hash ID for saved forms,
+                // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
+                var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
+                    url = method == 'POST' ? '/lawyers/universities' : '/lawyers/universities/' + object.id;
+                $http({
+                    method: method,
+                    url: url,
+                    data: copyObject,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                }).
+                    success(function (data, status, headers, config) {
+                        $scope.isUpdated = true;
+                        $scope.error = false;
+                    }).
+                    error(function (data, status, headers, config) {
+                        $scope.error = 'Unexpected error. Please try again later.';
+                        $scope.isUpdated = false;
+                    });
+
+        };
+    }]);
+'use strict';
+/* Controller */
+
 // The controller injected directly into html, avoiding routers
 App.controller('HeaderCtrl', ['$scope', '$rootScope', '$http', '$userInfo',
     function ($scope, $rootScope, $http, $userInfo) {
@@ -1686,6 +1793,159 @@ App.controller('LoginModalCtrl', ['$scope', '$http',
     };
 
 }]);
+'use strict';
+/* Controller - part of My Account (manage legal services), visible for lawyer,
+not for a user */
+
+App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService',
+  function ($scope, $http, MarketPlaceService) {
+
+    var taskCounter = 0;
+    $scope.legalServiceInProgress = MarketPlaceService.getLegalIssueFromStorage()
+        ? MarketPlaceService.getLegalIssueFromStorage()
+        : false;
+    $scope.legalServiceTasks = [];
+    $scope.taskTitle = {};
+    this.formStatus = {
+      isEditModeOpen: false
+    };
+
+    //Show appropriate wizard (animation) based on selected url
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+      $scope.wizardStatus = {};
+      switch (toState.url) {
+        case '/legal-services':
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = true;
+          $scope.wizardStatus.step3 = true;
+          break;
+        case '/create':
+            console.log(2);
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = false;
+          $scope.wizardStatus.step3 = true;
+          break;
+        case '/confirm':
+          console.log(3);
+          $scope.wizardStatus.step1 = false;
+          $scope.wizardStatus.step2 = false;
+          $scope.wizardStatus.step3 = false;
+          break;
+        default:
+          console.log(4);
+          break;
+      }
+    });
+
+    $scope.addNewTask = function() {
+      var task = angular.copy($scope.taskTitle);
+      // assign ID to added task
+      task.id = taskCounter;
+      $scope.legalServiceTasks.push(task);
+      taskCounter += 1;
+      // clear input after adding the task
+      $scope.taskTitle.title = '';
+    };
+
+    $scope.getElement = function(obj, index) {
+      // De-select active object if 'close' button clicked
+      if ( !obj && !index ) {
+        $scope.taskDetail = null;
+        return;
+      };
+      // Save information about selected object for ng-class
+      // and for Detail section
+      $scope.taskDetail = obj;
+      $scope.taskDetail.index = index;
+    };
+
+    $scope.removeTask = function(obj) {
+      angular.forEach($scope.legalServiceTasks, function(elem, index) {
+        // if user added a form that not saved on the server yet, just delete UI
+        if ($scope.legalServiceTasks.length != $scope.legalServiceTasks.length &&
+            $scope.legalServiceTasks[index]['id'] == obj['id']) {
+          $scope.legalServiceTasks.splice(index, 1);
+          return;
+        }
+        if ( $scope.legalServiceTasks[index]['id'] == obj['id'] ) {
+          $http({
+            method: 'DELETE',
+            url: '/api/..' + obj['id'],
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+            }
+          }).
+              success(function (data, status, headers, config) {
+                $scope.legalServiceTasks.splice(index, 1);
+              }).
+              error(function (data, status, headers, config) {
+                $scope.error = 'Unexpected error. Please try again later.';
+              });
+        }
+      })
+    };
+
+    $scope.saveLegalIssueToStorage = function() {
+      MarketPlaceService.saveLegalIssueToStorage($scope.legalServiceTasks);
+    };
+
+  }]);
+'use strict';
+/* Service */
+
+// The factory returns promise for MarketPlace
+App.factory('MarketPlaceService', function($http) {
+
+    function getLegalIssues() {
+      return $http.get('/api/...');
+    };
+
+    function createLegalIssue(marketTask) {
+      return $http.post('/api/...', marketTask);
+    };
+
+    function updateLegalIssue(marketTask) {
+      return $http.post('/api/...', marketTask);
+    };
+
+    function deleteLegalIssue(id) {
+      return $http.delete('/api/.../' + id);
+    };
+
+    function deleteTaskOfLegalIssue(id) {
+      return $http.delete('/api/.../' + id);
+    };
+
+    function saveLegalIssueToStorage(obj) {
+      var objStr = angular.toJson(obj);
+      localStorage.setItem('legalIssue', objStr);
+    };
+
+    function getLegalIssueFromStorage() {
+      return angular.fromJson(localStorage.getItem('legalIssue'));
+    };
+
+
+    return {
+      getLegalIssues : getLegalIssues,
+      createLegalIssue :createLegalIssue,
+      updateLegalIssue : updateLegalIssue,
+      deleteLegalIssue: deleteLegalIssue,
+      deleteTaskOfLegalIssue: deleteTaskOfLegalIssue,
+      saveLegalIssueToStorage: saveLegalIssueToStorage,
+      getLegalIssueFromStorage: getLegalIssueFromStorage
+    }
+
+});
+'use strict';
+/* Controller */
+
+App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
+    function ($scope, $http, $userInfo, $rootScope, $state) {
+
+
+    }]);
 'use strict';
 /* Controller */
 
@@ -1885,250 +2145,6 @@ App.controller('RegistrationCtrl',['$scope', '$state', '$http', '$userInfo', 'Va
             $('.ui.form')
                 .form(ValidationRules.en);
         })(jQuery);
-
-
-    }]);
-'use strict';
-/* Controller */
-
-App.controller('ExperienceCtrl', ['$scope', '$http', '$userInfo', 'UtilsService',
-    function ($scope, $http, $userInfo, UtilsService) {
-
-        // if data had been saved before, do not send a request
-        if ( _.isEmpty($userInfo.experiences) ) {
-            var promiseGetExperience = $userInfo.getUserExperience();
-            promiseGetExperience.then(function (onFulfilled) {
-                // assign [{}] object if request returns an empty object.
-                // [{}] - is used to build default html template
-                // extra validation is needed due to another structure of data for the Experiences
-                $scope.experiences = ( onFulfilled['workPlaces'] && !_.isEmpty(onFulfilled['workPlaces']) )
-                    ? UtilsService.convertDate(onFulfilled['workPlaces'])
-                    : [{}];
-            }, function (onReject) {
-                $scope.experiences = [{}];
-            });
-        };
-
-        this.formStatus = {
-            isEditModeOpen: true,
-            isEditModeDisabled: false
-        };
-        $scope.experience = {};
-        $scope.experiences = $userInfo.experiences || [{}];
-        $scope.selectorYears = UtilsService.generateYears();
-        var formats = ['yyyy', 'DD/MM/YYYY', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
-            format = formats[0],
-            experiencesCounter = 0;
-        $scope.addExperience = function () {
-            var experiencesTemplate = {
-                id: experiencesCounter
-            };
-            experiencesCounter += 1;
-            $scope.experiences.push(experiencesTemplate);
-        };
-        $scope.removeExperience = function(obj) {
-            angular.forEach($scope.experiences, function(elem, index) {
-                // if user added a form that not saved on the server yet, just delete UI
-                if ($scope.experiences.length != $scope.experiences.length &&
-                    $scope.experiences[index]['id'] == obj['id']) {
-                    $scope.experiences.splice(index, 1);
-                    return;
-                }
-                if ( $scope.experiences[index]['id'] == obj['id'] ) {
-                    $http({
-                        method: 'DELETE',
-                        url: '/lawyers/experience/' + obj['id'],
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                        }
-                    }).
-                        success(function (data, status, headers, config) {
-                            $scope.experiences.splice(index, 1);
-                        }).
-                        error(function (data, status, headers, config) {
-                            $scope.error = 'Unexpected error. Please try again later.';
-                        });
-                }
-            })
-        };
-        $scope.updateExperience = function (object) {
-            var copyObject = angular.copy(object);
-            copyObject = UtilsService.convertDate(copyObject, formats[1] ); // helps to avoid overwriting of UI
-            // The server generates hash ID for saved forms,
-            // if new form is added from UI and the ID starts from 0 (means that id is not saved on the server )
-            var method = isFinite(object.id) || !object.id ? 'POST' : 'PUT',
-                url = method == 'POST' ? '/lawyers/experience' : '/lawyers/experience/' + object.id;
-            $http({
-                method: method,
-                url: url,
-                data: copyObject,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-                }
-            }).
-                success(function (data, status, headers, config) {
-                    $scope.isUpdated = true;
-                    $scope.error = false;
-                }).
-                error(function (data, status, headers, config) {
-                    $scope.error = 'Unexpected error. Please try again later.';
-                    $scope.isUpdated = false;
-                });
-
-        };
-}]);
-'use strict';
-/* Controller - part of My Account (manage legal services), visible for lawyer,
-not for a user */
-
-App.controller('MarketPlaceLawyerCtrl', ['$scope', '$http', 'MarketPlaceService',
-  function ($scope, $http, MarketPlaceService) {
-
-    var taskCounter = 0;
-    $scope.legalServiceInProgress = MarketPlaceService.getLegalIssueFromStorage()
-        ? MarketPlaceService.getLegalIssueFromStorage()
-        : false;
-    $scope.legalServiceTasks = [];
-    $scope.taskTitle = {};
-    this.formStatus = {
-      isEditModeOpen: false
-    };
-
-    //Show appropriate wizard (animation) based on selected url
-    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
-      $scope.wizardStatus = {};
-      switch (toState.url) {
-        case '/legal-services':
-          $scope.wizardStatus.step1 = false;
-          $scope.wizardStatus.step2 = true;
-          $scope.wizardStatus.step3 = true;
-          break;
-        case '/create':
-            console.log(2);
-          $scope.wizardStatus.step1 = false;
-          $scope.wizardStatus.step2 = false;
-          $scope.wizardStatus.step3 = true;
-          break;
-        case '/confirm':
-          console.log(3);
-          $scope.wizardStatus.step1 = false;
-          $scope.wizardStatus.step2 = false;
-          $scope.wizardStatus.step3 = false;
-          break;
-        default:
-          console.log(4);
-          break;
-      }
-    });
-
-    $scope.addNewTask = function() {
-      var task = angular.copy($scope.taskTitle);
-      // assign ID to added task
-      task.id = taskCounter;
-      $scope.legalServiceTasks.push(task);
-      taskCounter += 1;
-      // clear input after adding the task
-      $scope.taskTitle.title = '';
-    };
-
-    $scope.getElement = function(obj, index) {
-      // De-select active object if 'close' button clicked
-      if ( !obj && !index ) {
-        $scope.taskDetail = null;
-        return;
-      };
-      // Save information about selected object for ng-class
-      // and for Detail section
-      $scope.taskDetail = obj;
-      $scope.taskDetail.index = index;
-    };
-
-    $scope.removeTask = function(obj) {
-      angular.forEach($scope.legalServiceTasks, function(elem, index) {
-        // if user added a form that not saved on the server yet, just delete UI
-        if ($scope.legalServiceTasks.length != $scope.legalServiceTasks.length &&
-            $scope.legalServiceTasks[index]['id'] == obj['id']) {
-          $scope.legalServiceTasks.splice(index, 1);
-          return;
-        }
-        if ( $scope.legalServiceTasks[index]['id'] == obj['id'] ) {
-          $http({
-            method: 'DELETE',
-            url: '/api/..' + obj['id'],
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-            }
-          }).
-              success(function (data, status, headers, config) {
-                $scope.legalServiceTasks.splice(index, 1);
-              }).
-              error(function (data, status, headers, config) {
-                $scope.error = 'Unexpected error. Please try again later.';
-              });
-        }
-      })
-    };
-
-    $scope.saveLegalIssueToStorage = function() {
-      MarketPlaceService.saveLegalIssueToStorage($scope.legalServiceTasks);
-    };
-
-  }]);
-'use strict';
-/* Service */
-
-// The factory returns promise for MarketPlace
-App.factory('MarketPlaceService', function($http) {
-
-    function getLegalIssues() {
-      return $http.get('/api/...');
-    };
-
-    function createLegalIssue(marketTask) {
-      return $http.post('/api/...', marketTask);
-    };
-
-    function updateLegalIssue(marketTask) {
-      return $http.post('/api/...', marketTask);
-    };
-
-    function deleteLegalIssue(id) {
-      return $http.delete('/api/.../' + id);
-    };
-
-    function deleteTaskOfLegalIssue(id) {
-      return $http.delete('/api/.../' + id);
-    };
-
-    function saveLegalIssueToStorage(obj) {
-      var objStr = angular.toJson(obj);
-      localStorage.setItem('legalIssue', objStr);
-    };
-
-    function getLegalIssueFromStorage() {
-      return angular.fromJson(localStorage.getItem('legalIssue'));
-    };
-
-
-    return {
-      getLegalIssues : getLegalIssues,
-      createLegalIssue :createLegalIssue,
-      updateLegalIssue : updateLegalIssue,
-      deleteLegalIssue: deleteLegalIssue,
-      deleteTaskOfLegalIssue: deleteTaskOfLegalIssue,
-      saveLegalIssueToStorage: saveLegalIssueToStorage,
-      getLegalIssueFromStorage: getLegalIssueFromStorage
-    }
-
-});
-'use strict';
-/* Controller */
-
-App.controller('LandingPageCtrl', ['$scope', '$http', '$userInfo', '$rootScope', '$state',
-    function ($scope, $http, $userInfo, $rootScope, $state) {
 
 
     }]);
