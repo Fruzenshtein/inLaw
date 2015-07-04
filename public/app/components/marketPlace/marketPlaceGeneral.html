@@ -21,7 +21,7 @@
             <div class="two fields">
                 <div class="field">
                     <label>Category</label>
-                    <ui-select  ng-model="userProfile.gender" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
+                    <ui-select class="ui-select-drop-wrap" ng-model="userProfile.gender" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
                         <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
                             <span ng-bind-html="gender.name | highlight: $select.search"></span>

@@ -18,27 +18,75 @@
 .flat-inputs input[type="text"]:focus {
     box-shadow: none !important;
 }
-
-.ui-select-drop-wrap.ui-select-match{
-    cursor: pointer;
-    word-wrap: break-word;
-    line-height: 1em;
-    white-space: normal;
+/* Restyle Angular ui select - Drop menu */
+.ui-select-drop-wrap span{
+    float: none !important;
+    height: 37px;
     outline: 0;
-    -webkit-transform: rotateZ(0);
-    transform: rotateZ(0);
-    min-width: 14em;
-    min-height: 2.7142em;
-    background: #fff;
-    display: inline-block;
-    padding: .78571429em 2.6em .78571429em 1em;
-    color: rgba(0,0,0,.87);
-    box-shadow: none;
-    border: 1px solid rgba(34,36,38,.15);
-    border-radius: .28571429rem;
-    -webkit-transition: box-shadow .1s ease,width .1s ease;
-    transition: box-shadow .1s ease,width .1s ease;
+    font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    margin: 0em;
+    outline: none;
+    -webkit-appearance: none;
+    tap-highlight-color: rgba(255, 255, 255, 0);
+    line-height: 1.2142em;
+    padding: 0.67861429em 1em;
+    font-size: 1em;
+    color: rgba(0, 0, 0, 0.87);
+    border-radius: 0.28571429rem;
+    box-shadow: 0em 0em 0em 0em transparent inset;
+    -webkit-transition: color 0.1s ease, border-color 0.1s ease;
+    transition: color 0.1s ease, border-color 0.1s ease;
 }
+
+.ui-select-drop-wrap input{
+    height: 37px;
+    outline: 0;
+    font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    margin: 0em;
+    outline: none;
+    -webkit-appearance: none;
+    tap-highlight-color: rgba(255, 255, 255, 0);
+    line-height: 1.2142em;
+    padding: 0.67861429em 1em;
+    font-size: 1em;
+    background: #ffffff;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    color: rgba(0, 0, 0, 0.87);
+    border-radius: 0.28571429rem;
+    box-shadow: 0em 0em 0em 0em transparent inset;
+    -webkit-transition: color 0.1s ease, border-color 0.1s ease;
+    transition: color 0.1s ease, border-color 0.1s ease;
+}
+
+.ui-select-drop-wrap .btn-default:focus,
+.ui-select-drop-wrap .btn-default:hover {
+    background-color: #ffffff !important;
+}
+
+.ui-select-drop-wrap .ui-select-placeholder {
+    border: none;
+}
+
+.ui-select-bootstrap .ui-select-choices-row.active > a {
+    color: inherit;
+    background-color: #f5f5f5;
+}
+
+/* Overwriting Angular ui-select tag */
+.ui-select-tagging input {
+    border: none !important;
+    height: 1.866666em !important;
+}
+
+.ui-select-tagging {
+    height: auto !important;
+    min-height: 37px;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    color: rgba(0, 0, 0, 0.87);
+    border-radius: 0.28571429rem;
+    box-shadow: 0em 0em 0em 0em transparent inset;
+}
+
 
 .slider-input {
     width: 100%;
@@ -112,14 +160,6 @@ input[type="range"]::-ms-thumb {
 .tab-content {
     border-radius: 0 !important;
     box-shadow: none !important;
-}
-/* Overwriting of Semantic stales */
-.ui-select-tagging  input {
-    border: none !important;
-}
-
-.ui-select-tagging {
-    height: auto !important;
 }
 .empty-section {
     background: #fff url('../images/briefcase.png') no-repeat center;

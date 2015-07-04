@@ -25,7 +25,10 @@
                 </div>
                 <div class="field">
                     <label>Gender:</label>
-                    <ui-select ng-model="userProfile.gender" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
+                    <ui-select class="ui-select-drop-wrap"
+                               ng-model="userProfile.gender"
+                               theme="bootstrap"
+                               ng-disabled="formStatus.isEditModeOpen">
                         <ui-select-match placeholder="Select a gender in the list...">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="gender in genderTypes | filter: $select.search">
                             <span ng-bind-html="gender.name | highlight: $select.search"></span>
@@ -55,7 +58,10 @@
             <div class="tree fields">
                 <div class="field">
                     <label></label>
-                    <ui-select ng-model="birthDate.day" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
+                    <ui-select class="ui-select-drop-wrap"
+                               ng-model="birthDate.day"
+                               theme="bootstrap"
+                               ng-disabled="formStatus.isEditModeOpen">
                         <ui-select-match placeholder="Select a day...">{{$select.selected}}</ui-select-match>
                         <ui-select-choices repeat="day in selectorDays | filter: $select.search">
                             <span ng-bind-html="day | highlight: $select.search"></span>
@@ -64,7 +70,10 @@
                 </div>
                 <div class="field">
                     <label></label>
-                    <ui-select ng-model="birthDate.month" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
+                    <ui-select class="ui-select-drop-wrap"
+                               ng-model="birthDate.month"
+                               theme="bootstrap"
+                               ng-disabled="formStatus.isEditModeOpen">
                         <ui-select-match placeholder="Select a month...">{{$select.selected}}</ui-select-match>
                         <ui-select-choices repeat="month in selectorMonth | filter: $select.search">
                             <span ng-bind-html="month | highlight: $select.search"></span>
@@ -73,7 +82,10 @@
                 </div>
                 <div class="field">
                     <label></label>
-                    <ui-select ng-model="birthDate.year" theme="bootstrap" ng-disabled="formStatus.isEditModeOpen">
+                    <ui-select class="ui-select-drop-wrap"
+                               ng-model="birthDate.year"
+                               theme="bootstrap"
+                               ng-disabled="formStatus.isEditModeOpen">
                         <ui-select-match placeholder="Select a year...">{{$select.selected}}</ui-select-match>
                         <ui-select-choices repeat="year in selectorYears | filter: $select.search">
                             <span ng-bind-html="year | highlight: $select.search"></span>

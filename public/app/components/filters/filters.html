@@ -27,7 +27,8 @@
                     </div>
                     <div class="field">
                         <label>Gender:</label>
-                        <ui-select ng-model="filters.gender"
+                        <ui-select class="ui-select-drop-wrap"
+                                   ng-model="filters.gender"
                                    theme="bootstrap"
                                    ng-disabled="disabled">
                             <ui-select-match placeholder="Please, select a gender..">{{$select.selected.name}}</ui-select-match>
@@ -38,7 +39,8 @@
                     </div>
                     <div class="field">
                         <label>City:</label>
-                        <ui-select ng-model="filters.address.selected"
+                        <ui-select class="ui-select-drop-wrap"
+                                   ng-model="filters.address.selected"
                                    theme="bootstrap"
                                    ng-disabled="disabled"
                                    reset-search-input="false">
