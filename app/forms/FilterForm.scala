@@ -33,25 +33,3 @@ trait LawyerFilterForm {
   )
 
 }
-
-case class LegalServiceFilter(category: Option[String],
-                              name: Option[String],
-                              minPrice: Option[Int],
-                              maxPrice: Option[Int],
-                              minEst: Option[Long],
-                              maxEst: Option[Long])
-
-trait LegalServiceFilterForm {
-
-  val serviceFilterForm = Form(
-    mapping(
-      "category" -> optional(text),
-      "name" -> optional(text),
-      "minPrice" -> optional(number),
-      "maxPrice" -> optional(number),
-      "minEst" -> optional(longNumber),
-      "maxEst" -> optional(longNumber)
-    )(LegalServiceFilter.apply)(LegalServiceFilter.unapply)
-  )
-
-}

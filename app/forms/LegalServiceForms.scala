@@ -8,6 +8,13 @@ import play.api.data.Forms._
 /**
  * Created by Alex on 6/5/15.
  */
+case class LegalServiceFilter(category: Option[String],
+                              name: Option[String],
+                              minPrice: Option[Int],
+                              maxPrice: Option[Int],
+                              minEst: Option[Long],
+                              maxEst: Option[Long])
+
 trait LegalServiceForms extends CommonValidators {
 
   val legalServiceInfo = Form(
@@ -20,6 +27,17 @@ trait LegalServiceForms extends CommonValidators {
       "excluded" ->seq(nonEmptyText(maxLength = 240)),
       "required" ->seq(nonEmptyText(maxLength = 240))
     )(LegalServiceDTO.apply)(LegalServiceDTO.unapply)
+  )
+
+  val serviceFilterForm = Form(
+    mapping(
+      "category" -> optional(text),
+      "name" -> optional(text),
+      "minPrice" -> optional(number),
+      "maxPrice" -> optional(number),
+      "minEst" -> optional(longNumber),
+      "maxEst" -> optional(longNumber)
+    )(LegalServiceFilter.apply)(LegalServiceFilter.unapply)
   )
 
 }

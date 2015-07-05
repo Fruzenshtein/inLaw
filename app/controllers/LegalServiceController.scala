@@ -3,11 +3,11 @@ package controllers
 import javax.ws.rs.QueryParam
 
 import com.wordnik.swagger.annotations._
-import forms.LegalServiceForms
+import forms.{LegalServiceFilter, LegalServiceForms}
 import models.marketplace.LegalService
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Result, Controller}
+import play.api.mvc.{Action, Result, Controller}
 import services.LegalServiceService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -146,6 +146,24 @@ object LegalServiceController extends Controller with Security with LegalService
           }
         }
       )
+    )
+  }
+
+  def filterServices = Action.async { implicit request =>
+    import services.QueryBuilder._
+    serviceFilterForm.bindFromRequest fold(
+      formWithErrors => {
+        Logger.info("Service Filter Form was with ERRORS")
+        Future(BadRequest(Json.obj("message" -> formWithErrors.errorsAsJson)))
+      },
+      serviceFilter => {
+        import services.QueryBuilder._
+        Logger.info("Filtering of Legal Services...")
+        val generalQuery = Json.obj()
+
+
+        Future.successful(Ok)
+      }
     )
   }
 
